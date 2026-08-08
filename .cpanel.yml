@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    # Canar: deploy în subdirectorul de test până validăm .htaccess pe Apache-ul real.
+    # După validare, ținta devine /home/gamesro/public_html/ (un commit schimbă linia).
+    - export DEPLOYPATH=/home/gamesro/public_html/test-fabrica/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R site/. $DEPLOYPATH
