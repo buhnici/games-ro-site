@@ -2,98 +2,106 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://games.ro/</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
-    <loc>https://games.ro/joc/2048</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/snake</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/flappy</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/tetris</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/stack-tower</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/sudoku</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/minesweeper</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/chess</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/geo-ro</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/joc/iq-test</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://games.ro/index</loc>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://games.ro/despre</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://games.ro/contact</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://games.ro/termeni</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
-    <loc>https://games.ro/confidentialitate</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://games.ro/contact</loc>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://games.ro/cookies</loc>
-    <lastmod>2026-03-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/confidentialitate</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/stiri</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/recomandat</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/recomandat/cele-mai-bune-casti-gaming</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/recomandat/cele-mai-bune-tastaturi-gaming</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/recomandat/incarcatoare-gaming-setup</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/2048</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/aripi</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/blocuri</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/chess</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/conexiuni-ro</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/geo-ro</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/headline-sau-fake</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/iq-test</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/minesweeper</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/pretul-corect</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/snake</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/stack-tower</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/sudoku</loc>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/type-racer-ro</loc>
+    <lastmod>2026-08-08</lastmod>
   </url>
 </urlset>
