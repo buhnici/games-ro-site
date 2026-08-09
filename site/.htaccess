@@ -24,7 +24,6 @@ RewriteRule ^joc/tetris$ /joc/blocuri [R=301,L]
 RewriteRule ^joc/flappy$ /joc/aripi [R=301,L]
 
 # Rescriere internă: servește fișiere .html când URL-urile vin fără extensie
-# Folosește [END] și condiție !-f pentru a evita buclele (spec F0.3)
-RewriteCond %{REQUEST_FILENAME} !-d
+# HOTFIX F0.3c: nu mai ștergem !-d pentru a permite servește .html chiar dacă există director vechi cu același nume
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+)$ $1.html [END]
