@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAMES.ro — Jocuri și Știri</title>
+  <meta name="description" content="Joacă jocuri gratuite și citește știri din gaming pe GAMES.ro.">
+  <style>
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #f4f1ea;
+        --bg-alt: #e8e4dc;
+        --text: #1a1a1a;
+        --text-muted: #6b6b6b;
+        --border: #d1ccc4;
+        --accent: #d44536;
+        --accent-light: rgba(212, 69, 54, 0.08);
+        --font-headings: Georgia, 'Times New Roman', serif;
+        --font-body: 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      a {
+        color: #000;
+      }
+
+      .section-header a {
+        color: var(--accent);
+      }
+
+      .newsletter-form input {
+        background: var(--bg-alt);
+        color: var(--text);
+        border-color: var(--border);
+      }
+
+      .game-card {
+        background: var(--bg);
+        border-color: var(--border);
+      }
+
+      .game-card:hover {
+        border-color: var(--accent);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+      }
+
+      .btn-primary:hover {
+        background: #b93b2e;
+      }
+
+      .btn-secondary {
+        background: var(--bg-alt);
+        border-color: var(--border);
+      }
+
+      .btn-secondary:hover {
+        border-color: var(--accent);
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #fff;
+        --bg-alt: #f8f6f3;
+        --text: #111;
+        --text-muted: #555;
+        --border: #e2dcd4;
+        --accent: #d44536;
+        --accent-light: rgba(212, 69, 54, 0.06);
+        --font-headings: Georgia, 'Times New Roman', serif;
+        --font-body: 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-headings);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .logo .dot {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: none;
+      gap: 2rem;
+    }
+
+    @media(min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    @media(min-width: 768px) {
+      .hero {
+        padding: 6rem 1.5rem;
+      }
+    }
+
+    .hero h1 {
+      font-family: var(--font-headings);
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 .accent {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.75rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      max-width: 30rem;
+    }
+
+    /* Section */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header h2 {
+      font-family: var(--font-headings);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .section-header .date {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .section-header a {
+      font-size: 0.875rem;
+      text-decoration: underline;
+    }
+
+    /* Daily Challenges */
+    .daily-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media(min-width: 640px) {
+      .daily-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(min-width: 1024px) {
+      .daily-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .challenge-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .challenge-card:hover {
+      border-color: var(--accent);
+    }
+
+    .challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .challenge-icon {
+      font-size: 1.5rem;
+    }
+
+    .challenge-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+    }
+
+    .challenge-badge.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .challenge-badge.paused {
+      background: var(--border);
+      color: var(--text-muted);
+    }
+
+    .challenge-badge.new {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .challenge-badge.viral {
+      background: #d4a536;
+      color: #fff;
+    }
+
+    .challenge h3 {
+      font-family: var(--font-headings);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .challenge p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Featured */
+    .featured-card {
+      background: linear-gradient(180deg, rgba(212, 69, 54, 0.03) 0%, transparent 100%);
+      border: 1px solid rgba(212, 69, 54, 0.15);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media(min-width: 640px) {
+      .featured-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 2rem;
+      }
+    }
+
+    .featured-content {
+      flex: 1;
+    }
+
+    .featured-label {
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .featured h2 {
+      font-family: var(--font-headings);
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .featured p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      max-width: 25rem;
+    }
+
+    .featured-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .featured-status .dot {
+      width: 8px;
+      height: 8px;
+      background: #d4a536;
+      border-radius: 50%;
+    }
+
+    .featured-image {
+      display: none;
+
+      @media(min-width: 640px) {
+        display: block;
+      }
+    }
+
+    .featured-image::before {
+      content: '';
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--accent-light);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .featured-image::after {
+      content: '🚀';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+    }
+
+    /* Newsletter */
+    .newsletter {
+      text-align: center;
+      padding: 4rem 1.5rem;
+    }
+
+    @media(min-width: 768px) {
+      .newsletter {
+        padding: 6rem 1.5rem;
+      }
+    }
+
+    .newsletter h2 {
+      font-family: var(--font-headings);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .newsletter p {
+      color: var(--text-muted);
+      max-width: 30rem;
+      margin: 0 auto 2rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 30rem;
+      margin: 0 auto;
+    }
+
+    @media(min-width: 640px) {
+      .newsletter-form {
+        flex-direction: row;
+      }
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #b93b2e;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-headings);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand .dot {
+      color: var(--accent);
+    }
+
+    .footer-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    @media(min-width: 640px) {
+      .footer-links {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    .footer-links a {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span>GAMES</span><span class="dot">.ro</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#ziua">Jocuri</a>
+        <a href="#recomandat">Recomandat</a>
+        <a href="#stiri">Știri</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1><span class="accent">Jocuri Diurne</span>Jocuri, știri și mai mult din lumea gaming-ului.</h1>
+    <p>Cele mai noi provocări jurnalistice din gaming, publicate zilnic.</p>
+  </section>
+
+  <section class="section" id="ziua">
+    <div class="section-header">
+      <h2>Ziua 142 — Vineri, 8 august</h2>
+      <a href="/joc/geo-ro">Vezi toate →</a>
+    </div>
+
+    <div class="daily-grid">
+      <a href="/joc/geo-ro" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">🗺️</span>
+          <span class="challenge-badge active">NOU</span>
+        </div>
+        <h3>GeoRo</h3>
+        <p>Ghicește locația pe harta României. Un nou loc în fiecare zi.</p>
+      </a>
+
+      <a href="/joc/pretul-corect" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">💰</span>
+          <span class="challenge-badge paused">ÎN PAUZĂ</span>
+        </div>
+        <h3>Prețul Corect RO</h3>
+        <p>Ghicește prețul real al produselor din România.</p>
+      </a>
+
+      <a href="/joc/headline-sau-fake" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">📰</span>
+          <span class="challenge-badge viral">VIRAL</span>
+        </div>
+        <h3>Headline sau Fake?</h3>
+        <p>Știrea e reală sau inventată? Testează-ți instinctul.</p>
+      </a>
+
+      <a href="/joc/conexiuni-ro" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">🔗</span>
+          <span class="challenge-badge new">NOU</span>
+        </div>
+        <h3>Conexiuni RO</h3>
+        <p>Găsește legătura între 16 cuvinte. Patru grupuri, o singură soluție.</p>
+      </a>
+
+      <a href="/joc/type-racer-ro" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">⌨️</span>
+          <span class="challenge-badge active">LIVE</span>
+        </div>
+        <h3>Type Racer RO</h3>
+        <p>Cât de repede tastezi în română? Cursă live cu alți jucători.</p>
+      </a>
+
+      <a href="/joc/iq-test" class="challenge-card">
+        <div class="challenge-header">
+          <span class="challenge-icon">🧠</span>
+          <span class="challenge-badge active">POPULAR</span>
+        </div>
+        <h3>Test de Inteligență</h3>
+        <p>20 de întrebări, 4 categorii, scor IQ estimat. Cât de deștept ești?</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="recomandat">
+    <div class="section-header">
+      <h2>Recomandări Editoriale</h2>
+    </div>
+
+    <div class="featured-card">
+      <div class="featured-content">
+        <div class="featured-label">Feature</div>
+        <h2>Prosumatorul</h2>
+        <p>Platforma pe care games.ro îl construiește. Jocuri, știri și hardware într-un singur loc. Începe să lucreze.</p>
+        <div class="featured-status">
+          <span class="dot"></span>
+          <span>În lucru — Estimare Q4 2026</span>
+        </div>
+      </div>
+      <div class="featured-image"></div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <h2>Buletin zilnic</h2>
+    <p>Primește cele mai noi jocuri și știri din gaming direct în inbox. Fără spam, doar joc.</p>
+
+    <form class="newsletter-form">
+      <input type="email" placeholder="adresa@email.com" required>
+      <button type="submit" class="btn-primary">Abonează-te</button>
+    </form>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span>GAMES</span><span class="dot">.ro</span>
+      </div>
+      <p class="footer-text">Un proiect de George Buhnici</p>
+      <div class="footer-links">
+        <a href="/termeni">Termeni</a>
+        <a href="/confidentialitate">Confidențialitate</a>
+        <a href="/cookies">Cookie-uri</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

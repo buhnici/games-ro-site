@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoRo — Rezultat — GAMES.ro</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-alt: #12121a;
+      --text: #e8e6e0;
+      --text-muted: #9a9790;
+      --accent: #FF3D00;
+      --accent-glow: rgba(255, 61, 0, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #00FF88;
+      --font-display: 'Chakra Petch', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-display);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .share-card {
+      max-width: 1200px;
+      width: 100%;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    @media(min-width: 768px) {
+      .share-card {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    .share-visual {
+      flex: 1;
+    }
+
+    .game-result {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+      border: 2px solid var(--success);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .result-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--success);
+      color: #0a0a0f;
+      padding: 0.375rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-emoji {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-score {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--success);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-label {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .result-game {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .share-content {
+      flex: 1.5;
+    }
+
+    .share-content h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .share-content h1 .accent {
+      color: var(--accent);
+    }
+
+    .share-content p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .share-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .highlight-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .highlight-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    .highlight-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 0.5rem;
+    }
+
+    .share-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    @media(min-width: 768px) {
+      .share-actions {
+        flex-direction: row;
+      }
+    }
+
+    .btn {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      brightness: 1.1;
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+    }
+
+    .share-footer {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .share-footer a {
+      color: var(--text);
+      text-decoration: underline;
+    }
+
+    @media(max-width: 768px) {
+      .share-card {
+        padding: 2rem;
+      }
+
+      .share-content h1 {
+        font-size: 2rem;
+      }
+
+      .share-content p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="share-card">
+    <div class="share-visual">
+      <div class="game-result">
+        <span class="result-badge">Ziua 142</span>
+        <div class="result-emoji">🗺️</div>
+        <div class="result-score">4,231</div>
+        <div class="result-label">Puncte GeoRo</div>
+        <div class="result-game">GeoRo</div>
+      </div>
+    </div>
+
+    <div class="share-content">
+      <h1>Rezultat GeoRo <span class="accent">✓</span></h1>
+      <p>Îți place de GeoRo? Distribuie scorul și invită prietenii la provocare.</p>
+
+      <div class="share-highlights">
+        <div class="highlight-item">
+          <div class="highlight-value">4,231</div>
+          <div class="highlight-label">Puncte</div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-value">🔥</div>
+          <div class="highlight-label">Streak</div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-value">🗺️</div>
+          <div class="highlight-label">Ziua</div>
+        </div>
+      </div>
+
+      <div class="share-actions">
+        <a href="/" class="btn btn-primary">Joacă din nou</a>
+        <a href="https://games.ro" target="_blank" class="btn btn-secondary">games.ro</a>
+      </div>
+
+      <div class="share-footer">
+        Un proiect de <a href="https://buhnici.ro" target="_blank">George Buhnici</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoRo — Ghicește locația — GAMES.ro</title>
+  <meta name="description" content="Testează-ți cunoștințele despre geografia României. Ghicește locul din fotografie pe harta interactivă.">
+  <style>
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #f4f1ea;
+        --bg-alt: #e8e4dc;
+        --text: #1a1a1a;
+        --text-muted: #6b6b6b;
+        --border: #d1ccc4;
+        --accent: #d44536;
+        --accent-light: rgba(212, 69, 54, 0.08);
+        --font-headings: Georgia, 'Times New Roman', serif;
+        --font-body: 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      a {
+        color: #000;
+      }
+
+      .game-card {
+        background: var(--bg);
+        border-color: var(--border);
+      }
+
+      .game-card:hover {
+        border-color: var(--accent);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+      }
+
+      .btn-primary:hover {
+        background: #b93b2e;
+      }
+
+      .btn-secondary {
+        background: var(--bg-alt);
+        border-color: var(--border);
+      }
+
+      .btn-secondary:hover {
+        border-color: var(--accent);
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #fff;
+        --bg-alt: #f8f6f3;
+        --text: #111;
+        --text-muted: #555;
+        --border: #e2dcd4;
+        --accent: #d44536;
+        --accent-light: rgba(212, 69, 54, 0.06);
+        --font-headings: Georgia, 'Times New Roman', serif;
+        --font-body: 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 50;
+    }
+
+    .header-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .back-btn:hover {
+      color: var(--accent);
+    }
+
+    .game-title {
+      font-family: var(--font-headings);
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* Main */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Date Header */
+    .date-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .date-header .number {
+      font-family: var(--font-headings);
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+    }
+
+    .date-header .day {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Game Info */
+    .game-info {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .game-info h3 {
+      font-family: var(--font-headings);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .game-info p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Game Grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    @media(max-width: 640px) {
+      .game-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media(max-width: 500px) {
+      .game-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .game-option {
+      aspect-ratio: 1;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .game-option:hover {
+      border-color: var(--accent);
+    }
+
+    .game-option.selected {
+      border-color: var(--accent);
+    }
+
+    .game-option.correct {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .game-option.incorrect {
+      border-color: var(--border);
+      opacity: 0.5;
+    }
+
+    /* Feedback */
+    .feedback {
+      text-align: center;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .feedback h4 {
+      font-family: var(--font-headings);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback p {
+      color: var(--text-muted);
+    }
+
+    .feedback-points {
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Footer Stats */
+    .game-footer {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media(max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+      }
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-family: var(--font-headings);
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .stat-value.accent {
+      color: var(--accent);
+    }
+
+    .stat-value.golden {
+      color: #d4a536;
+    }
+
+    .share-btn {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 1rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      background: #b93b2e;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="back-btn">
+        ← Înapoi
+      </a>
+      <span class="game-title">GeoRo</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="date-header">
+      <div class="number">142</div>
+      <div class="day">Vineri, 8 august</div>
+    </div>
+
+    <section class="game-info">
+      <h3>Locația curentă</h3>
+      <p>Vei vedea un punct pe harta României. Ghicește orașul sau județul. Scor mai mare = mai aproape de locație. Jocul se termină în 3 minute.</p>
+    </section>
+
+    <section class="game-grid">
+      <button class="game-option" data-region="București">📍</button>
+      <button class="game-option" data-region="Cluj">📍</button>
+      <button class="game-option" data-region="Timișoara">📍</button>
+      <button class="game-option" data-region="Iași">📍</button>
+    </section>
+
+    <section class="feedback">
+      <h4>Ai găsit!</h4>
+      <p>Bucureștiul, capitala României, este la distanță de 358 km.</p>
+      <div class="feedback-points">
+        300 - 499 km: 300 puncte<br>
+        500 - 749 km: 200 puncte<br>
+        750 - 999 km: 100 puncte<br>
+        1000 km+: 0 puncte
+      </div>
+    </section>
+
+    <footer class="game-footer">
+      <div class="footer-inner">
+        <div class="stat-item">
+          <span class="stat-label">Scor curent</span>
+          <span class="stat-value accent">287</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Streak</span>
+          <span class="stat-value golden">🔥 3</span>
+        </div>
+        <button class="share-btn">Partajează rezultatul</button>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

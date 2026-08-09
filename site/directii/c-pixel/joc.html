@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoRo — Ghicește locația pe harta României — GAMES.ro</title>
+  <meta name="description" content="Testează-ți cunoștințele despre geografia României. Ghicește locul din fotografie pe harta interactivă.">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --bg-alt: #1a1a1a;
+      --text: #e8e8e8;
+      --text-muted: #888;
+      --accent: #ff8c00;
+      --border: #333;
+      --success: #00ff41;
+      --font-pixel: 'Courier New', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 4px solid var(--border);
+      padding: 1rem 0;
+      font-family: var(--font-pixel);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: all 0.3s;
+      font-family: var(--font-pixel);
+    }
+
+    .back-btn:hover {
+      color: var(--accent);
+      transform: translateX(-3px);
+    }
+
+    .game-title {
+      margin-left: auto;
+      font-size: 1.25rem;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      font-family: var(--font-pixel);
+    }
+
+    @media(max-width: 640px) {
+      .game-title {
+        margin-left: auto;
+        font-size: 1rem;
+      }
+    }
+
+    .game-icon {
+      color: var(--text-muted);
+    }
+
+    /* Main Game Area */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Game Stats */
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-pixel);
+    }
+
+    .round-indicator {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .round-indicator span {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 0.375rem;
+    }
+
+    .progress-segment {
+      width: 1.5rem;
+      height: 0.5rem;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+
+    .progress-segment.completed {
+      background: var(--success);
+    }
+
+    @media(max-width: 640px) {
+      .progress-segment {
+        width: 1rem;
+        height: 0.375rem;
+      }
+    }
+
+    /* Map Area */
+    .game-area {
+      background: var(--bg-alt);
+      border: 4px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-placeholder {
+      text-align: center;
+    }
+
+    .map-placeholder-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .map-placeholder h3 {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-pixel);
+    }
+
+    .map-placeholder p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Game Info Card */
+    .game-info {
+      background: var(--bg);
+      border: 3px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      font-family: var(--font-pixel);
+    }
+
+    .game-info h3 {
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    .game-info p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+
+    /* Score Footer */
+    .game-footer {
+      background: var(--bg-alt);
+      border: 3px solid var(--border);
+      padding: 1.5rem;
+      font-family: var(--font-pixel);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .score-display {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .score-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .score-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--success);
+      letter-spacing: 0.06em;
+    }
+
+    .streak-display {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .streak-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .streak-value {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 1rem 1.5rem;
+      background: var(--accent);
+      color: #000;
+      border: 3px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-pixel);
+    }
+
+    .share-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    @media(max-width: 640px) {
+      .footer-inner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .share-btn {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="back-btn">
+        &lt; Înapoi la GAMES.ro
+      </a>
+      <span class="game-title">GeoRo</span>
+      <span class="game-icon">🗺️</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="game-stats">
+      <div class="round-indicator">
+        Runda <span>1</span> / 5
+      </div>
+      <div class="progress-bar">
+        <div class="progress-segment completed"></div>
+        <div class="progress-segment"></div>
+        <div class="progress-segment"></div>
+        <div class="progress-segment"></div>
+        <div class="progress-segment"></div>
+      </div>
+    </div>
+
+    <section class="game-area">
+      <div class="map-placeholder">
+        <div class="map-placeholder-icon">🗺️</div>
+        <h3>Harta ROMÂNIEI</h3>
+        <p>Locația curentă va apărea aici</p>
+      </div>
+    </section>
+
+    <section class="game-info">
+      <h3>CUM FUNCȚIONEAZĂ</h3>
+      <p>Vei vedea un punct pe harta României. Ghicești orașul sau județul. Scor mai mare = mai aproape de locație.</p>
+    </section>
+
+    <footer class="game-footer">
+      <div class="footer-inner">
+        <div class="score-display">
+          <span class="score-label">SCOR</span>
+          <span class="score-value">0</span>
+        </div>
+        <div class="streak-display">
+          <span class="streak-label">STREAK</span>
+          <span class="streak-value">0</span>
+        </div>
+        <a href="javascript:void(0)" class="share-btn">
+          Share rezultat
+        </a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

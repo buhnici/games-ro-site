@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAMES.ro — Jocuri Online Gratuite</title>
+  <meta name="description" content="Joacă cele mai tari jocuri online gratuit pe GAMES.ro. Zero download, zero cont.">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --bg-alt: #1a1a1a;
+      --text: #e8e8e8;
+      --text-muted: #888;
+      --accent: #ff8c00;
+      --border: #333;
+      --success: #00ff41;
+      --font-pixel: 'Courier New', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 4px solid var(--border);
+      padding: 1.5rem 0;
+      font-family: var(--font-pixel);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      font-family: var(--font-pixel);
+    }
+
+    .logo .brand {
+      color: var(--text);
+    }
+
+    .logo .dot {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: none;
+      gap: 2rem;
+      margin-left: 2rem;
+    }
+
+    @media(min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-family: var(--font-pixel);
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 3rem 1.5rem;
+    }
+
+    @media(min-width: 768px) {
+      .hero {
+        padding: 4rem 1.5rem;
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      font-family: var(--font-pixel);
+      color: var(--accent);
+      text-shadow: 2px 2px 0 #333;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      max-width: 30rem;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      gap: 1rem;
+    }
+
+    @media(min-width: 768px) {
+      .hero-cta {
+        display: flex;
+      }
+    }
+
+    .btn {
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 1rem 2rem;
+      border: 3px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 900;
+    }
+
+    .btn-primary:hover {
+      background: #ffa500;
+    }
+
+    /* Azi Section */
+    .azi {
+      background: var(--bg-alt);
+      padding: 2rem 0;
+    }
+
+    .azi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1.5rem;
+    }
+
+    .azi-header h2 {
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      font-family: var(--font-pixel);
+    }
+
+    .azi-header .badge {
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--accent);
+      color: #000;
+      padding: 0.375rem 0.875rem;
+      font-family: var(--font-pixel);
+    }
+
+    .cartridges {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+    }
+
+    @media(min-width: 640px) {
+      .cartridges {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(min-width: 1024px) {
+      .cartridges {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .cartridge {
+      background: var(--bg);
+      border: 3px solid var(--border);
+      padding: 1.25rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .cartridge:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .cartridge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--border);
+    }
+
+    .cartridge.active::before { background: var(--success); }
+    .cartridge.new::before { background: var(--accent); }
+    .cartridge.streak::before { background: #ffd700; }
+
+    .cartridge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .cartridge-icon {
+      font-size: 2rem;
+    }
+
+    .cartridge-badge {
+      font-size: 0.55rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.5rem;
+      background: var(--border);
+      color: var(--text);
+      font-family: var(--font-pixel);
+    }
+
+    .badge-active { background: var(--success); color: #000; }
+    .badge-new { background: var(--accent); color: #000; }
+    .badge-streak { background: #ffd700; color: #000; }
+
+    .cartridge h3 {
+      font-size: 1rem;
+      font-weight: bold;
+      font-family: var(--font-pixel);
+    }
+
+    .cartridge p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Flagship */
+    .flagship {
+      padding: 2rem 0;
+    }
+
+    .flagship-card {
+      background: var(--bg);
+      border: 3px solid var(--accent);
+      padding: 2rem;
+      font-family: var(--font-pixel);
+    }
+
+    .flagship-label {
+      font-size: 0.6rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .flagship h2 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+
+    .flagship p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-family: var(--font-sans);
+    }
+
+    .flagship-status {
+      display: inline-flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.875rem;
+      color: #ffd700;
+      font-family: var(--font-pixel);
+    }
+
+    /* Din Fabrica */
+    .fabrica {
+      background: var(--bg-alt);
+      padding: 2rem 0;
+    }
+
+    .fabrica-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .fabrica-header h2 {
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      font-family: var(--font-pixel);
+    }
+
+    .fabrica-header a {
+      font-size: 0.875rem;
+      color: var(--accent);
+      font-family: var(--font-pixel);
+    }
+
+    .fabrica-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+    }
+
+    @media(min-width: 640px) {
+      .fabrica-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .experiment-card {
+      background: var(--bg);
+      border: 3px solid var(--border);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .experiment-icon {
+      font-size: 2rem;
+    }
+
+    .experiment-content h3 {
+      font-size: 0.875rem;
+      font-weight: bold;
+      font-family: var(--font-pixel);
+    }
+
+    .experiment-content p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .experiment-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      background: var(--bg-alt);
+      border: 3px solid var(--border);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.25rem;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Clasice */
+    .clasice {
+      padding: 2rem 0;
+    }
+
+    .clasice-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .clasice-header h2 {
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      font-family: var(--font-pixel);
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media(min-width: 640px) {
+      .game-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .game-card {
+      background: var(--bg);
+      border: 3px solid var(--border);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-pixel);
+    }
+
+    .game-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .game-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .game-name {
+      font-size: 0.875rem;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 4px solid var(--border);
+      padding: 2rem 0;
+      margin-top: 2rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    @media(min-width: 640px) {
+      .footer-inner {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .footer-brand {
+      font-size: 1.125rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      font-family: var(--font-pixel);
+    }
+
+    .footer-brand .dot {
+      color: var(--accent);
+    }
+
+    .footer-brand a {
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    @media(min-width: 640px) {
+      .footer-links {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <span class="brand">GAMES</span><span class="dot">.ro</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#azi">Azi</a>
+          <a href="#clasice">Jocuri</a>
+          <a href="#recomandat">Recomandat</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>GAMES.RO<br><span>Pixel Edition</span></h1>
+      <p>Jocuri pixel-perfect. Zero dependențe. Zero compromisuri.</p>
+      <div class="hero-cta">
+        <a href="#azi" class="btn btn-primary">JOCURI</a>
+        <a href="#clasice" class="btn">CLASICE</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="azi">
+    <div class="container">
+      <div class="azi-header">
+        <h2>DAILY CHALLENGES</h2>
+        <span class="badge">7 ACTIVE</span>
+      </div>
+      <div class="cartridges">
+        <a href="/joc/geo-ro" class="cartridge active">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">🗺️</span>
+            <span class="cartridge-badge badge-active">ACTIVE</span>
+          </div>
+          <h3>GeoRo</h3>
+          <p>Ghicește locația pe harta României. Pixel perfect.</p>
+        </a>
+
+        <a href="/joc/pretul-corect" class="cartridge new">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">💰</span>
+            <span class="cartridge-badge badge-new">PAUZĂ</span>
+          </div>
+          <h3>Prețul Corect RO</h3>
+          <p>Ghicește prețul real. România vs. prețuri.</p>
+        </a>
+
+        <a href="/joc/headline-sau-fake" class="cartridge">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">📰</span>
+            <span class="cartridge-badge">VIRAL</span>
+          </div>
+          <h3>Headline sau Fake?</h3>
+          <p>Știrea e reală sau creată? Testează instinctul.</p>
+        </a>
+
+        <a href="/joc/conexiuni-ro" class="cartridge">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">🔗</span>
+            <span class="cartridge-badge badge-new">NOU</span>
+          </div>
+          <h3>Conexiuni RO</h3>
+          <p>Găsește legătura. 16 cuvinte. 4 grupuri.</p>
+        </a>
+
+        <a href="/joc/type-racer-ro" class="cartridge">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">⌨️</span>
+            <span class="cartridge-badge">LIVE</span>
+          </div>
+          <h3>Type Racer RO</h3>
+          <p>Simulare tastatură. Viteză română.</p>
+        </a>
+
+        <a href="/joc/iq-test" class="cartridge">
+          <div class="cartridge-header">
+            <span class="cartridge-icon">🧠</span>
+            <span class="cartridge-badge">POPULAR</span>
+          </div>
+          <h3>Test de Inteligență</h3>
+          <p>20 de întrebări. 4 categorii. Scor IQ estimat.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="flagship">
+    <div class="container">
+      <div class="flagship-card">
+        <div class="flagship-label">FEATURED PROJECT</div>
+        <h2>PROSUMATORUL</h2>
+        <p>Platforma ta de jocuri, știri și hardware. Începe să lucreze.</p>
+        <div class="flagship-status">
+          <span>[</span>
+          <span>în lucru</span>
+          <span>—</span>
+          <span>Estimare: Q4 2026</span>
+          <span>]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fabrica">
+    <div class="container">
+      <div class="fabrica-header">
+        <h2>DIN FABRICĂ</h2>
+        <a href="#">Vezi toate >></a>
+      </div>
+      <div class="fabrica-grid">
+        <div class="experiment-card">
+          <span class="experiment-icon">📊</span>
+          <div class="experiment-content">
+            <h3>STATS JOCURI</h3>
+            <p>Analiză jocurile pe care le jucați</p>
+          </div>
+          <div class="experiment-actions">
+            <div class="action-btn">👎</div>
+            <div class="action-btn">👍</div>
+          </div>
+        </div>
+        <div class="experiment-card">
+          <span class="experiment-icon">🔥</span>
+          <div class="experiment-content">
+            <h3>STREAK-URI</h3>
+            <p>Urmărește șirul de victorii</p>
+          </div>
+          <div class="experiment-actions">
+            <div class="action-btn">👎</div>
+            <div class="action-btn">👍</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clasice">
+    <div class="container">
+      <div class="clasice-header">
+        <h2>JOCURI CLASICE</h2>
+      </div>
+      <div class="game-grid">
+        <a href="/joc/2048" class="game-card">
+          <span class="game-emoji">🔢</span>
+          <span class="game-name">2048</span>
+        </a>
+        <a href="/joc/snake" class="game-card">
+          <span class="game-emoji">🐍</span>
+          <span class="game-name">Snake</span>
+        </a>
+        <a href="/joc/aripi" class="game-card">
+          <span class="game-emoji">🐦</span>
+          <span class="game-name">Aripi Bird</span>
+        </a>
+        <a href="/joc/blocuri" class="game-card">
+          <span class="game-emoji">🟦</span>
+          <span class="game-name">Blocuri</span>
+        </a>
+        <a href="/joc/stack-tower" class="game-card">
+          <span class="game-emoji">🏗️</span>
+          <span class="game-name">Stack Tower</span>
+        </a>
+        <a href="/joc/sudoku" class="game-card">
+          <span class="game-emoji">📐</span>
+          <span class="game-name">Sudoku</span>
+        </a>
+        <a href="/joc/minesweeper" class="game-card">
+          <span class="game-emoji">💣</span>
+          <span class="game-name">Minesweeper</span>
+        </a>
+        <a href="/joc/chess" class="game-card">
+          <span class="game-emoji">♟️</span>
+          <span class="game-name">Șah Online</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="brand">GAMES</span><span class="dot">.ro</span>
+          <span>un proiect</span>
+          <a href="https://buhnici.ro" target="_blank">George Buhnici</a>
+        </div>
+        <div class="footer-links">
+          <a href="/termeni">Termeni</a>
+          <a href="/confidentialitate">Confidențialitate</a>
+          <a href="/cookies">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
