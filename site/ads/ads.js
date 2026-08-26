@@ -13,7 +13,7 @@
   function beacon(e, zone, cid) {
     try {
       navigator.sendBeacon(BASE + "ads.php", new Blob(
-        [JSON.stringify({ e: e, zone: zone, cid: cid })], { type: "application/json" }
+        [JSON.stringify({ e: e, zone: zone, cid: cid })], { type: "text/plain" }
       ));
     } catch (_) {}
   }

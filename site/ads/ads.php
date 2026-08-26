@@ -22,6 +22,15 @@ if (in_array($origin, $ORIGINS, true)) {
 }
 header('Cache-Control: no-store');
 
+/* ---- CORS preflight (beacon cross-origin de pe buhnici.ro/gb.ro) ---- */
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Max-Age: 86400');
+    http_response_code(204);
+    exit;
+}
+
 /* ---- beacon ---- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $raw = file_get_contents('php://input', false, null, 0, 512);
@@ -102,6 +111,7 @@ $ZONE_BUCKETS = [
     'end-arcade'   => ['casti', 'incarcatoare'],
     'end-quiz'     => ['crypto', 'gadget'],
     'ticker'       => ['casti', 'esim', 'incarcatoare', 'crypto', 'gadget'],
+    'blog-post-end' => ['gadget', 'casti', 'esim', 'incarcatoare', 'crypto'],
 ];
 $cache = json_decode(@file_get_contents(__DIR__ . '/products-cache.json') ?: '{}', true);
 $buckets = $cache['buckets'] ?? [];
