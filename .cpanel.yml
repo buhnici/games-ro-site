@@ -1,8 +1,9 @@
 ---
 deployment:
   tasks:
-    # PRODUCȚIE: deploy pe rădăcina games.ro (validat pe canar 2026-08-09).
-    # Rollback: revert la commit-ul anterior + Update/Deploy, sau restaurare JetBackup.
-    # directii-preview/ NU se copiază (doar site/). Canarul /test-fabrica/ rămâne înghețat.
-    - export DEPLOYPATH=/home/gamesro/public_html/
-    - /bin/cp -R site/. $DEPLOYPATH
+    # Un repo, două conturi pe același server. Ramificare după utilizator:
+    # - gamesro: site-ul complet games.ro + /ads/
+    # - comedia: DOAR /ads/ (serverul central de reclame; site-ul comedia nu se atinge)
+    - if [ "`whoami`" = "gamesro" ]; then /bin/cp -R site/. /home/gamesro/public_html/; fi
+    - /bin/mkdir -p $HOME/public_html/ads
+    - /bin/cp -R site/ads/. $HOME/public_html/ads/

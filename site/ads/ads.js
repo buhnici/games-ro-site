@@ -6,8 +6,10 @@
  */
 (function () {
   "use strict";
-  var BASE = (document.currentScript && document.currentScript.src.indexOf("games.ro") !== -1)
-    ? "https://games.ro/ads/" : "/ads/";
+  var BASE = (function () {
+    var src = document.currentScript && document.currentScript.src;
+    return src ? src.replace(/ads\.js.*$/, "") : "/ads/";
+  })();
   var SITE = location.hostname.replace(/^www\./, "");
 
   function beacon(e, zone, cid) {
