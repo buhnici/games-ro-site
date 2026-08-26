@@ -146,14 +146,6 @@ body{
   .game-cabinets,.info-panels{grid-template-columns:1fr}
 }
 </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KKT0VVWR18"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-KKT0VVWR18');
-</script>
 </head>
 <body class="scanlines crt-vignette">
 <main class="console">
@@ -335,18 +327,18 @@ gtag('config', 'G-KKT0VVWR18');
 
 </main>
 
-<script src="/ads/ads.js" defer></script>
+<script src="https://comedia.ro/ads/ads.js" defer></script>
 <script type="module">
   import { GamesRO } from "/shell.js";
 
   /* Z5: o mențiune de produs în ticker (text, discret, cu beacon prin ads.php) */
-  fetch("/ads/ads.php?zone=ticker&site=games.ro")
+  fetch("https://comedia.ro/ads/ads.php?zone=ticker&site=games.ro")
     .then((r) => (r.ok ? r.json() : null))
     .then((d) => {
       if (!d || !d.creative || !d.creative.price) return;
       const t = ` » Testat pe GB.ro: ${d.creative.title} — ${d.creative.price} `;
       document.querySelectorAll(".ticker-content").forEach((el) => { el.textContent += t; });
-      navigator.sendBeacon("/ads/ads.php", new Blob([JSON.stringify({ e: "imp", zone: "ticker", cid: d.cid })], { type: "application/json" }));
+      navigator.sendBeacon("https://comedia.ro/ads/ads.php", new Blob([JSON.stringify({ e: "imp", zone: "ticker", cid: d.cid })], { type: "application/json" }));
     })
     .catch(() => {});
 
