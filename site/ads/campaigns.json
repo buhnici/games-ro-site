@@ -1,0 +1,22 @@
+{
+  "_doc": "Ads-as-code. type: 'paid' (prioritate absolută) sau 'house'. Ponderea decide împărțirea între campanii de același tip. Flight: start/end inclusiv (Y-m-d). House-ads cedează automat 50% din afișări produselor GB.ro.",
+  "campaigns": [
+    {
+      "id": "house-prosumatorul-teaser",
+      "type": "house",
+      "zones": ["home-cabinet"],
+      "weight": 1,
+      "start": "2026-08-27",
+      "end": "2026-12-31",
+      "creative": {
+        "title": "PROSUMATORUL",
+        "desc": "Consumi, stochezi sau vinzi? Simulatorul casei tale energetice, pe date reale din România.",
+        "price": null,
+        "img": null,
+        "cta": "În pregătire",
+        "url": "https://games.ro/",
+        "label": "CURÂND PE GAMES.RO"
+      }
+    }
+  ]
+}

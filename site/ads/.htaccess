@@ -1,0 +1,4 @@
+# /ads/ — protecție fișiere interne (statistici + config). PHP-urile și ads.js rămân publice.
+<FilesMatch "^(config\.php|stats-.*\.jsonl|products-cache\.json)$">
+  Require all denied
+</FilesMatch>

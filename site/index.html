@@ -134,6 +134,11 @@ body{
 .footer-link{color:var(--neon-cyan);text-decoration:none}
 .footer-link:hover{color:var(--amber)}
 
+/* Zona de reclamă: cabinet distinct, marquee AMBER (nu cyan) — vizibil altfel, dar din aceeași lume */
+.cabinet-card--ad{border-color:rgba(255,179,0,0.6)}
+.cabinet-card--ad::before{background:linear-gradient(90deg,var(--amber),var(--neon-magenta),var(--amber));background-size:200% 100%}
+.cabinet-card--ad:empty{display:none}
+
 /* Responsive */
 @media (max-width:768px){
   .console-header{flex-direction:column;align-items:flex-start}
@@ -249,6 +254,10 @@ body{
       </div>
     </article>
 
+    <article class="cabinet-card cabinet-card--ad">
+      <div class="cabinet-content" data-gro-ad="home-cabinet" style="min-height:230px"></div>
+    </article>
+
   </section>
 
   <section class="info-panels">
@@ -318,8 +327,20 @@ body{
 
 </main>
 
+<script src="/ads/ads.js" defer></script>
 <script type="module">
   import { GamesRO } from "/shell.js";
+
+  /* Z5: o mențiune de produs în ticker (text, discret, cu beacon prin ads.php) */
+  fetch("/ads/ads.php?zone=ticker&site=games.ro")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (!d || !d.creative || !d.creative.price) return;
+      const t = ` » Testat pe GB.ro: ${d.creative.title} — ${d.creative.price} `;
+      document.querySelectorAll(".ticker-content").forEach((el) => { el.textContent += t; });
+      navigator.sendBeacon("/ads/ads.php", new Blob([JSON.stringify({ e: "imp", zone: "ticker", cid: d.cid })], { type: "application/json" }));
+    })
+    .catch(() => {});
 
   /* Statusuri pe cabinete + statistici în header — din datele REALE ale jucătorului. */
   const DAILY = ["geo-ro", "pretul-corect", "headline-sau-fake", "conexiuni-ro", "blocuri", "aripi"];
