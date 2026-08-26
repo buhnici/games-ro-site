@@ -1,0 +1,171 @@
+/* ============================================================
+   GAMES.RO — NEON TERMINAL · tokens.css
+   Legea vizuală a direcției alese (sursa: directii/d-neon-terminal).
+   Orice pagină games.ro consumă ACESTE variabile — nu valori hardcodate.
+   ============================================================ */
+
+:root {
+  /* — Culori de bază — */
+  --bg-deep: #05060f;        /* fundalul nopții */
+  --bg-mid: #0b0d1f;         /* gradientul superior al orașului */
+  --bg-panel: rgba(10, 14, 28, 0.92);   /* panouri plutitoare */
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);  /* cabinetele de arcade */
+
+  /* — Neon — */
+  --neon-cyan: #00e5ff;      /* frame-uri UI, glow principal */
+  --neon-magenta: #ff2e88;   /* social, evenimente, accent secundar */
+  --amber: #ffb300;          /* elementul ACTIV, featured */
+  --live: #39ff88;           /* DOAR statusuri live/succes */
+
+  /* — Text — */
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+
+  /* — Tipografie — */
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;  /* uppercase display spacing */
+  --tracking-label: 0.22em;    /* etichete mici */
+
+  /* — Spațiere (scară de 4) — */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+
+  /* — Raze & borduri — */
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+
+  /* — Glow-uri (umbre stratificate; NU inventa altele) — */
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  /* aberația cromatică a titlurilor mari (se ADAUGĂ peste glow) */
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+
+  /* — Mișcare — */
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+  --speed-ticker: 45s;
+}
+
+/* ============ KEYFRAMES COMUNE ============ */
+@keyframes gro-marquee {          /* banda de gradient a cabinetelor */
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+@keyframes gro-pulse {            /* respirația ramelor holografice */
+  0%, 100% { box-shadow: var(--glow-cyan); }
+  50%      { box-shadow: 0 0 16px rgba(0, 229, 255, 0.75), 0 0 40px rgba(0, 229, 255, 0.3), inset 0 0 14px rgba(0, 229, 255, 0.12); }
+}
+@keyframes gro-ticker {           /* banda de sistem care rulează */
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes gro-scroll-slow {      /* leaderboard-ul din fundal */
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+/* ============ CLASE UTILITARE ============ */
+.panel {
+  background: var(--bg-panel);
+  border: var(--border-neon);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--glow-cyan);
+}
+.panel--pulse { animation: gro-pulse var(--speed-pulse) ease-in-out infinite; }
+
+.cabinet {
+  position: relative;
+  background: var(--bg-cabinet);
+  border: var(--border-neon);
+  border-radius: var(--radius-cabinet);
+  box-shadow: var(--glow-cyan);
+  overflow: hidden;
+  transition: transform var(--speed-hover) var(--ease-arcade), box-shadow var(--speed-hover) ease;
+}
+.cabinet:hover { transform: scale(1.03) rotate(0.4deg); box-shadow: 0 0 18px rgba(0,229,255,0.8), 0 0 44px rgba(0,229,255,0.3); }
+
+.marquee-top {                    /* banda luminoasă din capul cabinetului */
+  height: 6px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-cyan));
+  background-size: 200% 100%;
+  animation: gro-marquee var(--speed-marquee) linear infinite;
+}
+
+.btn-joaca {                      /* INSERT COIN */
+  display: inline-block;
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: var(--amber);
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: var(--space-2) var(--space-4);
+  box-shadow: var(--glow-amber);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform var(--speed-hover) var(--ease-arcade);
+}
+.btn-joaca:hover { transform: scale(1.06); }
+
+.badge-pauza {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--tracking-label);
+  color: var(--text-dim);
+  border: var(--border-magenta);
+  border-radius: var(--radius-btn);
+  padding: 2px 10px;
+}
+.badge-live { color: var(--live); text-shadow: 0 0 8px rgba(57,255,136,0.6); }
+
+.title-display {                  /* titluri mari, cu aberație */
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  color: var(--text);
+  text-shadow: var(--chromatic), var(--text-glow-cyan);
+}
+
+.scanlines::after {               /* CRT peste tot ecranul; aplicat pe body */
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 3px);
+  opacity: 0.55;
+  z-index: 9998;
+}
+.crt-vignette::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,0.55) 100%);
+  z-index: 9999;
+}
+
+/* ============ ACCESIBILITATE ============ */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-top, .panel--pulse { animation: none; }
+  .cabinet, .btn-joaca { transition: none; }
+  [class*="gro-"] { animation: none !important; }
+}
