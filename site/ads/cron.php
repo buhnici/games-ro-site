@@ -8,6 +8,9 @@
  */
 
 declare(strict_types=1);
+if (!function_exists('str_contains')) {
+    function str_contains(string $h, string $n): bool { return $n === '' || strpos($h, $n) !== false; }
+}
 require __DIR__ . '/config.php'; // definește ADS_KEY
 
 if (PHP_SAPI !== 'cli') {

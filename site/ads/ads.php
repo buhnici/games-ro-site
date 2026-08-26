@@ -9,6 +9,9 @@
  */
 
 declare(strict_types=1);
+if (!function_exists('str_contains')) {
+    function str_contains(string $h, string $n): bool { return $n === '' || strpos($h, $n) !== false; }
+}
 require __DIR__ . '/config.php';
 
 $ORIGINS = ['https://games.ro', 'https://www.games.ro', 'https://buhnici.ro', 'https://www.buhnici.ro', 'https://gb.ro'];
@@ -26,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $e = $d['e'] ?? ''; $zone = $d['zone'] ?? ''; $cid = $d['cid'] ?? '';
     if (in_array($e, ['imp', 'click'], true) && preg_match('/^[a-z0-9-]{1,40}$/', $zone) && preg_match('/^[a-zA-Z0-9_-]{0,80}$/', $cid)) {
         $f = __DIR__ . '/stats-' . date('Ym') . '.jsonl';
-        if (!file_exists($f) || filesize($f) < 20_000_000) {   // plafon 20MB/lună
+        if (!file_exists($f) || filesize($f) < 20000000) {   // plafon 20MB/lună
             file_put_contents($f, json_encode(['t' => time(), 'e' => $e, 'z' => $zone, 'c' => $cid]) . "\n", FILE_APPEND | LOCK_EX);
         }
     }
@@ -65,13 +68,14 @@ function utm(string $url, string $site, string $zone): string {
 /* 1) campanii direct-sold / house cu flight activ */
 $camps = json_decode(@file_get_contents(__DIR__ . '/campaigns.json') ?: '{}', true)['campaigns'] ?? [];
 $now = date('Y-m-d');
-$eligible = array_values(array_filter($camps, fn($c) =>
-    in_array($zone, $c['zones'] ?? [], true)
-    && ($c['start'] ?? '0000') <= $now && $now <= ($c['end'] ?? '9999')
-    && ($c['weight'] ?? 0) > 0
-));
+$eligible = array_values(array_filter($camps, function ($c) use ($zone, $now) {
+    return in_array($zone, isset($c['zones']) ? $c['zones'] : [], true)
+        && (isset($c['start']) ? $c['start'] : '0000') <= $now
+        && $now <= (isset($c['end']) ? $c['end'] : '9999')
+        && (isset($c['weight']) ? $c['weight'] : 0) > 0;
+}));
 /* campaniile plătite au prioritate absolută față de house */
-$paid = array_values(array_filter($eligible, fn($c) => ($c['type'] ?? '') === 'paid'));
+$paid = array_values(array_filter($eligible, function ($c) { return (isset($c['type']) ? $c['type'] : '') === 'paid'; }));
 $pool = $paid ?: $eligible;
 if ($pool) {
     $totw = array_sum(array_column($pool, 'weight'));
