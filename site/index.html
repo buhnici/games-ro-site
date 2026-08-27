@@ -146,6 +146,7 @@ body{
   .game-cabinets,.info-panels{grid-template-columns:1fr}
 }
 </style>
+<!-- PRODUCTION-ONLY: GA4 — NU există în fabrică (site-new); păstrează blocul la orice resincronizare a homepage-ului. Vezi contradicția cu cookies.html — decizie George în curs. -->
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KKT0VVWR18"></script>
 <script>
@@ -178,6 +179,18 @@ gtag('config', 'G-KKT0VVWR18');
 
   <h2 class="section-title" id="jocuri">Azi — provocările zilei</h2>
   <section class="game-cabinets">
+
+    <article class="cabinet-card">
+      <div class="cabinet-content">
+        <div class="cabinet-header">
+          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="13" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="31" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="4" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/><rect x="13" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="28" width="7" height="7" rx="1" fill="#ffb300" stroke="#ffb300" stroke-width="2"/><rect x="31" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/></svg></div>
+          <span class="cabinet-status" data-slug="cuvantul-zilei"></span>
+        </div>
+        <h3 class="cabinet-title">Cuvântul Zilei</h3>
+        <p class="cabinet-desc">Ghicește cuvântul românesc de 5 litere. Unul nou în fiecare zi.</p>
+        <a class="play-btn" href="/joc/cuvantul-zilei" data-play="cuvantul-zilei">Joacă</a>
+      </div>
+    </article>
 
     <article class="cabinet-card">
       <div class="cabinet-content">
@@ -273,15 +286,15 @@ gtag('config', 'G-KKT0VVWR18');
       <div class="panel-header">În pregătire</div>
       <ul class="panel-list">
         <li class="panel-item"><span class="amber">PROSUMATORUL</span> — simulatorul casei tale energetice: consumi, stochezi sau vinzi? Pe date reale din România. <span class="dim">În lucru.</span></li>
-        <li class="panel-item"><span class="amber">Cuvântul Zilei</span> — cuvântul românesc de ghicit în 6 încercări. <span class="dim">Foarte curând.</span></li>
         <li class="panel-item dim">Ai o idee de joc românesc? <a href="mailto:george@buhnici.ro?subject=Idee%20joc%20GAMES.ro">Propune-o →</a></li>
       </ul>
     </div>
     <div class="panel">
       <div class="panel-header">Noutăți</div>
       <ul class="panel-list">
+        <li class="panel-item"><span class="dim">aug 2026</span> — Joc nou: <span class="amber">Cuvântul Zilei</span>. Ghicește cuvântul românesc de 5 litere, ai 6 încercări. Zilnic.</li>
         <li class="panel-item"><span class="dim">aug 2026</span> — Site-ul funcționează din nou complet: fiecare joc are link direct, share-uibil.</li>
-        <li class="panel-item"><span class="dim">aug 2026</span> — Tetris devine <span class="amber">Blocuri</span>, Flappy devine <span class="amber">Aripi</span>. Aceleași jocuri, nume de-ale noastre.</li>
+        <li class="panel-item"><span class="dim">aug 2026</span> — Clasicele au nume românești: <span class="amber">Blocuri</span> și <span class="amber">Aripi</span>. Aceleași jocuri, nume de-ale noastre.</li>
         <li class="panel-item"><span class="dim">aug 2026</span> — Melodia ia o pauză până clarificăm licențele muzicale.</li>
       </ul>
     </div>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuvântul Zilei — GAMES.ro</title>
+<meta name="description" content="Ghicește cuvântul de 5 litere din ziua de azi pe GAMES.ro. Provocare zilnică românească.">
+<link rel="canonical" href="https://games.ro/joc/cuvantul-zilei">
+<meta property="og:title" content="Cuvântul Zilei — GAMES.ro">
+<meta property="og:description" content="Ghicește cuvântul românesc de 5 litere din ziua de azi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://games.ro/joc/cuvantul-zilei">
+<style>
+/* ==== SURSA: site-new/tokens.css — nu edita aici ==== */
+:root {
+  --bg-deep: #05060f;
+  --bg-mid: #0b0d1f;
+  --bg-panel: rgba(10, 14, 28, 0.92);
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e88;
+  --amber: #ffb300;
+  --live: #39ff88;
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;
+  --tracking-label: 0.22em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+
+/* Header */
+.console-header{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
+  border:var(--border-neon-strong);border-radius:var(--radius-panel);
+  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+}
+.logo-glow{
+  font-family:var(--font-mono);font-weight:700;font-size:1.3rem;
+  letter-spacing:var(--tracking-display);color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-decoration:none;
+}
+.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
+.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
+.status-value{color:var(--text);font-weight:700}
+.status-value.hot{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.clock{text-align:right;font-family:var(--font-mono)}
+.clock-time{font-size:1rem;color:var(--neon-cyan)}
+.clock-date{font-size:0.7rem;color:var(--text-dim)}
+
+/* Game */
+.game-title{
+  font-family:var(--font-display);font-size:1.8rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-align:center;margin:var(--space-4) 0 var(--space-3);
+}
+.game-instructions{
+  font-size:0.85rem;color:var(--text-dim);text-align:center;margin-bottom:var(--space-4);
+}
+.guess-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-2);
+  max-width:450px;margin:0 auto var(--space-5);
+  padding:var(--space-2);
+}
+.guess-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  border:var(--border-neon);border-radius:var(--radius-btn);
+  font-family:var(--font-mono);font-size:1.8rem;font-weight:700;
+  color:var(--text);
+  transition:transform var(--speed-hover) var(--ease-arcade);
+}
+.guess-cell.filled{border-color:var(--neon-cyan)}
+.guess-cell.correct{background:var(--live);color:#000;border-color:var(--live)}
+.guess-cell.present{background:var(--amber);color:#000;border-color:var(--amber)}
+.guess-cell.absent{background:var(--bg-mid);color:var(--text-dim);border-color:var(--bg-mid)}
+.guess-cell.disabled{opacity:0.3}
+.guess-cell.eroare{border-color:var(--neon-magenta);box-shadow:var(--glow-magenta)}
+
+/* Keyboard */
+.keyboard{max-width:500px;margin:0 auto var(--space-4);padding:0 var(--space-1)}
+.keyboard-row{display:flex;justify-content:center;gap:var(--space-1);margin-bottom:var(--space-1)}
+.key{
+  flex:1;min-width:32px;padding:12px 0;
+  border:var(--border-neon);border-radius:var(--radius-btn);
+  font-family:var(--font-mono);font-size:0.9rem;font-weight:700;
+  color:var(--text);background:var(--bg-cabinet);
+  cursor:pointer;transition:transform var(--speed-hover) var(--ease-arcade),background var(--speed-hover) ease;
+}
+.key:hover:not(:disabled){transform:scale(1.06)}
+.key:disabled{opacity:0.3;cursor:default}
+.key.correct{background:var(--live);color:#000;border-color:var(--live)}
+.key.present{background:var(--amber);color:#000;border-color:var(--amber)}
+.key.absent{background:var(--bg-mid);color:var(--text-dim);border-color:var(--bg-mid)}
+#keyboard-enter{flex:1.5}
+#keyboard-backspace{flex:1.5}
+
+/* Share */
+.share-section{text-align:center;margin-top:var(--space-5)}
+.share-button{
+  display:inline-block;padding:12px 28px;border:1px solid var(--neon-cyan);
+  background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.75rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;
+  transition:transform var(--speed-hover) var(--ease-arcade),box-shadow var(--speed-hover) ease,color var(--speed-hover) ease;
+}
+.share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber)}
+.share-button:disabled{opacity:0.3;cursor:default}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);
+  display:none;align-items:center;justify-content:center;z-index:1000;
+}
+.modal-overlay.active{display:flex}
+.modal-content{
+  background:var(--bg-panel);border:var(--border-neon-strong);
+  border-radius:var(--radius-panel);padding:var(--space-5);
+  max-width:400px;width:90%;
+  text-align:center;
+  box-shadow:var(--glow-cyan);
+}
+.modal-title{
+  font-family:var(--font-display);font-size:1.5rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);margin-bottom:var(--space-3);
+  text-shadow:var(--text-glow-cyan);
+}
+.modal-message{
+  font-size:1rem;color:var(--text-dim);margin-bottom:var(--space-4);
+}
+.modal-streak{
+  font-family:var(--font-mono);font-size:2rem;color:var(--neon-cyan);
+  margin:var(--space-3) 0;
+}
+.modal-btn{
+  display:inline-block;padding:12px 24px;border:1px solid var(--neon-cyan);
+  background:var(--bg-panel);color:var(--text);font-family:var(--font-mono);font-size:0.8rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;
+  transition:transform var(--speed-hover) var(--ease-arcade),box-shadow var(--speed-hover) ease,color var(--speed-hover) ease;
+}
+.modal-btn:hover{transform:scale(1.04);border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber)}
+
+/* Scanlines */
+.scanlines::after{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 3px);
+  opacity:0.55;z-index:9998;
+}
+.crt-vignette::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,0.55) 100%);
+  z-index:9999;
+}
+
+/* Responsive */
+@media (prefers-reduced-motion: reduce) {
+  .key, .guess-cell { transition: none !important; animation: none !important; }
+}
+
+/* Mobile */
+@media (max-width:480px) {
+  .game-title{font-size:1.4rem}
+  .guess-cell{font-size:1.4rem}
+  .keyboard-row{gap:0.3rem}
+  .key{padding:10px 0;font-size:0.8rem}
+  #keyboard-enter,#keyboard-backspace{min-width:40px}
+}
+</style>
+</head>
+<body class="crt-vignette scanlines">
+<div class="console">
+<header class="console-header">
+  <a href="/" class="logo-glow">GAMES<span>.ro</span></a>
+  <div class="player-status">
+    <div class="clock">
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">--/--/----</div>
+    </div>
+    <div class="status-item">
+      <span class="status-label">STREAK</span>
+      <span class="status-value" id="streak">0</span>
+    </div>
+  </div>
+</header>
+
+<h1 class="game-title">Cuvântul Zilei</h1>
+<p class="game-instructions">Ghicește cuvântul românesc de 5 litere din ziua de azi. Ai 6 încercări.</p>
+
+<div class="guess-grid" id="guess-grid"></div>
+
+<div class="keyboard" id="keyboard"></div>
+
+<div class="share-section">
+  <button class="share-button" id="share-button" disabled>SHARE</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content">
+    <div class="modal-title" id="modal-title">Felicitări!</div>
+    <div class="modal-message" id="modal-message"></div>
+    <div class="modal-streak" id="modal-streak"></div>
+    <button class="modal-btn" id="modal-close">ÎNCHIDE</button>
+  </div>
+</div>
+
+<script type="module">
+// ==== Cuvântul Zilei — logica jocului (rescriere manager, 2026-08-27) ====
+// SDK-ul comun se încarcă modul real de la rădăcină — sursă unică, fără copii inline.
+import { GamesRO } from "/shell.js";
+
+const SLUG = "cuvantul-zilei";
+const MAX_GUESSES = 6;
+
+/* Cuvintele-secret: românești comune, exact 5 litere, fără diacritice (317).
+   Ghicirile NU se validează contra listei — o listă mică ar respinge pe nedrept
+   cuvinte reale, așa că orice combinație de 5 litere e acceptată ca încercare. */
+const WORDS = [
+  "acasa","acord","actor","adult","album","altar","amurg","anexa","antic","anual",
+  "apune","arama","arici","aripa","aroma","atent","atlas","autor","avere","avion",
+  "baiat","balon","balta","banca","baraj","barba","barca","barza","baton","beton",
+  "biban","bilet","birou","bivol","blana","blond","bluza","bogat","boier","bolta",
+  "bomba","brate","brici","bruma","bucla","bufet","bujor","bunic","burta","butoi",
+  "buton","cablu","cadou","cadru","cafea","caiet","caine","camin","canal","canta",
+  "capac","capra","carne","carte","casca","catel","cauza","cazan","ceapa","ceara",
+  "ceata","cheie","cifra","cinci","cires","citat","civil","clima","coada","coaja",
+  "coase","cocor","cocos","codru","colac","coleg","colet","comun","copac","copil",
+  "covor","crema","cuier","culme","cuplu","curaj","curea","cursa","curte","cutie",
+  "dalta","dansa","decor","deget","desen","dinte","doina","dulap","dulce","dunga",
+  "ecran","efort","epoca","exact","faina","fapta","fazan","felie","ferma","ficat",
+  "fiert","final","firma","flaut","foaie","forma","frate","fruct","funie","furca",
+  "fusta","gaina","garaj","gasca","gazda","ghete","gluma","glont","graba","grija",
+  "grota","gutui","haina","halat","hamac","harta","hotel","hrean","iarba","iarna",
+  "iaurt","inalt","inima","iulie","iunie","izvor","lacat","lalea","lampa","lapte",
+  "liber","liceu","limba","linie","lista","litru","local","lucru","lunar","lunca",
+  "lupta","magar","marfa","masca","mediu","merit","metal","metru","miere","minge",
+  "minte","minut","moale","moara","model","morar","motan","motor","munca","munte",
+  "musca","muzeu","negru","nepot","ninge","nisip","nivel","norma","noroc","notar",
+  "nufar","numar","oaste","obraz","ocean","omida","opera","ordin","pahar","paine",
+  "palat","palma","panou","panza","papuc","parau","pasaj","pasta","patru","pauza",
+  "perie","perla","perna","peron","peste","piesa","pilot","pirat","plaja","plasa",
+  "plata","plumb","podea","pofta","polei","popor","posta","print","proba","pruna",
+  "punct","punga","punte","radio","retea","rival","roata","robot","roman","sabie",
+  "salam","salon","salut","sanie","sapte","sapun","sarat","sarma","sarpe","sarut",
+  "scara","scaun","scena","scris","scump","scund","secol","senin","sfert","sirop",
+  "soare","sofer","somon","sonda","spate","sport","spuma","steag","stofa","strat",
+  "sunet","sursa","surub","tabla","talpa","tanar","tasta","tavan","teava","teren",
+  "tigru","titlu","topor","tufis","turta","umbra","unchi","uzina","vagon","vapor",
+  "varza","vatra","vecin","verde","vesel","veste","viata","vidra","vifor","vitel",
+  "volan","vreme","vulpe","zahar","zeama","zebra","zidar"
+];
+
+/* Amestec determinist (xorshift): fără el, zilele consecutive ar nimeri cuvinte
+   alfabetic vecine din listă. Același rezultat pentru toți jucătorii în aceeași zi. */
+function indexZi(seed, n) {
+  let x = seed >>> 0;
+  x ^= (x << 13) >>> 0;
+  x ^= x >>> 17;
+  x ^= (x << 5) >>> 0;
+  return x % n;
+}
+
+const ZI = GamesRO.seedAzi();
+const SECRET = WORDS[indexZi(ZI, WORDS.length)].toUpperCase();
+const STATE_KEY = "gro:" + SLUG + ":stare:" + ZI;
+
+// Referințe UI
+const guessGrid = document.getElementById("guess-grid");
+const keyboard = document.getElementById("keyboard");
+const shareButton = document.getElementById("share-button");
+const streakEl = document.getElementById("streak");
+const clockTimeEl = document.getElementById("clock-time");
+const clockDateEl = document.getElementById("clock-date");
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalMessage = document.getElementById("modal-message");
+const modalStreak = document.getElementById("modal-streak");
+const modalClose = document.getElementById("modal-close");
+
+// Stare
+let guesses = [];      // încercări trimise (string, MAJUSCULE)
+let results = [];      // verdictele memorate pe rând: "correct" | "present" | "absent"
+let currentGuess = []; // literele rândului în lucru
+let done = false;
+let win = false;
+let cells = [];
+
+/* Persistența zilei: reload-ul păstrează tabla; ziua încheiată rămâne încheiată. */
+function citesteStare() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (!Array.isArray(s.guesses) || !Array.isArray(s.results)) return null;
+    return s;
+  } catch { return null; }
+}
+function salveazaStare() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({ guesses, results, done, win }));
+    // igienă: stările zilelor trecute nu mai folosesc (day-mark-urile SDK rămân neatinse)
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf("gro:" + SLUG + ":stare:") === 0 && k !== STATE_KEY) localStorage.removeItem(k);
+    }
+  } catch { /* private mode — jocul merge, doar nu persistă */ }
+}
+
+/* Algoritmul Wordle corect: pozițiile exacte întâi, apoi prezențele
+   pe bugetul literelor rămase — duplicatele nu se supra-colorează. */
+function evalueaza(guess, secret) {
+  const res = new Array(5).fill("absent");
+  const ramase = {};
+  for (let i = 0; i < 5; i++) {
+    if (guess[i] === secret[i]) res[i] = "correct";
+    else ramase[secret[i]] = (ramase[secret[i]] || 0) + 1;
+  }
+  for (let i = 0; i < 5; i++) {
+    if (res[i] === "absent" && ramase[guess[i]] > 0) {
+      res[i] = "present";
+      ramase[guess[i]] -= 1;
+    }
+  }
+  return res;
+}
+
+function renderGrid() {
+  for (let r = 0; r < MAX_GUESSES; r++) {
+    for (let c = 0; c < 5; c++) {
+      const cell = cells[r * 5 + c];
+      if (r < guesses.length) {
+        cell.textContent = guesses[r][c];
+        cell.className = "guess-cell " + results[r][c];
+      } else if (r === guesses.length && !done) {
+        cell.textContent = currentGuess[c] || "";
+        cell.className = "guess-cell" + (currentGuess[c] ? " filled" : "");
+      } else {
+        cell.textContent = "";
+        cell.className = "guess-cell" + (done ? " disabled" : "");
+      }
+    }
+  }
+}
+
+const RANG = { absent: 1, present: 2, correct: 3 };
+function updateKeyboard() {
+  const best = {};
+  for (let r = 0; r < guesses.length; r++) {
+    for (let c = 0; c < 5; c++) {
+      const L = guesses[r][c];
+      const s = results[r][c];
+      if (!best[L] || RANG[s] > RANG[best[L]]) best[L] = s;
+    }
+  }
+  keyboard.querySelectorAll(".key").forEach((k) => {
+    const L = k.dataset.key;
+    if (!L || L.length !== 1) return;
+    k.className = "key" + (best[L] ? " " + best[L] : "");
+  });
+}
+
+function flashEroare() {
+  const start = guesses.length * 5;
+  const rand = cells.slice(start, start + 5);
+  rand.forEach((c) => c.classList.add("eroare"));
+  setTimeout(() => rand.forEach((c) => c.classList.remove("eroare")), 350);
+}
+
+function actualizeazaStreak() {
+  streakEl.textContent = GamesRO.streak(SLUG);
+}
+
+function activeazaShare() {
+  shareButton.disabled = false;
+}
+
+function arataModal() {
+  if (win) {
+    modalTitle.textContent = "Felicitări!";
+    modalTitle.style.color = "var(--live)";
+    modalMessage.textContent = "Ai ghicit din " + guesses.length + "/6 încercări. Revino mâine pentru următorul cuvânt.";
+  } else {
+    modalTitle.textContent = "Nu de data asta...";
+    modalTitle.style.color = "var(--neon-magenta)";
+    modalMessage.textContent = "Cuvântul zilei era \u201e" + SECRET + "\u201d. Revino mâine pentru revanșă.";
+  }
+  modalStreak.textContent = "STREAK " + GamesRO.streak(SLUG);
+  modal.classList.add("active");
+}
+
+function inchideModal() {
+  modal.classList.remove("active");
+}
+
+function trimite() {
+  if (currentGuess.length < 5) { flashEroare(); return; }
+  const guess = currentGuess.join("");
+  const res = evalueaza(guess, SECRET);
+  guesses.push(guess);
+  results.push(res);
+  currentGuess = [];
+  if (guess === SECRET) { done = true; win = true; }
+  else if (guesses.length >= MAX_GUESSES) { done = true; win = false; }
+  salveazaStare();
+  renderGrid();
+  updateKeyboard();
+  if (done) {
+    if (win) GamesRO.marcheazaJucat(SLUG, { incercari: guesses.length });
+    actualizeazaStreak();
+    activeazaShare();
+    setTimeout(arataModal, 450);
+  }
+}
+
+function handleKey(key) {
+  if (done) return;
+  if (key === "ENTER") {
+    trimite();
+  } else if (key === "BACKSPACE") {
+    currentGuess.pop();
+    renderGrid();
+  } else if (currentGuess.length < 5) {
+    currentGuess.push(key);
+    renderGrid();
+  }
+}
+
+/* Diacriticele tastate fizic se pliază pe litera de bază (Ș→S, Ă→A...). */
+const FOLD = { "\u0102": "A", "\u00c2": "A", "\u00ce": "I", "\u0218": "S", "\u021a": "T", "\u015e": "S", "\u0162": "T" };
+function onKeydown(e) {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  let k = e.key.toUpperCase();
+  if (FOLD[k]) k = FOLD[k];
+  if (k === "ENTER") { e.preventDefault(); handleKey("ENTER"); }
+  else if (k === "BACKSPACE") { handleKey("BACKSPACE"); }
+  else if (/^[A-Z]$/.test(k) && k.length === 1) { handleKey(k); }
+}
+
+async function distribuie() {
+  const grila = results
+    .map((r) => r.map((s) => (s === "correct" ? "\ud83d\udfe9" : s === "present" ? "\ud83d\udfe8" : "\u2b1b")).join(""))
+    .join("\n");
+  const scor = (win ? guesses.length : "X") + "/6";
+  const out = await GamesRO.share(SLUG, grila, scor);
+  if (out === "copied") feedbackShare("COPIAT!");
+  else if (out === false) feedbackShare("COPIAZ\u0102 MANUAL");
+}
+
+let shareTimer = null;
+function feedbackShare(text) {
+  shareButton.textContent = text;
+  clearTimeout(shareTimer);
+  shareTimer = setTimeout(() => { shareButton.textContent = "SHARE"; }, 1600);
+}
+
+function updateClock() {
+  const now = new Date();
+  clockTimeEl.textContent = now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+  clockDateEl.textContent = now.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function init() {
+  // Grila 6×5
+  guessGrid.innerHTML = "";
+  cells = [];
+  for (let i = 0; i < MAX_GUESSES * 5; i++) {
+    const cell = document.createElement("div");
+    cell.className = "guess-cell";
+    guessGrid.appendChild(cell);
+    cells.push(cell);
+  }
+
+  // Tastatura QWERTY + ENTER/BACKSPACE pe rândul 3
+  const RANDURI = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+  keyboard.innerHTML = "";
+  RANDURI.forEach((rowStr, idx) => {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "keyboard-row";
+    const adauga = (dataKey, id, label) => {
+      const b = document.createElement("button");
+      b.className = "key";
+      b.dataset.key = dataKey;
+      b.textContent = label;
+      if (id) b.id = id;
+      b.addEventListener("click", () => { b.blur(); handleKey(dataKey); });
+      rowDiv.appendChild(b);
+    };
+    if (idx === 2) adauga("ENTER", "keyboard-enter", "ENTER");
+    for (const ch of rowStr) adauga(ch, null, ch);
+    if (idx === 2) adauga("BACKSPACE", "keyboard-backspace", "\u2190");
+    keyboard.appendChild(rowDiv);
+  });
+
+  document.addEventListener("keydown", onKeydown);
+  shareButton.addEventListener("click", distribuie);
+  modalClose.addEventListener("click", inchideModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) inchideModal(); });
+
+  // Restaurarea zilei curente (tabla + starea încheiat/câștigat)
+  const s = citesteStare();
+  if (s) {
+    guesses = s.guesses;
+    results = s.results;
+    done = !!s.done;
+    win = !!s.win;
+  }
+  shareButton.disabled = !done;
+
+  renderGrid();
+  updateKeyboard();
+  actualizeazaStreak();
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+init();
+</script>
+</body>
+</html>
