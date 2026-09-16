@@ -4,3 +4,7 @@
 
 /* F0.8b: bannerul legacy de cookies (React re-seteaza display-ul inline la animatie) — ucis definitiv; site-ul NU foloseste cookies. */
 div.fixed.bottom-0.left-0.right-0.z-\[100\].p-4{display:none !important;visibility:hidden !important;pointer-events:none !important}
+
+/* Fix sudoku (raport jucator 30.08): numpad text-white pe fundal alb — chip-uri solide, vizibile pe orice tema. */
+.btn.btn-ghost.w-10.h-10{background:#243047 !important;border-color:#243047 !important;color:#fff !important}
+.flex.justify-center:has(>.btn.btn-ghost.w-10.h-10){flex-wrap:wrap;padding:0 8px}
