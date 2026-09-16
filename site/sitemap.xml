@@ -65,6 +65,10 @@
     <lastmod>2026-08-08</lastmod>
   </url>
   <url>
+    <loc>https://games.ro/joc/conexiuni-ro</loc>
+    <lastmod>2026-09-17</lastmod>
+  </url>
+  <url>
     <loc>https://games.ro/joc/cuvantul-zilei</loc>
     <lastmod>2026-08-27</lastmod>
   </url>
@@ -73,12 +77,20 @@
     <lastmod>2026-08-08</lastmod>
   </url>
   <url>
+    <loc>https://games.ro/joc/headline-sau-fake</loc>
+    <lastmod>2026-09-17</lastmod>
+  </url>
+  <url>
     <loc>https://games.ro/joc/iq-test</loc>
     <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://games.ro/joc/minesweeper</loc>
     <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/pretul-corect</loc>
+    <lastmod>2026-09-17</lastmod>
   </url>
   <url>
     <loc>https://games.ro/joc/snake</loc>
@@ -91,5 +103,9 @@
   <url>
     <loc>https://games.ro/joc/sudoku</loc>
     <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://games.ro/joc/type-racer-ro</loc>
+    <lastmod>2026-09-17</lastmod>
   </url>
 </urlset>
