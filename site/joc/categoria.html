@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Categoria — GAMES.ro</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Ghicește categoria zilei din cinci indicii, de la cel mai înșelător la cel mai evident. O singură încercare după fiecare indiciu, o categorie nouă în fiecare zi.">
+<link rel="canonical" href="https://games.ro/joc/categoria">
+<meta property="og:title" content="Categoria — GAMES.ro">
+<meta property="og:description" content="Ghicește categoria zilei din cinci indicii, de la cel mai înșelător la cel mai evident. O singură încercare după fiecare indiciu, o categorie nouă în fiecare zi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://games.ro/joc/categoria">
+<style>
+/* ==== SURSA: site-new/tokens.css — nu edita aici ==== */
+:root {
+  --bg-deep: #05060f;
+  --bg-mid: #0b0d1f;
+  --bg-panel: rgba(10, 14, 28, 0.92);
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e88;
+  --amber: #ffb300;
+  --live: #39ff88;
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;
+  --tracking-label: 0.22em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+}
+/* Proprietățile paginii (derivate din tokens, fără culori noi) */
+:root {
+  --patrat: 18px;          /* pătratele de progres */
+  --speed-aparitie: 320ms; /* apariția unui indiciu nou */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important} /* clasele cu display:flex/grid nu au voie să învingă atributul hidden */
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+
+/* Header */
+.console-header{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
+  border:var(--border-neon-strong);border-radius:var(--radius-panel);
+  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+}
+.logo-glow{
+  font-family:var(--font-mono);font-weight:700;font-size:1.3rem;
+  letter-spacing:var(--tracking-display);color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-decoration:none;
+}
+.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
+.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
+.status-value{color:var(--text);font-weight:700}
+.clock{text-align:right;font-family:var(--font-mono)}
+.clock-time{font-size:1rem;color:var(--neon-cyan)}
+.clock-date{font-size:0.7rem;color:var(--text-dim)}
+
+/* Accesibilitate */
+:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:3px}
+button{font:inherit;color:var(--text)} /* <button> nu moștenește culoarea: fără asta, UA-ul pune negru pe fundal negru */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Titlu */
+.joc{max-width:560px;margin:0 auto}
+.game-title{
+  font-family:var(--font-display);font-size:2rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);
+  text-shadow:var(--chromatic);
+  text-align:center;margin:var(--space-4) 0 var(--space-2);
+}
+.editie{
+  text-align:center;margin-bottom:var(--space-3);
+  font-family:var(--font-mono);font-size:0.75rem;letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-dim);
+}
+.game-instructions{
+  font-size:0.9rem;line-height:1.5;color:var(--text-dim);text-align:center;margin-bottom:var(--space-3);
+}
+
+/* Cum se joacă */
+.reguli{
+  margin-bottom:var(--space-4);
+  border:1px solid var(--text-faint);border-radius:var(--radius-btn);background:var(--bg-cabinet);
+}
+.reguli summary{
+  display:flex;align-items:center;gap:var(--space-2);min-height:44px;padding:var(--space-2) var(--space-3);
+  cursor:pointer;list-style:none;
+  font-family:var(--font-mono);font-size:0.78rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;color:var(--text);
+}
+.reguli summary::-webkit-details-marker{display:none}
+.reguli summary svg{width:16px;height:16px;flex:none;color:var(--neon-cyan);transition:transform var(--speed-hover) ease}
+.reguli[open] summary svg{transform:rotate(90deg)}
+.reguli summary:hover{color:var(--amber)}
+.reguli ul{list-style:none;padding:0 var(--space-3) var(--space-3);display:grid;gap:var(--space-2)}
+.reguli li{position:relative;padding-left:var(--space-3);font-size:0.88rem;line-height:1.5;color:var(--text-dim)}
+.reguli li::before{content:"";position:absolute;left:2px;top:0.62em;width:6px;height:6px;border-radius:1px;background:var(--neon-cyan)}
+.reguli strong{color:var(--text);font-weight:600}
+
+/* Rezultat (apare deasupra indiciilor când ziua s-a terminat) */
+.rezultat{
+  text-align:center;margin-bottom:var(--space-4);padding:var(--space-4) var(--space-3);
+  background:var(--bg-panel);border:1px solid var(--text-faint);border-radius:var(--radius-panel);
+}
+.rezultat.castig{border:var(--border-neon-strong);box-shadow:var(--glow-cyan)} /* glow: doar starea de câștig */
+.rezultat-eticheta{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-dim)}
+.rezultat-categorie{
+  margin-top:var(--space-2);
+  font-family:var(--font-display);font-size:1.6rem;font-weight:700;letter-spacing:0.03em;line-height:1.25;color:var(--text);
+  overflow-wrap:anywhere;
+}
+.rezultat.castig .rezultat-categorie{color:var(--live)}
+.rezultat-scor{margin-top:var(--space-2);font-family:var(--font-mono);font-size:0.85rem;color:var(--text-dim)}
+.rezultat.castig .rezultat-scor{color:var(--live)}
+.rezultat-explicatie{margin:var(--space-3) auto var(--space-4);max-width:460px;font-size:0.95rem;line-height:1.55;color:var(--text)}
+.revino{margin-top:var(--space-3);font-size:0.85rem;color:var(--text-dim)}
+
+/* Progres: câte un pătrat pe încercare */
+.progres-rand{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  margin-bottom:var(--space-2);
+}
+.progres{display:flex;gap:var(--space-1)}
+.patrat{
+  width:var(--patrat);height:var(--patrat);border-radius:3px;
+  border:1px solid var(--text-faint);background:transparent;
+}
+.patrat.curent{border:2px solid var(--neon-cyan)}
+.patrat.gresit{background:var(--neon-magenta);border-color:var(--neon-magenta)}
+.patrat.aproape{background:var(--amber);border-color:var(--amber)}
+.patrat.sarit{background:var(--text-faint);border-color:var(--text-faint)}
+.patrat.corect{background:var(--live);border-color:var(--live)}
+.contor{font-family:var(--font-mono);font-size:0.75rem;letter-spacing:0.06em;color:var(--text-dim);text-align:right}
+
+/* Indiciile */
+.indicii{list-style:none;display:grid;gap:var(--space-2);margin-bottom:var(--space-4)}
+.indiciu{
+  display:flex;align-items:center;gap:var(--space-3);min-height:52px;
+  padding:var(--space-2) var(--space-3);
+  background:var(--bg-cabinet);border:1px solid var(--text-faint);border-radius:var(--radius-cabinet);
+}
+.indiciu-nr{
+  flex:none;display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;border:1px solid var(--text-dim);
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;color:var(--text-dim);
+}
+.indiciu-text{font-size:1.1rem;font-weight:600;line-height:1.3;color:var(--text);overflow-wrap:anywhere}
+.indiciu.curent{border:var(--border-neon)}
+.indiciu.curent .indiciu-nr{border-color:var(--neon-cyan);color:var(--neon-cyan)}
+.indiciu.ascuns .indiciu-text{font-size:0.85rem;font-weight:400;font-family:var(--font-mono);letter-spacing:0.06em;color:var(--text-dim)}
+.indiciu.ascuns svg{width:16px;height:16px;flex:none;color:var(--text-dim)}
+.indiciu.ascuns .indiciu-nr{border-style:dashed}
+.indiciu.bonus{border-style:dashed}
+.indiciu.bonus .indiciu-text{color:var(--text-dim)}
+.indiciu-nota{margin-left:auto;padding-left:var(--space-2);font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);text-align:right}
+.indiciu.nou{animation:aparitie var(--speed-aparitie) var(--ease-arcade)}
+@keyframes aparitie{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+
+/* Ghicire */
+.ghicire{margin-bottom:var(--space-4)}
+.ghicire-rand{display:flex;gap:var(--space-2)}
+.ghicire-input{
+  flex:1;min-width:0;display:block;padding:12px var(--space-3);min-height:48px;
+  background:var(--bg-cabinet);border:var(--border-neon);border-radius:var(--radius-btn);
+  color:var(--text);font-family:var(--font-body);font-size:1rem; /* ≥ 16px: iOS nu mai face zoom la focus */
+  -webkit-appearance:none;appearance:none;
+}
+.ghicire-input::placeholder{color:var(--text-dim);opacity:1}
+.ghicire-input:focus{border-color:var(--neon-cyan)}
+.ghicire-input:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+.mesaj{min-height:1.5em;margin:var(--space-2) 0;font-size:0.9rem;line-height:1.4;text-align:center;color:var(--text-dim)}
+.mesaj.aproape{color:var(--amber);font-weight:600}
+.mesaj.gresit{color:var(--neon-magenta)}
+
+/* Butoane */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+  min-height:48px;padding:10px 18px;
+  border:1px solid var(--neon-cyan);border-radius:var(--radius-btn);
+  background:var(--bg-panel);color:var(--text);
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  text-decoration:none;cursor:pointer;
+  transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.btn svg{width:15px;height:15px;flex:none}
+.btn:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.btn:disabled{color:var(--text-dim);border-color:var(--text-faint);box-shadow:none;cursor:default}
+.btn-trimite{flex:none;border:var(--border-neon-strong);color:var(--neon-cyan);box-shadow:var(--glow-cyan)} /* glow: acțiunea principală */
+.btn-indiciu{width:100%;margin-top:var(--space-1);border-color:var(--text-dim);color:var(--text)}
+.btn-indiciu.confirma{border-color:var(--amber);color:var(--amber)}
+
+/* Încercări greșite */
+.greseli{margin-bottom:var(--space-4)}
+.greseli-titlu{
+  margin-bottom:var(--space-2);
+  font-family:var(--font-mono);font-size:0.72rem;font-weight:700;letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-dim);
+}
+.greseli-lista{list-style:none;display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.greseala{
+  display:inline-flex;align-items:center;gap:6px;max-width:100%;
+  padding:6px 10px;border:var(--border-magenta);border-radius:var(--radius-btn);background:var(--bg-cabinet);
+  font-size:0.9rem;line-height:1.3;color:var(--neon-magenta);overflow-wrap:anywhere;
+}
+.greseala svg{width:14px;height:14px;flex:none}
+.greseala.aproape{border-color:var(--amber);color:var(--amber)}
+.greseala .eticheta{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase}
+
+/* Share */
+.share-button{
+  display:inline-block;min-height:44px;padding:12px 28px;border:1px solid var(--neon-cyan);
+  background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.75rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;cursor:pointer;
+  transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease; /* nu „all”: inelul de focus apare instant */
+}
+.share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.share-button:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:var(--bg-deep);background:color-mix(in srgb,var(--bg-deep) 88%,transparent);
+  display:none;align-items:center;justify-content:center;z-index:1000;padding:var(--space-3);
+}
+.modal-overlay.active{display:flex}
+.modal-content{
+  background:var(--bg-panel);border:var(--border-neon-strong);
+  border-radius:var(--radius-panel);padding:var(--space-5);
+  max-width:450px;width:100%;text-align:center;
+}
+.modal-content.castig{box-shadow:var(--glow-cyan)} /* glow: doar starea de câștig */
+.modal-content.pierdere{border-color:var(--neon-magenta)}
+.modal-title{
+  font-family:var(--font-display);font-size:1.8rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);margin-bottom:var(--space-3);
+}
+.modal-content.castig .modal-title{color:var(--live)}
+.modal-content.pierdere .modal-title{color:var(--neon-magenta)}
+.modal-message{font-size:1rem;line-height:1.5;color:var(--text);margin-bottom:var(--space-2);overflow-wrap:anywhere}
+.modal-revino{font-size:0.9rem;line-height:1.5;color:var(--text-dim);margin-bottom:var(--space-3)}
+.modal-streak{font-family:var(--font-mono);font-size:2.2rem;color:var(--neon-cyan);margin:var(--space-3) 0}
+.modal-btn{
+  display:inline-block;min-height:44px;padding:12px 28px;border:1px solid var(--neon-cyan);
+  background:var(--bg-panel);color:var(--text);font-family:var(--font-mono);font-size:0.8rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;cursor:pointer;
+  transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease; /* nu „all”: inelul de focus apare instant */
+}
+.modal-btn:hover:not(:disabled){transform:scale(1.05);border-color:var(--amber);color:var(--amber)}
+
+/* Scanlines */
+.scanlines::after{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,0.04) 0 1px,transparent 1px 3px);
+  opacity:0.5;z-index:9998;
+}
+.crt-vignette::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);
+  z-index:9999;
+}
+
+/* Responsive */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+@media (max-width:600px) {
+  .game-title{font-size:1.6rem}
+  .modal-content{padding:var(--space-4)}
+  .modal-title{font-size:1.4rem}
+  .modal-streak{font-size:1.9rem}
+  .rezultat-categorie{font-size:1.35rem}
+}
+@media (max-width:400px) {
+  .console-header{padding:var(--space-3)}
+  .player-status{gap:var(--space-3)}
+  .btn{padding:10px 12px;letter-spacing:0.06em}
+  .indiciu{gap:var(--space-2);padding:var(--space-2)}
+  .indiciu-text{font-size:1rem}
+}
+</style>
+<script defer src="/consimtamant.js"></script></head>
+<body class="crt-vignette scanlines">
+<div class="console">
+<header class="console-header">
+  <a href="/" class="logo-glow">GAMES<span>.ro</span></a>
+  <div class="player-status">
+    <div class="clock">
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">--/--/----</div>
+    </div>
+    <div class="status-item">
+      <span class="status-label">STREAK</span>
+      <span class="status-value" id="streak">0</span>
+    </div>
+  </div>
+</header>
+
+<main class="joc" id="joc">
+  <h1 class="game-title">Categoria</h1>
+  <p class="editie" id="editie">Ediția zilei</p>
+  <p class="game-instructions">Ghicește categoria ascunsă din cinci indicii. După fiecare indiciu ai o singură încercare.</p>
+
+  <details class="reguli">
+    <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>Cum se joacă</summary>
+    <ul>
+      <li>Indiciile apar pe rând, de la cel mai înșelător la cel mai evident. Toate țin de aceeași <strong>categorie</strong>.</li>
+      <li>După fiecare indiciu ai <strong>o singură încercare</strong>. Dacă greșești, apare următorul indiciu.</li>
+      <li><strong>Mai dă-mi un indiciu</strong> sare peste încercare. Scorul e numărul de indicii de care ai avut nevoie, din 5.</li>
+      <li>Diacriticele și formularea exactă nu contează: „râuri” și „Rauri din Romania” merg la fel.</li>
+    </ul>
+  </details>
+
+  <section class="rezultat" id="rezultat" hidden aria-labelledby="rez-categorie">
+    <p class="rezultat-eticheta">Categoria zilei</p>
+    <h2 class="rezultat-categorie" id="rez-categorie"></h2>
+    <p class="rezultat-scor" id="rez-scor"></p>
+    <p class="rezultat-explicatie" id="rez-explicatie"></p>
+    <button class="share-button" id="share-button" type="button">SHARE</button>
+    <p class="revino">Revino mâine pentru o provocare nouă.</p>
+  </section>
+
+  <section aria-label="Indicii">
+    <div class="progres-rand">
+      <div class="progres" id="progres" role="img" aria-label="Încercări"></div>
+      <p class="contor" id="contor"></p>
+    </div>
+    <ol class="indicii" id="indicii"></ol>
+  </section>
+
+  <section class="ghicire" id="ghicire" aria-label="Răspunsul tău">
+    <label class="sr" for="ghicire-input">Categoria ta</label>
+    <div class="ghicire-rand">
+      <input class="ghicire-input" id="ghicire-input" type="text" placeholder="Scrie categoria…" maxlength="80" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send">
+      <button class="btn btn-trimite" id="trimite-btn" type="button">Trimite</button>
+    </div>
+    <p class="mesaj" id="mesaj"></p>
+    <button class="btn btn-indiciu" id="indiciu-btn" type="button">Mai dă-mi un indiciu</button>
+  </section>
+
+  <section class="greseli" id="greseli" hidden aria-labelledby="greseli-titlu">
+    <h2 class="greseli-titlu" id="greseli-titlu">Încercări greșite</h2>
+    <ul class="greseli-lista" id="greseli-lista"></ul>
+  </section>
+
+  <p class="sr" id="anunt" aria-live="polite"></p>
+</main>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" id="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+    <div class="modal-title" id="modal-title">Felicitări!</div>
+    <p class="modal-message" id="modal-message"></p>
+    <p class="modal-revino">Revino mâine pentru o provocare nouă.</p>
+    <div class="modal-streak" id="modal-streak"></div>
+    <button class="modal-btn" id="modal-close" type="button">ÎNCHIDE</button>
+  </div>
+</div>
+
+<script type="module">
+// ==== Categoria — logica paginii (v1, 24.09.2026) ====
+// Banca, potrivirea și alegerea zilei stau în ./categoria.js (testate în Node); aici: DOM, stare, anunțuri.
+import { GamesRO } from "/shell.js";
+import {
+  MAX_INCERCARI, MAX_CUVINTE, potrivire, normalizeaza, tulpini,
+  puzzleZilei, editia, grilaShare, textScor,
+} from "./categoria.js?v=1";
+
+const SLUG = "categoria";
+const ZI = GamesRO.seedAzi();
+const P = puzzleZilei(ZI);
+const EDITIE = editia(ZI);
+const PREFIX_STARE = "gro:" + SLUG + ":stare:";
+// id-ul puzzle-ului e în cheie: dacă banca se reordonează în timpul zilei, starea veche nu se aplică noului puzzle
+const STATE_KEY = PREFIX_STARE + ZI + ":" + P.id;
+const TIPURI = ["corect", "gresit", "aproape", "sarit"];
+
+const $ = (id) => document.getElementById(id);
+const editieEl = $("editie"), indiciiEl = $("indicii"), progresEl = $("progres"), contorEl = $("contor");
+const ghicireEl = $("ghicire"), input = $("ghicire-input"), trimiteBtn = $("trimite-btn"), indiciuBtn = $("indiciu-btn");
+const mesajEl = $("mesaj"), greseliEl = $("greseli"), greseliLista = $("greseli-lista");
+const rezultatEl = $("rezultat"), rezCategorie = $("rez-categorie"), rezScor = $("rez-scor"), rezExplicatie = $("rez-explicatie");
+const shareButton = $("share-button"), anuntEl = $("anunt");
+const streakEl = $("streak"), clockTimeEl = $("clock-time"), clockDateEl = $("clock-date");
+const modal = $("modal"), modalContent = $("modal-content"), modalTitle = $("modal-title");
+const modalMessage = $("modal-message"), modalStreak = $("modal-streak"), modalClose = $("modal-close");
+
+let incercari = [];   // [{ tip: "corect" | "gresit" | "aproape" | "sarit", text }]
+let done = false, win = false;
+let nouIndiciu = -1;  // indexul indiciului abia apărut (primește animația de apariție)
+
+// Pictograme — SVG inline, currentColor (fără emoji în interfață)
+const SVG = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + d + "</svg>";
+const ICON = {
+  gresit: SVG('<path d="M6 6l12 12M18 6L6 18"/>'),
+  aproape: SVG('<path d="M4 9.5c2.7-2.2 5.3-2.2 8 0s5.3 2.2 8 0M4 15.5c2.7-2.2 5.3-2.2 8 0s5.3 2.2 8 0"/>'),
+  lacat: SVG('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+};
+
+// ─── Stare (localStorage, cu try/catch: private mode) ───
+function citesteStare() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return [];
+    const s = JSON.parse(raw);
+    if (!s || !Array.isArray(s.incercari)) return [];
+    const lista = s.incercari
+      .filter((i) => i && TIPURI.includes(i.tip) && typeof i.text === "string")
+      .slice(0, MAX_INCERCARI);
+    const k = lista.findIndex((i) => i.tip === "corect");
+    return k >= 0 ? lista.slice(0, k + 1) : lista;
+  } catch { return []; }
+}
+
+function salveazaStare() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({ incercari, done, win, editie: EDITIE }));
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(PREFIX_STARE) === 0 && k !== STATE_KEY) localStorage.removeItem(k);
+    }
+  } catch { /* private mode / stocare blocată */ }
+}
+
+// ─── Afișare ───
+/** Câte indicii se văd: unul în plus față de încercări; la final, toate. */
+function indiciiVizibile() {
+  return done ? MAX_INCERCARI : Math.min(incercari.length + 1, MAX_INCERCARI);
+}
+
+function randeazaIndicii() {
+  indiciiEl.innerHTML = "";
+  const vizibile = indiciiVizibile();
+  const vazute = done ? incercari.length : vizibile; // la câștig, indiciile de după nu au mai fost necesare
+  P.indicii.forEach((txt, i) => {
+    const li = document.createElement("li");
+    const nr = document.createElement("span");
+    nr.className = "indiciu-nr";
+    nr.setAttribute("aria-hidden", "true");
+    nr.textContent = i + 1;
+    const sr = document.createElement("span");
+    sr.className = "sr";
+    const text = document.createElement("span");
+    text.className = "indiciu-text";
+    if (i < vizibile) {
+      const bonus = i >= vazute;
+      li.className = "indiciu" + (!done && i === vizibile - 1 ? " curent" : "") + (bonus ? " bonus" : "") + (i === nouIndiciu ? " nou" : "");
+      sr.textContent = "Indiciul " + (i + 1) + ": ";
+      text.textContent = txt;
+      li.append(nr, sr, text);
+      if (bonus) {
+        const nota = document.createElement("span");
+        nota.className = "indiciu-nota";
+        nota.textContent = "nu a mai fost nevoie";
+        li.appendChild(nota);
+      }
+    } else {
+      li.className = "indiciu ascuns";
+      sr.textContent = "Indiciul " + (i + 1) + ": încă ascuns";
+      text.textContent = "Indiciul " + (i + 1);
+      text.setAttribute("aria-hidden", "true");
+      li.append(nr, sr, text);
+      li.insertAdjacentHTML("beforeend", ICON.lacat);
+    }
+    indiciiEl.appendChild(li);
+  });
+}
+
+function randeazaProgres() {
+  progresEl.innerHTML = "";
+  const nume = { corect: "corectă", gresit: "greșită", aproape: "aproape", sarit: "sărită" };
+  const descriere = [];
+  for (let i = 0; i < MAX_INCERCARI; i++) {
+    const inc = incercari[i];
+    const s = document.createElement("span");
+    s.className = "patrat " + (inc ? inc.tip : (!done && i === incercari.length ? "curent" : "gol"));
+    progresEl.appendChild(s);
+    if (inc) descriere.push(nume[inc.tip]);
+  }
+  progresEl.setAttribute("aria-label", descriere.length ? "Încercări: " + descriere.join(", ") : "Nicio încercare încă");
+  const n = incercari.length;
+  if (!done) contorEl.textContent = "Încercarea " + (n + 1) + " din " + MAX_INCERCARI;
+  else contorEl.textContent = win ? (n === 1 ? "Ghicită din primul indiciu" : "Ghicită din " + n + " indicii") : "Nu de data asta";
+}
+
+function randeazaGreseli() {
+  const gresite = incercari.filter((i) => i.tip === "gresit" || i.tip === "aproape");
+  greseliEl.hidden = gresite.length === 0;
+  greseliLista.innerHTML = "";
+  for (const inc of gresite) {
+    const li = document.createElement("li");
+    li.className = "greseala " + inc.tip;
+    li.innerHTML = ICON[inc.tip];
+    const txt = document.createElement("span");
+    txt.textContent = inc.text;
+    li.appendChild(txt);
+    if (inc.tip === "aproape") {
+      const et = document.createElement("span");
+      et.className = "eticheta";
+      et.textContent = "aproape";
+      li.appendChild(et);
+    }
+    greseliLista.appendChild(li);
+  }
+}
+
+function completeazaRezultat() {
+  const n = incercari.length;
+  rezultatEl.classList.toggle("castig", win);
+  rezCategorie.textContent = P.categorie;
+  rezScor.textContent = win ? (n === 1 ? "Ai ghicit din primul indiciu." : "Ai ghicit din " + n + " indicii.") : "Nu ai ghicit de data asta.";
+  rezExplicatie.textContent = P.explicatie;
+}
+
+function randeaza() {
+  randeazaIndicii();
+  randeazaProgres();
+  randeazaGreseli();
+  ghicireEl.hidden = done;
+  input.disabled = trimiteBtn.disabled = indiciuBtn.disabled = done;
+  if (!confirmaRenunt) indiciuBtn.textContent = incercari.length >= MAX_INCERCARI - 1 ? "Renunț" : "Mai dă-mi un indiciu";
+  rezultatEl.hidden = !done;
+  if (done) completeazaRezultat();
+}
+
+function mesaj(text, tip = "") {
+  mesajEl.textContent = text;
+  mesajEl.className = "mesaj" + (tip ? " " + tip : "");
+}
+
+/** Anunț pentru cititoarele de ecran (regiunea aria-live). Golit întâi, ca un text repetat să fie citit din nou. */
+function anunta(text) {
+  anuntEl.textContent = "";
+  requestAnimationFrame(() => { anuntEl.textContent = text; });
+}
+
+// ─── Ghicire ───
+function trimite() {
+  if (done) return;
+  reseteazaRenunt();
+  const text = input.value.trim();
+  if (!text) { mesaj("Scrie mai întâi o categorie."); anunta("Scrie mai întâi o categorie."); input.focus(); return; }
+  const t = tulpini(text);
+  if (!t.length) { mesaj("Scrie o categorie, nu doar cuvinte de legătură."); anunta(mesajEl.textContent); return; }
+  if (t.length > MAX_CUVINTE) { mesaj("Prea lung: scrie categoria în cel mult " + MAX_CUVINTE + " cuvinte."); anunta(mesajEl.textContent); return; }
+  const n = normalizeaza(text), forma = t.join(" ");
+  if (incercari.some((i) => i.text && (normalizeaza(i.text) === n || tulpini(i.text).join(" ") === forma))) {
+    mesaj("Ai încercat deja asta. Încearcă altceva.");
+    anunta(mesajEl.textContent);
+    return;
+  }
+  const r = potrivire(text, P);
+  input.value = "";
+  inregistreaza({ tip: r.corect ? "corect" : r.aproape ? "aproape" : "gresit", text });
+}
+
+let confirmaRenunt = false, timerRenunt = 0;
+function reseteazaRenunt() {
+  if (!confirmaRenunt) return;
+  confirmaRenunt = false;
+  clearTimeout(timerRenunt);
+  indiciuBtn.classList.remove("confirma");
+  indiciuBtn.textContent = incercari.length >= MAX_INCERCARI - 1 ? "Renunț" : "Mai dă-mi un indiciu";
+}
+
+function cereIndiciu() {
+  if (done) return;
+  // la ultimul indiciu butonul devine „Renunț” — cere o a doua apăsare, ca un click scăpat să nu piardă ziua
+  if (incercari.length >= MAX_INCERCARI - 1 && !confirmaRenunt) {
+    confirmaRenunt = true;
+    indiciuBtn.classList.add("confirma");
+    indiciuBtn.textContent = "Sigur? Apasă din nou";
+    anunta("Apasă din nou ca să renunți și să vezi categoria.");
+    timerRenunt = setTimeout(reseteazaRenunt, 4000);
+    return;
+  }
+  reseteazaRenunt();
+  mesaj("");
+  inregistreaza({ tip: "sarit", text: "" });
+}
+
+function inregistreaza(inc) {
+  incercari.push(inc);
+  if (inc.tip === "corect") { done = true; win = true; }
+  else if (incercari.length >= MAX_INCERCARI) { done = true; win = false; }
+  nouIndiciu = done ? -1 : incercari.length;
+  salveazaStare();
+  randeaza();
+  if (!done) {
+    const nr = incercari.length + 1;
+    const urmator = "Indiciul " + nr + ": " + P.indicii[nr - 1] + ".";
+    if (inc.tip === "aproape") { mesaj("Aproape! Mai precis?", "aproape"); anunta("Aproape! Mai precis? " + urmator); }
+    else if (inc.tip === "gresit") { mesaj("Nu e asta. Uite încă un indiciu.", "gresit"); anunta("Nu e asta. " + urmator); }
+    else anunta(urmator);
+    return;
+  }
+  mesaj("");
+  if (win) GamesRO.marcheazaJucat(SLUG, { scor: incercari.length, editie: EDITIE });
+  actualizeazaStreak();
+  anunta(win ? "Corect! Categoria zilei: " + P.categorie + "." : "S-au terminat încercările. Categoria zilei era: " + P.categorie + ".");
+  setTimeout(arataModal, 600);
+}
+
+// ─── Final: modal + share ───
+function arataModal() {
+  const n = incercari.length;
+  modalContent.classList.toggle("castig", win);
+  modalContent.classList.toggle("pierdere", !win);
+  if (win) {
+    modalTitle.textContent = "Felicitări!";
+    modalMessage.textContent = "Ai ghicit „" + P.categorie + "” " + (n === 1 ? "din primul indiciu." : "din " + n + " indicii.");
+  } else {
+    modalTitle.textContent = "Nu de data asta...";
+    modalMessage.textContent = "Categoria zilei era „" + P.categorie + "”.";
+  }
+  modalStreak.textContent = "STREAK " + GamesRO.streak(SLUG);
+  modal.classList.add("active");
+  modalClose.focus();
+}
+
+function inchideModal() {
+  if (!modal.classList.contains("active")) return;
+  modal.classList.remove("active");
+  if (!rezultatEl.hidden) shareButton.focus();
+}
+
+async function distribuie() {
+  if (!done) return;
+  const out = await GamesRO.share(SLUG, grilaShare(incercari), textScor(EDITIE, incercari));
+  if (out === "copied") feedbackShare("COPIAT!");
+  else if (out === false) feedbackShare("COPIAZĂ MANUAL");
+}
+
+let shareTimer = 0;
+function feedbackShare(t) {
+  shareButton.textContent = t;
+  anunta(t === "COPIAT!" ? "Rezultatul a fost copiat." : "Copierea automată nu a mers.");
+  clearTimeout(shareTimer);
+  shareTimer = setTimeout(() => { shareButton.textContent = "SHARE"; }, 1500);
+}
+
+// ─── Header: ceas + streak ───
+function actualizeazaStreak() { streakEl.textContent = GamesRO.streak(SLUG); }
+
+function updateClock() {
+  const now = new Date();
+  clockTimeEl.textContent = now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+  clockDateEl.textContent = now.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+// ─── Pornire ───
+function init() {
+  editieEl.textContent = "Ediția #" + EDITIE;
+  updateClock();
+  setInterval(updateClock, 1000);
+  actualizeazaStreak();
+  incercari = citesteStare();
+  win = incercari.some((i) => i.tip === "corect");
+  done = win || incercari.length >= MAX_INCERCARI;
+  randeaza(); // la reîncărcarea unei zile terminate modalul nu mai apare
+}
+
+trimiteBtn.addEventListener("click", trimite);
+indiciuBtn.addEventListener("click", cereIndiciu);
+indiciuBtn.addEventListener("blur", reseteazaRenunt);
+input.addEventListener("keydown", (e) => {
+  if (e.isComposing || e.keyCode === 229) return; // tastare IME în curs
+  if (e.key === "Enter") { e.preventDefault(); trimite(); }
+});
+input.addEventListener("input", () => { if (mesajEl.textContent) mesaj(""); });
+shareButton.addEventListener("click", distribuie);
+modalClose.addEventListener("click", inchideModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) inchideModal(); });
+document.addEventListener("keydown", (e) => {
+  if (!modal.classList.contains("active")) return;
+  if (e.key === "Escape") { e.preventDefault(); inchideModal(); }
+  else if (e.key === "Tab") { e.preventDefault(); modalClose.focus(); } // un singur buton: focusul rămâne în modal
+});
+
+init();
+</script>
+</body>
+</html>
