@@ -4,353 +4,329 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GAMES.ro — Jocuri românești zilnice</title>
-<meta name="description" content="Provocări zilnice românești: GeoRo, Prețul Corect, Conexiuni RO, Blocuri și altele. Un joc nou în fiecare zi — gratuit, în browser, fără instalare.">
+<meta name="description" content="Șase provocări românești noi în fiecare zi: Cuvântul Zilei, GeoRo, Prețul Corect, Headline sau Fake?, Conexiuni RO și Type Racer RO. Plus clasice arcade. Gratuit, în browser, fără instalare.">
 <link rel="canonical" href="https://games.ro/">
 <meta property="og:title" content="GAMES.ro — Jocuri românești zilnice">
 <meta property="og:description" content="Provocări zilnice românești, gratuite, direct în browser. Streak-ul tău începe azi.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://games.ro/">
 <meta property="og:locale" content="ro_RO">
+<meta name="theme-color" content="#05060f">
 <link rel="stylesheet" href="/tokens.css">
 <style>
-/* ==== stiluri de pagină peste tokens.css (legea e acolo) ==== */
+/* ==== homepage v2 (23.09.2026) — stiluri de pagină peste tokens.css (legea e acolo) ====
+   Ierarhie: UN singur element luminos (jocul următor), restul liniștit; glow doar la hover.
+   Titluri: --font-display; text: --font-body; mono doar pentru etichete și cifre. */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:var(--font-body);
-  color:var(--text);
+  font-family:var(--font-body);color:var(--text);
   background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
-  min-height:100vh;
-  overflow-x:hidden;
+  min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
 }
-.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+.pagina{max-width:1180px;margin:0 auto;padding:20px 20px 36px}
+:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:3px}
 
-/* Header */
-.console-header{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
-  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
-  border:var(--border-neon-strong);border-radius:var(--radius-panel);
-  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+/* Antet */
+.antet{display:flex;align-items:center;gap:28px;padding:4px 0 22px}
+.logo{
+  font-family:var(--font-mono);font-weight:700;font-size:1.35rem;letter-spacing:var(--tracking-display);
+  color:var(--text);text-shadow:var(--chromatic),var(--text-glow-cyan);text-decoration:none;white-space:nowrap;
 }
-.logo-glow{
-  font-family:var(--font-mono);font-weight:700;font-size:1.5rem;
-  letter-spacing:var(--tracking-display);color:var(--text);
-  text-shadow:var(--chromatic),var(--text-glow-cyan);
-  text-decoration:none;
+.logo span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.meniu{display:flex;gap:24px;flex:1}
+.meniu a{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-dim);text-decoration:none;padding:6px 0;border-bottom:1px solid transparent;white-space:nowrap;
 }
-.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
-.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
-.status-item{display:flex;align-items:center;gap:6px}
-.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
-.status-value{color:var(--text);font-weight:700}
-.status-value.hot{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
-.clock{text-align:right;font-family:var(--font-mono)}
-.clock-time{font-size:1.1rem;color:var(--neon-cyan)}
-.clock-date{font-size:0.7rem;color:var(--text-dim)}
-
-/* Nav */
-.nav-bar{display:flex;justify-content:center;gap:var(--space-2);margin-bottom:var(--space-5);flex-wrap:wrap}
-.nav-button{
-  display:inline-block;padding:12px 28px;border:1px solid rgba(0,229,255,0.3);
-  background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.75rem;
-  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
-  border-radius:var(--radius-btn);text-decoration:none;
-  transition:transform var(--speed-hover) var(--ease-arcade),box-shadow var(--speed-hover) ease,color var(--speed-hover) ease;
+.meniu a:hover{color:var(--text);border-bottom-color:var(--neon-cyan)}
+.cipuri{display:flex;gap:8px}
+.cip{
+  display:flex;align-items:baseline;gap:8px;padding:7px 12px;border:1px solid rgba(0,229,255,.25);
+  border-radius:999px;font-family:var(--font-mono);font-size:.75rem;white-space:nowrap;
 }
-.nav-button:hover{transform:scale(1.04);border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber)}
-.nav-button.active{border-color:var(--amber);background:rgba(255,179,0,0.18);color:var(--amber);box-shadow:var(--glow-amber)}
+.cip span{color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;font-size:.62rem}
+.cip b{color:var(--text)}
+.cip b.hot{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
 
-/* Cabinete */
-.section-title{
-  font-family:var(--font-display);font-size:0.95rem;letter-spacing:var(--tracking-display);
-  text-transform:uppercase;color:var(--neon-cyan);margin:var(--space-4) 0 var(--space-3);
+/* Erou: provocările zilei + jocul următor */
+.erou{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr 1fr;gap:36px;align-items:center;
+  padding:48px 44px;margin-bottom:44px;border:1px solid rgba(0,229,255,.22);border-radius:18px;
+  background:
+    radial-gradient(110% 90% at 88% -12%,rgba(255,46,136,.20),transparent 55%),
+    radial-gradient(90% 80% at 0% 112%,rgba(0,229,255,.16),transparent 60%),
+    var(--bg-panel-solid);
 }
-.game-cabinets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-3);margin-bottom:var(--space-5)}
-.cabinet-card{position:relative;border:var(--border-neon-strong);border-radius:var(--radius-cabinet);
-  padding:var(--space-4);padding-top:calc(var(--space-4) + 6px);background:var(--bg-cabinet);
-  box-shadow:var(--glow-cyan);overflow:hidden;
-  transition:transform var(--speed-hover) var(--ease-arcade),box-shadow var(--speed-hover) ease}
-.cabinet-card:hover{transform:scale(1.02) rotate(0.35deg);box-shadow:0 0 18px rgba(0,229,255,0.8),0 0 44px rgba(0,229,255,0.3)}
-.cabinet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;
-  background:linear-gradient(90deg,var(--neon-cyan),var(--neon-magenta),var(--neon-cyan));
-  background-size:200% 100%;animation:gro-marquee var(--speed-marquee) linear infinite}
-.cabinet-content{display:flex;flex-direction:column;gap:var(--space-3);height:100%}
-.cabinet-header{display:flex;align-items:flex-start;justify-content:space-between}
-.cabinet-icon{width:48px;height:48px}
-.cabinet-icon svg{width:100%;height:100%}
-.cabinet-status{font-family:var(--font-mono);font-size:0.7rem;color:var(--live)}
-.cabinet-status::before{content:'●';margin-right:4px}
-.cabinet-status.paused{color:var(--amber)}
-.cabinet-status:empty{display:none}
-.cabinet-title{font-family:var(--font-mono);font-weight:700;font-size:0.95rem;letter-spacing:0.1em;color:var(--text)}
-.cabinet-desc{font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);line-height:1.5;flex:1}
-.play-btn{margin-top:auto;text-align:center;display:block;padding:12px 24px;
-  border:1px solid var(--amber);background:rgba(255,179,0,0.18);color:var(--amber);
-  font-family:var(--font-mono);font-weight:700;font-size:0.7rem;letter-spacing:var(--tracking-display);
-  text-transform:uppercase;border-radius:var(--radius-btn);text-decoration:none;
-  transition:background var(--speed-hover) ease,box-shadow var(--speed-hover) ease}
-.play-btn:hover{background:rgba(255,179,0,0.4);box-shadow:var(--glow-amber)}
+.erou::after{ /* podeaua-grilă în perspectivă */
+  content:"";position:absolute;left:-40%;right:-40%;bottom:-52%;height:92%;pointer-events:none;opacity:.5;
+  background:
+    repeating-linear-gradient(90deg,rgba(0,229,255,.30) 0 1px,transparent 1px 56px),
+    repeating-linear-gradient(0deg,rgba(255,46,136,.24) 0 1px,transparent 1px 40px);
+  transform:perspective(380px) rotateX(64deg);transform-origin:50% 0;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 35%,#000 75%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 35%,#000 75%,transparent 100%);
+}
+.erou > *{position:relative;z-index:1}
+.kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--neon-cyan);margin-bottom:14px}
+.erou h1{
+  font-family:var(--font-display);font-weight:800;font-size:clamp(2.4rem,5.4vw,4.1rem);line-height:.98;
+  letter-spacing:.02em;text-transform:uppercase;text-shadow:var(--chromatic),0 0 26px rgba(0,229,255,.35);margin-bottom:18px;
+}
+.lead{font-size:1.06rem;line-height:1.55;color:var(--text-dim);max-width:30em;margin-bottom:26px}
+.progres{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.progres-bara{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:min(100%,240px)}
+.progres-bara i{height:8px;border-radius:2px;background:rgba(154,163,192,.22)}
+.progres-bara i.on{background:var(--live);box-shadow:0 0 8px rgba(57,255,136,.55)}
+.progres-text{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim)}
+.progres-text b{color:var(--text)}
 
-/* Panouri */
-.info-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-3);margin-bottom:var(--space-4)}
-.panel{border:var(--border-neon);border-radius:var(--radius-panel);padding:var(--space-4);background:var(--bg-panel)}
-.panel-header{font-family:var(--font-mono);font-weight:700;font-size:0.85rem;color:var(--neon-cyan);
-  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:var(--space-3);
-  border-bottom:1px solid rgba(0,229,255,0.2);padding-bottom:10px}
-.panel-list{list-style:none;display:flex;flex-direction:column;gap:10px}
-.panel-item{font-family:var(--font-mono);font-size:0.75rem;color:var(--text);padding:8px;
-  border-radius:var(--radius-btn);background:rgba(0,229,255,0.05);line-height:1.5}
-.panel-item .dim{color:var(--text-dim)}
-.panel-item .amber{color:var(--amber)}
-.panel-item a{color:var(--neon-cyan);text-decoration:none}
-.panel-item a:hover{color:var(--amber)}
+.urmator{
+  display:grid;gap:14px;padding:26px;border-radius:14px;text-decoration:none;color:var(--text);
+  background:linear-gradient(180deg,rgba(8,11,24,.84),rgba(8,11,24,.96));
+  border:1px solid rgba(255,179,0,.6);box-shadow:var(--glow-amber);
+  transition:transform var(--speed-hover) var(--ease-arcade);
+}
+.urmator:hover{transform:translateY(-3px)}
+.eticheta{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber)}
+.urmator-cap{display:flex;align-items:center;gap:18px}
+.urmator-icon{
+  flex:none;width:72px;height:72px;display:grid;place-items:center;border-radius:16px;
+  background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.22);
+}
+.urmator-icon svg{width:46px;height:46px}
+.urmator-titlu{font-family:var(--font-display);font-weight:800;font-size:clamp(1.5rem,2.6vw,1.95rem);letter-spacing:.03em;text-transform:uppercase;line-height:1.05}
+.urmator-desc{color:var(--text-dim);line-height:1.5}
+.urmator .btn-joaca{justify-self:start;padding:13px 26px;font-size:.95rem;font-weight:800;margin-top:4px}
 
-/* Harta */
-.map-section{border:var(--border-neon-strong);border-radius:var(--radius-panel);padding:var(--space-4);
-  background:var(--bg-panel);margin-bottom:var(--space-4)}
-.map-svg{width:100%;height:250px}
-.map-outline{fill:rgba(0,229,255,0.05);stroke:var(--neon-cyan);stroke-width:1.5;stroke-linejoin:round;
-  filter:drop-shadow(0 0 6px rgba(0,229,255,0.5))}
-.map-point{fill:var(--bg-mid);stroke:var(--live);stroke-width:2}
-.map-point-label{fill:var(--text);font-family:var(--font-mono);font-size:11px}
+/* Secțiuni */
+.sectiune{margin-bottom:44px;scroll-margin-top:16px}
+.sectiune-cap{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.sectiune-cap h2{font-family:var(--font-display);font-weight:800;font-size:1.35rem;letter-spacing:.06em;text-transform:uppercase}
+.sectiune-cap p{font-size:.9rem;color:var(--text-dim)}
+
+/* Jocurile zilei */
+.jocuri{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.joc{
+  display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:16px;padding:18px 18px 18px 16px;
+  background:var(--bg-cabinet);border:1px solid rgba(0,229,255,.22);border-radius:var(--radius-cabinet);
+  text-decoration:none;color:var(--text);
+  transition:transform var(--speed-hover) var(--ease-arcade),border-color var(--speed-hover) ease,box-shadow var(--speed-hover) ease;
+}
+.joc:hover{transform:translateY(-2px);border-color:var(--neon-cyan);box-shadow:var(--glow-cyan)}
+.joc-icon{
+  width:60px;height:60px;display:grid;place-items:center;border-radius:12px;
+  background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.16);
+}
+.joc-icon svg{width:38px;height:38px}
+.joc-titlu{display:block;font-family:var(--font-display);font-weight:800;font-size:1.12rem;letter-spacing:.04em;text-transform:uppercase}
+.joc-desc{display:block;font-size:.88rem;color:var(--text-dim);line-height:1.45;margin-top:4px}
+.joc-meta{display:block;font-family:var(--font-mono);font-size:.68rem;color:var(--neon-magenta);margin-top:6px}
+.joc-meta:empty{display:none}
+.stare{
+  align-self:start;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 8px;border-radius:999px;border:1px solid rgba(0,229,255,.28);color:var(--text-dim);white-space:nowrap;
+}
+.stare:empty{display:none}
+.stare.jucat{border-color:rgba(57,255,136,.6);color:var(--live)}
 
 /* Clasice */
-.classics{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5)}
-.classic-link{font-family:var(--font-mono);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--neon-cyan);text-decoration:none;border:1px solid rgba(0,229,255,0.3);
-  border-radius:var(--radius-btn);padding:10px 18px;
-  transition:color var(--speed-hover) ease,border-color var(--speed-hover) ease,box-shadow var(--speed-hover) ease}
-.classic-link:hover{color:var(--amber);border-color:var(--amber);box-shadow:var(--glow-amber)}
+.clasice{display:grid;grid-template-columns:repeat(9,1fr);gap:12px}
+.clasic{
+  display:grid;justify-items:center;align-content:center;gap:10px;padding:18px 6px;min-height:104px;
+  border:1px solid rgba(0,229,255,.16);border-radius:var(--radius-cabinet);background:rgba(8,11,24,.7);
+  text-decoration:none;color:var(--text);text-align:center;
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+  transition:border-color var(--speed-hover) ease,color var(--speed-hover) ease,box-shadow var(--speed-hover) ease,transform var(--speed-hover) var(--ease-arcade);
+}
+.clasic svg{width:34px;height:34px}
+.clasic:hover{border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber);transform:translateY(-2px)}
+
+/* Rândul de jos: în pregătire · recomandat · noutăți */
+.randul-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:36px} /* auto-fit: fără reclamă, panourile rămase se lățesc */
+.panou{padding:22px;border:1px solid rgba(0,229,255,.16);border-radius:var(--radius-panel);background:rgba(10,14,28,.7)}
+.panou h2{font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--neon-cyan);margin-bottom:14px}
+.panou ul{list-style:none;display:grid;gap:14px}
+.panou li{font-size:.9rem;line-height:1.5;color:var(--text-dim)}
+.panou li b{color:var(--text);font-weight:600}
+.panou li .data{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:2px}
+.panou a{color:var(--neon-cyan);text-decoration:none}
+.panou a:hover{color:var(--amber)}
+.panou--reclama{border-color:rgba(255,179,0,.35)}
+.panou--reclama:has(.slot-reclama:empty){display:none}
 
 /* Ticker */
-.ticker-bar{padding:14px 0;border:var(--border-neon);border-radius:var(--radius-panel);
-  background:var(--bg-panel);overflow:hidden;margin-bottom:var(--space-4)}
+.ticker{
+  overflow:hidden;padding:12px 0;margin-bottom:20px;
+  border-top:1px solid rgba(0,229,255,.16);border-bottom:1px solid rgba(0,229,255,.16);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
 .ticker-scroll{display:flex;width:max-content;animation:gro-ticker var(--speed-ticker) linear infinite}
-.ticker-content{font-family:var(--font-mono);font-size:0.75rem;color:var(--text);
-  letter-spacing:0.05em;white-space:nowrap;padding-right:var(--space-5)}
+.ticker-content{font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);letter-spacing:.06em;white-space:nowrap;padding-right:48px}
 
-/* Footer */
-.footer{padding:var(--space-4);text-align:center;border:var(--border-neon);border-radius:var(--radius-panel);background:var(--bg-panel)}
-.footer-text{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim)}
-.footer-link{color:var(--neon-cyan);text-decoration:none}
-.footer-link:hover{color:var(--amber)}
-
-/* Zona de reclamă: cabinet distinct, marquee AMBER (nu cyan) — vizibil altfel, dar din aceeași lume */
-.cabinet-card--ad{border-color:rgba(255,179,0,0.6)}
-.cabinet-card--ad::before{background:linear-gradient(90deg,var(--amber),var(--neon-magenta),var(--amber));background-size:200% 100%}
-.cabinet-card--ad:empty{display:none}
+/* Subsol */
+.subsol{text-align:center;font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);line-height:2}
+.subsol a{color:var(--neon-cyan);text-decoration:none}
+.subsol a:hover{color:var(--amber)}
 
 /* Responsive */
-@media (max-width:768px){
-  .console-header{flex-direction:column;align-items:flex-start}
-  .clock{text-align:left}
-  .game-cabinets,.info-panels{grid-template-columns:1fr}
+@media (max-width:1060px){
+  .jocuri{grid-template-columns:repeat(2,1fr)}
+  .clasice{grid-template-columns:repeat(5,1fr)}
+}
+@media (max-width:760px){
+  .antet{flex-wrap:wrap;gap:12px 16px;padding-bottom:18px}
+  .meniu{order:3;flex-basis:100%;gap:20px;overflow-x:auto;scrollbar-width:none}
+  .cipuri{margin-left:auto}
+  .erou{grid-template-columns:1fr;gap:26px;padding:30px 20px;margin-bottom:36px}
+  .jocuri{grid-template-columns:1fr}
+  .joc{padding:14px 14px 14px 12px;grid-template-columns:52px 1fr auto;gap:14px}
+  .joc-icon{width:52px;height:52px}
+  .joc-icon svg{width:32px;height:32px}
+}
+@media (max-width:600px){
+  .pagina{padding:14px 16px 28px}
+  .clasice{grid-template-columns:repeat(3,1fr)}
+  .cip{padding:6px 10px;gap:6px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ticker-scroll{animation:none}
+  .joc,.urmator,.clasic{transition:none}
 }
 </style>
 <script defer src="/consimtamant.js"></script></head>
 <body class="scanlines crt-vignette">
-<main class="console">
+<div class="pagina">
 
-  <header class="console-header">
-    <a class="logo-glow" href="/">GAMES<span>.ro</span></a>
-    <div class="player-status">
-      <div class="status-item"><span class="status-label">Streak</span><span class="status-value hot" id="stat-streak">–</span></div>
-      <div class="status-item"><span class="status-label">Azi</span><span class="status-value" id="stat-azi">–</span></div>
-      <div class="status-item"><span class="status-label">Nivel</span><span class="status-value" id="stat-nivel">–</span></div>
+  <header class="antet">
+    <a class="logo" href="/">GAMES<span>.ro</span></a>
+    <nav class="meniu" aria-label="Meniu">
+      <a href="#jocuri">Jocuri</a>
+      <a href="#clasice">Clasice</a>
+      <a href="/despre">Despre</a>
+      <a href="/recomandat">Recomandat</a>
+    </nav>
+    <div class="cipuri">
+      <div class="cip"><span>Streak</span><b class="hot" id="stat-streak">–</b></div>
+      <div class="cip"><span>Azi</span><b id="stat-azi">–</b></div>
     </div>
-    <div class="clock"><div class="clock-time" id="clock-time"></div><div class="clock-date" id="clock-date"></div></div>
   </header>
 
-  <nav class="nav-bar">
-    <a class="nav-button active" href="/">Acasă</a>
-    <a class="nav-button" href="#jocuri">Jocuri</a>
-    <a class="nav-button" href="#clasice">Clasice</a>
-    <a class="nav-button" href="/despre">Despre</a>
-    <a class="nav-button" href="/recomandat">Recomandat</a>
-  </nav>
-
-  <h2 class="section-title" id="jocuri">Azi — provocările zilei</h2>
-  <section class="game-cabinets">
-
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="13" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="31" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="4" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/><rect x="13" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="28" width="7" height="7" rx="1" fill="#ffb300" stroke="#ffb300" stroke-width="2"/><rect x="31" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/></svg></div>
-          <span class="cabinet-status" data-slug="cuvantul-zilei"></span>
+  <main>
+    <section class="erou" aria-labelledby="titlu-erou">
+      <div>
+        <p class="kicker" id="kicker">Azi pe GAMES.ro</p>
+        <h1 id="titlu-erou">Provocările zilei</h1>
+        <p class="lead">Șase jocuri românești noi în fiecare zi: cuvinte, hărți, prețuri, știri. Gratuit, direct în browser, fără cont.</p>
+        <div class="progres">
+          <div class="progres-bara" id="progres-bara" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <span class="progres-text"><b id="progres-nr">0 din 6</b> jucate azi</span>
         </div>
-        <h3 class="cabinet-title">Cuvântul Zilei</h3>
-        <p class="cabinet-desc">Ghicește cuvântul românesc de 5 litere. Unul nou în fiecare zi.</p>
-        <a class="play-btn" href="/joc/cuvantul-zilei" data-play="cuvantul-zilei">Joacă</a>
       </div>
-    </article>
+      <a class="urmator" id="urmator" href="/joc/cuvantul-zilei" data-play="cuvantul-zilei">
+        <span class="eticheta" id="urmator-eticheta">Începe cu</span>
+        <span class="urmator-cap">
+          <span class="urmator-icon" id="urmator-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="13" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="31" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="4" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/><rect x="13" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="28" width="7" height="7" rx="1" fill="#ffb300" stroke="#ffb300" stroke-width="2"/><rect x="31" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/></svg></span>
+          <span class="urmator-titlu" id="urmator-titlu">Cuvântul Zilei</span>
+        </span>
+        <span class="urmator-desc" id="urmator-desc">Ghicește cuvântul de 5 litere în 6 încercări.</span>
+        <span class="btn-joaca" id="urmator-btn">Joacă acum</span>
+      </a>
+    </section>
 
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg"><polygon class="map-outline" points="10,7 18,7 22,12 28,10 34,12 38,18 44,16 48,24 46,32 52,40 48,48 42,52 36,54 30,52 26,46 20,48 14,44 10,36 8,28 12,20"/></svg></div>
-          <span class="cabinet-status" data-slug="geo-ro"></span>
-        </div>
-        <h3 class="cabinet-title">GeoRo</h3>
-        <p class="cabinet-desc">Ghicește locația pe harta României. Un nou loc în fiecare zi.</p>
-        <a class="play-btn" href="/joc/geo-ro" data-play="geo-ro">Joacă</a>
+    <section class="sectiune" id="jocuri" aria-labelledby="titlu-jocuri">
+      <div class="sectiune-cap">
+        <h2 id="titlu-jocuri">Jocurile zilei</h2>
+        <p>Se schimbă la miezul nopții, ora României.</p>
       </div>
-    </article>
-
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="20" width="32" height="20" rx="2" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="12" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="20" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="28" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><circle cx="34" cy="30" r="2" fill="#39ff88"/></svg></div>
-          <span class="cabinet-status" data-slug="pretul-corect"></span>
-        </div>
-        <h3 class="cabinet-title">Prețul Corect</h3>
-        <p class="cabinet-desc">Ghicește prețul real al produselor din România.</p>
-        <a class="play-btn" href="/joc/pretul-corect" data-play="pretul-corect">Joacă</a>
+      <div class="jocuri">
+        <a class="joc" href="/joc/cuvantul-zilei" data-play="cuvantul-zilei">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="13" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="31" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="12" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="4" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/><rect x="13" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="22" y="28" width="7" height="7" rx="1" fill="#ffb300" stroke="#ffb300" stroke-width="2"/><rect x="31" y="28" width="7" height="7" rx="1" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="40" y="28" width="7" height="7" rx="1" fill="#39ff88" stroke="#39ff88" stroke-width="2"/></svg></span>
+          <span><span class="joc-titlu">Cuvântul Zilei</span><span class="joc-desc">Ghicește cuvântul de 5 litere în 6 încercări.</span><span class="joc-meta" data-streak="cuvantul-zilei"></span></span>
+          <span class="stare" data-stare="cuvantul-zilei"></span>
+        </a>
+        <a class="joc" href="/joc/geo-ro" data-play="geo-ro">
+          <span class="joc-icon"><svg viewBox="4 3 52 55" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polygon points="10,7 18,7 22,12 28,10 34,12 38,18 44,16 48,24 46,32 52,40 48,48 42,52 36,54 30,52 26,46 20,48 14,44 10,36 8,28 12,20" fill="rgba(0,229,255,.08)" stroke="#00e5ff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="36" cy="40" r="3.2" fill="#ffb300"/></svg></span>
+          <span><span class="joc-titlu">GeoRo</span><span class="joc-desc">Găsește locul zilei pe harta României.</span><span class="joc-meta" data-streak="geo-ro"></span></span>
+          <span class="stare" data-stare="geo-ro"></span>
+        </a>
+        <a class="joc" href="/joc/pretul-corect" data-play="pretul-corect">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="20" width="32" height="20" rx="2" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="12" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="20" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><rect x="28" y="24" width="6" height="12" fill="none" stroke="#ffb300" stroke-width="2"/><circle cx="34" cy="30" r="2" fill="#39ff88"/></svg></span>
+          <span><span class="joc-titlu">Prețul Corect</span><span class="joc-desc">Ghicește prețuri reale din România.</span><span class="joc-meta" data-streak="pretul-corect"></span></span>
+          <span class="stare" data-stare="pretul-corect"></span>
+        </a>
+        <a class="joc" href="/joc/headline-sau-fake" data-play="headline-sau-fake">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="4" width="40" height="40" rx="4" fill="none" stroke="#00e5ff" stroke-width="2"/><line x1="4" y1="16" x2="44" y2="16" stroke="#00e5ff" stroke-width="1"/><line x1="4" y1="32" x2="44" y2="32" stroke="#00e5ff" stroke-width="1"/><line x1="16" y1="4" x2="16" y2="44" stroke="#00e5ff" stroke-width="1"/><line x1="32" y1="4" x2="32" y2="44" stroke="#00e5ff" stroke-width="1"/><circle cx="16" cy="16" r="2.5" fill="#39ff88"/><circle cx="32" cy="32" r="2.5" fill="#ff2e88"/></svg></span>
+          <span><span class="joc-titlu">Headline sau Fake?</span><span class="joc-desc">Știrea e reală sau inventată? Ai instinct?</span><span class="joc-meta" data-streak="headline-sau-fake"></span></span>
+          <span class="stare" data-stare="headline-sau-fake"></span>
+        </a>
+        <a class="joc" href="/joc/conexiuni-ro" data-play="conexiuni-ro">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="#00e5ff" stroke-width="2"/><circle cx="17" cy="17" r="3.5" fill="#39ff88"/><circle cx="31" cy="17" r="3.5" fill="#ff2e88"/><circle cx="17" cy="31" r="3.5" fill="#00e5ff"/><circle cx="31" cy="31" r="3.5" fill="#ffb300"/></svg></span>
+          <span><span class="joc-titlu">Conexiuni RO</span><span class="joc-desc">16 cuvinte, 4 grupuri. Găsește legăturile.</span><span class="joc-meta" data-streak="conexiuni-ro"></span></span>
+          <span class="stare" data-stare="conexiuni-ro"></span>
+        </a>
+        <a class="joc" href="/joc/type-racer-ro" data-play="type-racer-ro">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="14" width="40" height="20" rx="3" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="8" y="18" width="4" height="4" fill="#00e5ff"/><rect x="14" y="18" width="4" height="4" fill="#00e5ff"/><rect x="20" y="18" width="4" height="4" fill="#39ff88"/><rect x="26" y="18" width="4" height="4" fill="#00e5ff"/><rect x="32" y="18" width="4" height="4" fill="#00e5ff"/><rect x="12" y="26" width="24" height="4" rx="1" fill="#ffb300"/></svg></span>
+          <span><span class="joc-titlu">Type Racer RO</span><span class="joc-desc">Tastează textul zilei cât mai repede.</span><span class="joc-meta" data-streak="type-racer-ro"></span></span>
+          <span class="stare" data-stare="type-racer-ro"></span>
+        </a>
       </div>
-    </article>
+    </section>
 
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="40" height="40" rx="4" fill="none" stroke="#00e5ff" stroke-width="2"/><line x1="4" y1="16" x2="44" y2="16" stroke="#00e5ff" stroke-width="1"/><line x1="4" y1="32" x2="44" y2="32" stroke="#00e5ff" stroke-width="1"/><line x1="16" y1="4" x2="16" y2="44" stroke="#00e5ff" stroke-width="1"/><line x1="32" y1="4" x2="32" y2="44" stroke="#00e5ff" stroke-width="1"/><circle cx="16" cy="16" r="2" fill="#39ff88"/><circle cx="32" cy="32" r="2" fill="#ff2e88"/></svg></div>
-          <span class="cabinet-status" data-slug="headline-sau-fake"></span>
-        </div>
-        <h3 class="cabinet-title">Headline sau Fake?</h3>
-        <p class="cabinet-desc">Știrea e reală sau inventată? Testează‑ți instinctul.</p>
-        <a class="play-btn" href="/joc/headline-sau-fake" data-play="headline-sau-fake">Joacă</a>
+    <section class="sectiune" id="clasice" aria-labelledby="titlu-clasice">
+      <div class="sectiune-cap">
+        <h2 id="titlu-clasice">Clasice arcade</h2>
+        <p>Fără provocare zilnică — joacă oricât.</p>
       </div>
-    </article>
-
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="#00e5ff" stroke-width="2"/><circle cx="17" cy="17" r="3" fill="#39ff88"/><circle cx="31" cy="17" r="3" fill="#ff2e88"/><circle cx="17" cy="31" r="3" fill="#00e5ff"/><circle cx="31" cy="31" r="3" fill="#ffb300"/></svg></div>
-          <span class="cabinet-status" data-slug="conexiuni-ro"></span>
-        </div>
-        <h3 class="cabinet-title">Conexiuni RO</h3>
-        <p class="cabinet-desc">Găsește legătura între 16 cuvinte. Patru grupuri, o soluție.</p>
-        <a class="play-btn" href="/joc/conexiuni-ro" data-play="conexiuni-ro">Joacă</a>
+      <div class="clasice">
+        <a class="clasic" href="/joc/blocuri" data-play="blocuri"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="26" width="10" height="10" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="18" y="26" width="10" height="10" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="18" y="16" width="10" height="10" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="28" y="26" width="10" height="10" fill="none" stroke="#ff2e88" stroke-width="2.5"/></svg>Blocuri</a>
+        <a class="clasic" href="/joc/aripi" data-play="aripi"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 30 L23 13 L27 22 L39 17 L30 30 L36 34 L19 39 Z" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linejoin="round"/><circle cx="23" cy="20" r="2" fill="#39ff88"/></svg>Aripi</a>
+        <a class="clasic" href="/joc/2048"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="7" y="7" width="15" height="15" rx="3" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="26" y="7" width="15" height="15" rx="3" fill="#ffb300" stroke="#ffb300" stroke-width="2.5"/><rect x="7" y="26" width="15" height="15" rx="3" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="26" y="26" width="15" height="15" rx="3" fill="none" stroke="#00e5ff" stroke-width="2.5"/></svg>2048</a>
+        <a class="clasic" href="/joc/snake"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 38h18V24H14V12h22" fill="none" stroke="#39ff88" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="38" cy="12" r="3" fill="#39ff88"/><circle cx="38" cy="36" r="3" fill="#ff2e88"/></svg>Snake</a>
+        <a class="clasic" href="/joc/sudoku"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="3" fill="none" stroke="#00e5ff" stroke-width="2.5"/><path d="M18 6v36M30 6v36M6 18h36M6 30h36" stroke="#00e5ff" stroke-width="1.2" opacity=".7"/><rect x="20" y="20" width="8" height="8" rx="1.5" fill="#ffb300"/><rect x="8" y="32" width="8" height="8" rx="1.5" fill="#00e5ff" opacity=".6"/></svg>Sudoku</a>
+        <a class="clasic" href="/joc/minesweeper"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="24" cy="24" r="10" fill="none" stroke="#ff2e88" stroke-width="2.5"/><path d="M24 8v6M24 34v6M8 24h6M34 24h6M12.7 12.7l4.2 4.2M31.1 31.1l4.2 4.2M12.7 35.3l4.2-4.2M31.1 16.9l4.2-4.2" stroke="#ff2e88" stroke-width="2.5" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="2.5" fill="#f2f4ff"/></svg>Minesweeper</a>
+        <a class="clasic" href="/joc/chess"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="24" cy="13" r="5.5" fill="none" stroke="#00e5ff" stroke-width="2.5"/><path d="M19 22h10M20.5 22c0 6-2.5 10-5.5 13h18c-3-3-5.5-7-5.5-13" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linejoin="round"/><path d="M12 40h24" stroke="#ffb300" stroke-width="3" stroke-linecap="round"/></svg>Șah</a>
+        <a class="clasic" href="/joc/stack-tower"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="34" width="28" height="6" rx="1.5" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="12" y="26" width="26" height="6" rx="1.5" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="13" y="18" width="23" height="6" rx="1.5" fill="none" stroke="#00e5ff" stroke-width="2.5"/><rect x="16" y="9" width="21" height="6" rx="1.5" fill="#ffb300" stroke="#ffb300" stroke-width="2.5"/></svg>Stack Tower</a>
+        <a class="clasic" href="/joc/iq-test"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 7a12 12 0 0 0-7 21.7c1.3 1 2 2.3 2 3.8V34h10v-1.5c0-1.5.7-2.8 2-3.8A12 12 0 0 0 24 7z" fill="none" stroke="#ffb300" stroke-width="2.5" stroke-linejoin="round"/><path d="M19 39h10M21 43h6" stroke="#ffb300" stroke-width="2.5" stroke-linecap="round"/><path d="M21 22l3-5 3 5" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Test IQ</a>
       </div>
-    </article>
+    </section>
 
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="26" width="8" height="8" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="18" y="26" width="8" height="8" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="18" y="18" width="8" height="8" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="26" y="26" width="8" height="8" fill="none" stroke="#ff2e88" stroke-width="2"/></svg></div>
-          <span class="cabinet-status" data-slug="blocuri"></span>
-        </div>
-        <h3 class="cabinet-title">Blocuri</h3>
-        <p class="cabinet-desc">Aranjează piesele care cad pe grilă.</p>
-        <a class="play-btn" href="/joc/blocuri" data-play="blocuri">Joacă</a>
+    <section class="randul-3" aria-label="Mai multe">
+      <div class="panou">
+        <h2>În pregătire</h2>
+        <ul>
+          <li><b>Melodia</b> — recunoști melodia? Revine în curând.</li>
+          <li><b>PROSUMATORUL</b> — simulatorul casei tale energetice: consumi, stochezi sau vinzi? Pe date reale din România.</li>
+          <li>Ai o idee de joc românesc? <a href="mailto:george@buhnici.ro?subject=Idee%20joc%20GAMES.ro">Propune‑o →</a></li>
+        </ul>
       </div>
-    </article>
-
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M12 30 L24 14 L28 22 L38 18 L30 30 L36 34 L20 38 Z" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linejoin="round"/><circle cx="24" cy="20" r="1.5" fill="#39ff88"/></svg></div>
-          <span class="cabinet-status" data-slug="aripi"></span>
-        </div>
-        <h3 class="cabinet-title">Aripi</h3>
-        <p class="cabinet-desc">Lansează pasărea și evită obstacolele.</p>
-        <a class="play-btn" href="/joc/aripi" data-play="aripi">Joacă</a>
+      <div class="panou panou--reclama">
+        <div class="slot-reclama" data-gro-ad="home-cabinet"></div>
       </div>
-    </article>
-
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="40" height="20" rx="3" fill="none" stroke="#00e5ff" stroke-width="2"/><rect x="8" y="18" width="4" height="4" fill="#00e5ff"/><rect x="14" y="18" width="4" height="4" fill="#00e5ff"/><rect x="20" y="18" width="4" height="4" fill="#39ff88"/><rect x="26" y="18" width="4" height="4" fill="#00e5ff"/><rect x="32" y="18" width="4" height="4" fill="#00e5ff"/><rect x="12" y="26" width="24" height="4" rx="1" fill="#ffb300"/></svg></div>
-          <span class="cabinet-status" data-slug="type-racer-ro"></span>
-        </div>
-        <h3 class="cabinet-title">Type Racer RO</h3>
-        <p class="cabinet-desc">Tastează textul zilei cât mai repede și corect. WPM‑ul tău?</p>
-        <a class="play-btn" href="/joc/type-racer-ro" data-play="type-racer-ro">Joacă</a>
+      <div class="panou">
+        <h2>Noutăți</h2>
+        <ul>
+          <li><span class="data">sept 2026</span>Patru jocuri noi: <a href="/joc/conexiuni-ro">Conexiuni RO</a>, <a href="/joc/pretul-corect">Prețul Corect</a>, <a href="/joc/headline-sau-fake">Headline sau Fake?</a> și <a href="/joc/type-racer-ro">Type Racer RO</a>.</li>
+          <li><span class="data">aug 2026</span><a href="/joc/cuvantul-zilei">Cuvântul Zilei</a>: cuvântul românesc de 5 litere, în 6 încercări.</li>
+          <li><span class="data">aug 2026</span>Clasicele au nume românești: <a href="/joc/blocuri">Blocuri</a> și <a href="/joc/aripi">Aripi</a>.</li>
+        </ul>
       </div>
-    </article>
+    </section>
+  </main>
 
-    <article class="cabinet-card">
-      <div class="cabinet-content">
-        <div class="cabinet-header">
-          <div class="cabinet-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M18 34 L18 14 L34 10 L34 30" fill="none" stroke="#ff2e88" stroke-width="2" stroke-linejoin="round"/><circle cx="14" cy="34" r="4" fill="none" stroke="#ff2e88" stroke-width="2"/><circle cx="30" cy="30" r="4" fill="none" stroke="#ff2e88" stroke-width="2"/></svg></div>
-          <span class="cabinet-status paused">ÎN PAUZĂ</span>
-        </div>
-        <h3 class="cabinet-title">Melodia</h3>
-        <p class="cabinet-desc">Recunoști melodia? Revine în curând, cu licențele la zi.</p>
-      </div>
-    </article>
-
-    <article class="cabinet-card cabinet-card--ad">
-      <div class="cabinet-content" data-gro-ad="home-cabinet" style="min-height:230px"></div>
-    </article>
-
-  </section>
-
-  <section class="info-panels">
-    <div class="panel">
-      <div class="panel-header">În pregătire</div>
-      <ul class="panel-list">
-        <li class="panel-item"><span class="amber">PROSUMATORUL</span> — simulatorul casei tale energetice: consumi, stochezi sau vinzi? Pe date reale din România. <span class="dim">În lucru.</span></li>
-        <li class="panel-item dim">Ai o idee de joc românesc? <a href="mailto:george@buhnici.ro?subject=Idee%20joc%20GAMES.ro">Propune‑o →</a></li>
-      </ul>
-    </div>
-    <div class="panel">
-      <div class="panel-header">Noutăți</div>
-      <ul class="panel-list">
-        <li class="panel-item"><span class="dim">sept 2026</span> — Patru jocuri noi dintr‑un foc: <span class="amber">Conexiuni RO</span>, <span class="amber">Prețul Corect</span>, <span class="amber">Headline sau Fake?</span> și <span class="amber">Type Racer RO</span>. Zilnice, românești.</li>
-        <li class="panel-item"><span class="dim">aug 2026</span> — Joc nou: <span class="amber">Cuvântul Zilei</span>. Ghicește cuvântul românesc de 5 litere, ai 6 încercări. Zilnic.</li>
-        <li class="panel-item"><span class="dim">aug 2026</span> — Site‑ul funcționează din nou complet: fiecare joc are link direct, share‑uibil.</li>
-        <li class="panel-item"><span class="dim">aug 2026</span> — Clasicele au nume românești: <span class="amber">Blocuri</span> și <span class="amber">Aripi</span>. Aceleași jocuri, nume de‑ale noastre.</li>
-        <li class="panel-item"><span class="dim">aug 2026</span> — Melodia ia o pauză până clarificăm licențele muzicale.</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <div class="panel-header">Jocul prețurilor</div>
-      <ul class="panel-list">
-        <li class="panel-item">Cât costă azi un coș de cumpărături în România? Testează‑ți instinctul de preț în <a href="/joc/pretul-corect">Prețul Corect →</a></li>
-        <li class="panel-item dim">Un produs nou în fiecare zi, cu prețuri reale din magazinele românești.</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="map-section">
-    <div class="panel-header">Harta jocului — provocarea GeoRo de azi</div>
-    <svg class="map-svg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harta României cu orașe marcate">
-      <polygon class="map-outline" points="52,96 76,60 108,44 150,36 190,42 232,34 268,44 300,40 336,58 352,86 344,116 356,146 336,178 300,196 262,206 220,210 180,206 148,214 116,206 88,188 64,160 48,128"/>
-      <circle class="map-point" cx="96" cy="118" r="6"/><text class="map-point-label" x="96" y="106" text-anchor="middle">Cluj</text>
-      <circle class="map-point" cx="70" cy="160" r="6"/><text class="map-point-label" x="70" y="180" text-anchor="middle">Timișoara</text>
-      <circle class="map-point" cx="238" cy="182" r="6"/><text class="map-point-label" x="238" y="200" text-anchor="middle">București</text>
-      <circle class="map-point" cx="300" cy="74" r="6"/><text class="map-point-label" x="300" y="62" text-anchor="middle">Iași</text>
-      <circle class="map-point" cx="330" cy="150" r="7" style="stroke:#ffb300"/><text class="map-point-label" x="330" y="136" text-anchor="middle" style="fill:#ffb300">azi: ?</text>
-    </svg>
-  </section>
-
-  <h2 class="section-title" id="clasice">Clasice</h2>
-  <section class="classics">
-    <a class="classic-link" href="/joc/2048">2048</a>
-    <a class="classic-link" href="/joc/snake">Snake</a>
-    <a class="classic-link" href="/joc/sudoku">Sudoku</a>
-    <a class="classic-link" href="/joc/minesweeper">Minesweeper</a>
-    <a class="classic-link" href="/joc/chess">Șah</a>
-    <a class="classic-link" href="/joc/stack-tower">Stack Tower</a>
-    <a class="classic-link" href="/joc/iq-test">Test IQ</a>
-  </section>
-
-  <div class="ticker-bar" aria-hidden="true">
+  <div class="ticker" aria-hidden="true">
     <div class="ticker-scroll">
-      <span class="ticker-content">» GAMES.ro s-a întors: toate jocurile au din nou link direct » Un joc nou pe zi, gratuit, fără instalare » PROSUMATORUL — simulatorul energiei — în pregătire » Melodia revine în curând »</span>
-      <span class="ticker-content">» GAMES.ro s-a întors: toate jocurile au din nou link direct » Un joc nou pe zi, gratuit, fără instalare » PROSUMATORUL — simulatorul energiei — în pregătire » Melodia revine în curând »</span>
+      <span class="ticker-content">» Șase provocări noi în fiecare zi » Gratuit, fără cont, fără instalare » PROSUMATORUL — simulatorul energiei — în pregătire » Melodia revine în curând »</span>
+      <span class="ticker-content">» Șase provocări noi în fiecare zi » Gratuit, fără cont, fără instalare » PROSUMATORUL — simulatorul energiei — în pregătire » Melodia revine în curând »</span>
     </div>
   </div>
 
-  <footer class="footer">
-    <p class="footer-text">un proiect <a class="footer-link" href="https://buhnici.ro">George Buhnici</a> · operat de Comedia Interactive SRL
-      · <a class="footer-link" href="/despre">Despre</a>
-      · <a class="footer-link" href="/termeni">Termeni</a>
-      · <a class="footer-link" href="/confidentialitate">Confidențialitate</a>
-      · <a class="footer-link" href="/cookies">Cookies</a>
-      · <a class="footer-link" href="/contact">Contact</a></p>
+  <footer class="subsol">
+    <p>un proiect <a href="https://buhnici.ro">George Buhnici</a> · operat de Comedia Interactive SRL<br>
+      <a href="/despre">Despre</a> · <a href="/termeni">Termeni</a> · <a href="/confidentialitate">Confidențialitate</a> · <a href="/cookies">Cookies</a> · <a href="/contact">Contact</a></p>
   </footer>
 
-</main>
+</div>
 
 <script src="https://comedia.ro/ads/ads.js" defer></script>
 <script type="module">
@@ -367,37 +343,52 @@ body{
     })
     .catch(() => {});
 
-  /* Statusuri pe cabinete + statistici în header — din datele REALE ale jucătorului. */
+  /* Data de azi, pe ora României */
+  const azi = new Intl.DateTimeFormat("ro-RO", { timeZone: "Europe/Bucharest", weekday: "long", day: "numeric", month: "long" }).format(new Date());
+  document.getElementById("kicker").textContent = azi.replace(",", " ·");
+
+  /* Starea jocurilor zilei — din datele REALE ale jucătorului */
   const DAILY = ["cuvantul-zilei", "geo-ro", "pretul-corect", "headline-sau-fake", "conexiuni-ro", "type-racer-ro"];
   const stats = GamesRO.statsToate(DAILY);
-
-  let jucateAzi = 0, maxStreak = 0;
+  let jucateAzi = 0, maxStreak = 0, urmator = null;
   for (const slug of DAILY) {
     const s = stats[slug];
     if (s.jucatAzi) jucateAzi += 1;
+    else if (!urmator) urmator = slug;
     if (s.streak > maxStreak) maxStreak = s.streak;
-    const badge = document.querySelector(`.cabinet-status[data-slug="${slug}"]`);
-    if (badge && s.jucatAzi) badge.textContent = "JUCAT";
+    const stare = document.querySelector(`[data-stare="${slug}"]`);
+    if (stare) { stare.textContent = s.jucatAzi ? "Jucat" : "Nou azi"; stare.classList.toggle("jucat", s.jucatAzi); }
+    const meta = document.querySelector(`[data-streak="${slug}"]`);
+    if (meta && s.streak > 1) meta.textContent = `Streak ${s.streak} zile`;
   }
-  document.getElementById("stat-streak").textContent = maxStreak > 0 ? `${maxStreak} ${maxStreak === 1 ? "zi" : "zile"}` : "începe azi";
+  document.getElementById("stat-streak").textContent = maxStreak > 0 ? `${maxStreak} ${maxStreak === 1 ? "zi" : "zile"}` : "0";
   document.getElementById("stat-azi").textContent = `${jucateAzi}/${DAILY.length}`;
-  document.getElementById("stat-nivel").textContent = maxStreak >= 30 ? "Veteran" : maxStreak >= 7 ? "Constant" : "Începător";
+  document.getElementById("progres-nr").textContent = `${jucateAzi} din ${DAILY.length}`;
+  document.querySelectorAll("#progres-bara i").forEach((el, i) => el.classList.toggle("on", i < jucateAzi));
 
-  /* Click pe JOACĂ = marcăm ziua (navigarea continuă normal). */
-  document.querySelectorAll("[data-play]").forEach((a) => {
-    a.addEventListener("click", () => GamesRO.marcheazaJucat(a.dataset.play));
-  });
-
-  /* Ceasul viu, pe ora României. */
-  const timeEl = document.getElementById("clock-time");
-  const dateEl = document.getElementById("clock-date");
-  function tick() {
-    const now = new Date();
-    timeEl.textContent = new Intl.DateTimeFormat("ro-RO", { timeZone: "Europe/Bucharest", hour: "2-digit", minute: "2-digit" }).format(now);
-    dateEl.textContent = new Intl.DateTimeFormat("ro-RO", { timeZone: "Europe/Bucharest", day: "numeric", month: "long", year: "numeric" }).format(now);
+  /* Eroul: primul joc nejucat azi — sau „gata pe azi" */
+  const erou = document.getElementById("urmator");
+  if (urmator) {
+    const card = document.querySelector(`.joc[data-play="${urmator}"]`);
+    erou.href = card.getAttribute("href");
+    erou.dataset.play = urmator;
+    document.getElementById("urmator-icon").innerHTML = card.querySelector(".joc-icon").innerHTML;
+    document.getElementById("urmator-titlu").textContent = card.querySelector(".joc-titlu").textContent;
+    document.getElementById("urmator-desc").textContent = card.querySelector(".joc-desc").textContent;
+    document.getElementById("urmator-eticheta").textContent = jucateAzi === 0 ? "Începe cu" : "Urmează";
+  } else {
+    erou.href = "#clasice";
+    delete erou.dataset.play;
+    document.getElementById("urmator-eticheta").textContent = "Gata pe azi";
+    document.getElementById("urmator-titlu").textContent = "Ai jucat tot!";
+    document.getElementById("urmator-desc").textContent = "Provocări noi de la miezul nopții. Până atunci, o clasică?";
+    document.getElementById("urmator-btn").textContent = "Clasice";
   }
-  tick();
-  setInterval(tick, 30000);
+
+  /* Click pe un joc = marcăm ziua (navigarea continuă normal) */
+  document.querySelectorAll("[data-play]").forEach((a) => {
+    a.addEventListener("click", () => { if (a.dataset.play) GamesRO.marcheazaJucat(a.dataset.play); });
+  });
 </script>
 </body>
 </html>
