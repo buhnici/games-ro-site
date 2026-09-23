@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coroane — GAMES.ro</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Puzzle-ul logic al zilei: pune câte o coroană pe fiecare rând, coloană și zonă colorată, fără ca două coroane să se atingă. Luni e ușor, duminică e greu.">
+<link rel="canonical" href="https://games.ro/joc/coroane">
+<meta property="og:title" content="Coroane — GAMES.ro">
+<meta property="og:description" content="Puzzle-ul logic al zilei: pune câte o coroană pe fiecare rând, coloană și zonă colorată, fără ca două coroane să se atingă. Luni e ușor, duminică e greu.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://games.ro/joc/coroane">
+<style>
+/* ==== SURSA: site-new/tokens.css — nu edita aici ==== */
+:root {
+  --bg-deep: #05060f;
+  --bg-mid: #0b0d1f;
+  --bg-panel: rgba(10, 14, 28, 0.92);
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e88;
+  --amber: #ffb300;
+  --live: #39ff88;
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;
+  --tracking-label: 0.22em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+}
+/* ==== Coroane — culorile proprii ale jocului ==== */
+:root {
+  /* Umplerile zonelor (a–i = literele din coroane.js). Întunecate, ca ✕-ul (--text-dim) să aibă
+     contrast ≥ 3:1 pe oricare; diferite ca nuanță și luminozitate (verificat și pentru daltonism).
+     Aceleași valori ca PALETA din fabrica/generatoare/coroane.mjs — testul verifică. */
+  --zona-a: #902736; /* rubin */
+  --zona-b: #4e1e01; /* rugină */
+  --zona-c: #4f4502; /* oliv */
+  --zona-d: #013526; /* brad */
+  --zona-e: #045a53; /* petrol */
+  --zona-f: #023f5f; /* safir */
+  --zona-g: #553c95; /* lavandă */
+  --zona-h: #3e146c; /* prun */
+  --zona-i: #6c0641; /* vișină */
+  --linie-zona: var(--text-dim);                                        /* granița dintre zone, 3px */
+  --linie-fina: color-mix(in srgb, var(--bg-deep) 55%, transparent);    /* în interiorul zonei, 1px */
+  --x-auto: color-mix(in srgb, var(--text-dim) 60%, transparent);       /* ✕-ul automat, mai stins */
+  --dungi-conflict: color-mix(in srgb, var(--neon-magenta) 72%, transparent);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important} /* clasele cu display:flex/grid nu au voie să învingă atributul hidden */
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+
+/* Header */
+.console-header{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
+  border:var(--border-neon-strong);border-radius:var(--radius-panel);
+  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+}
+.logo-glow{
+  font-family:var(--font-mono);font-weight:700;font-size:1.3rem;
+  letter-spacing:var(--tracking-display);color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-decoration:none;
+}
+.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
+.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
+.status-value{color:var(--text);font-weight:700}
+.clock{text-align:right;font-family:var(--font-mono)}
+.clock-time{font-size:1rem;color:var(--neon-cyan)}
+.clock-date{font-size:0.7rem;color:var(--text-dim)}
+
+/* Accesibilitate */
+:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:3px}
+button{font:inherit;color:var(--text);touch-action:manipulation} /* <button> nu moștenește culoarea: fără asta, UA-ul pune negru pe fundal negru; manipulation = fără zoom la dublă atingere */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Titlu */
+.game-title{
+  font-family:var(--font-display);font-size:2rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-align:center;margin:var(--space-4) 0 var(--space-2);
+}
+.meta-zi{
+  text-align:center;margin-bottom:var(--space-2);
+  font-family:var(--font-mono);font-size:0.78rem;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  color:var(--text-dim);
+}
+.meta-zi strong{color:var(--text)}
+.game-instructions{
+  font-size:0.9rem;line-height:1.5;color:var(--text-dim);text-align:center;margin-bottom:var(--space-3);
+  max-width:600px;margin-left:auto;margin-right:auto;
+}
+.joc{max-width:480px;margin:0 auto}
+
+/* Cum se joacă */
+.cum{
+  margin-top:var(--space-4);
+  background:var(--bg-cabinet);border:1px solid var(--text-faint);border-radius:var(--radius-cabinet);
+}
+.cum summary{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+  min-height:44px;padding:var(--space-2) var(--space-3);cursor:pointer;list-style:none;
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  color:var(--text);border-radius:var(--radius-cabinet);
+}
+.cum summary::-webkit-details-marker{display:none}
+.cum summary svg{width:16px;height:16px;flex:none;color:var(--text-dim);transition:transform var(--speed-hover) ease}
+.cum[open] summary svg{transform:rotate(180deg)}
+@media (hover:hover){.cum summary:hover{color:var(--amber)}}
+.cum-corp{display:flex;gap:var(--space-3);align-items:center;padding:0 var(--space-3) var(--space-3)}
+.cum-exemplu{width:108px;height:108px;flex:none}
+.cum-reguli{list-style:none;display:grid;gap:var(--space-2);font-size:0.86rem;line-height:1.45;color:var(--text-dim)}
+.cum-reguli li{padding-left:var(--space-3);position:relative}
+.cum-reguli li::before{content:"";position:absolute;left:0;top:0.6em;width:6px;height:6px;border-radius:1px;background:var(--amber)}
+.ico-inline{display:inline-block;width:0.95em;height:0.95em;vertical-align:-0.12em;color:var(--text)}
+.ex-a{fill:var(--zona-a)}.ex-c{fill:var(--zona-c)}.ex-f{fill:var(--zona-f)}.ex-g{fill:var(--zona-g)}
+.ex-fin{fill:none;stroke:var(--linie-fina);stroke-width:0.8}
+.ex-gros{fill:none;stroke:var(--linie-zona);stroke-width:2.2;stroke-linecap:square}
+.ex-x{fill:none;stroke:var(--text-dim);stroke-width:1.6;stroke-linecap:round}
+
+/* Bara de sus: timp + indicii */
+.bara-info{
+  display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);
+  margin-bottom:var(--space-2);font-family:var(--font-mono);
+}
+.info{display:flex;align-items:baseline;gap:var(--space-2)}
+.info-eticheta{color:var(--text-dim);font-size:0.7rem;letter-spacing:var(--tracking-label);text-transform:uppercase}
+.info-valoare{color:var(--text);font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
+.cronometru{color:var(--neon-cyan)}
+
+/* Tabla */
+.tabla{
+  display:grid;width:100%;aspect-ratio:1/1;
+  border:3px solid var(--linie-zona);border-radius:3px;
+  background:var(--bg-deep);
+  touch-action:none; /* tragerea peste căsuțe nu derulează pagina */
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+.celula{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:0;padding:0;
+  background-color:var(--fill);
+  border:0 solid var(--linie-fina);border-radius:0;
+  color:var(--text-dim); /* explicit: <button> nu moștenește culoarea */
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.celula svg{pointer-events:none}
+.celula:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:-4px;z-index:1}
+.sus-fin{border-top-width:1px}
+.sus-gros{border-top:3px solid var(--linie-zona)}
+.st-fin{border-left-width:1px}
+.st-gros{border-left:3px solid var(--linie-zona)}
+.z-a{--fill:var(--zona-a)}.z-b{--fill:var(--zona-b)}.z-c{--fill:var(--zona-c)}
+.z-d{--fill:var(--zona-d)}.z-e{--fill:var(--zona-e)}.z-f{--fill:var(--zona-f)}
+.z-g{--fill:var(--zona-g)}.z-h{--fill:var(--zona-h)}.z-i{--fill:var(--zona-i)}
+@media (hover:hover){
+  .tabla:not(.gata) .celula:hover:not(:disabled){background-color:color-mix(in srgb,var(--fill) 80%,var(--text))}
+}
+.ico-x{width:42%;height:42%;color:var(--text-dim);fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round}
+.ico-auto{width:24%;height:24%;color:var(--x-auto);fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round}
+.ico-coroana{width:68%;height:68%;color:var(--amber);overflow:visible}
+.ico-coroana *{fill:currentColor;stroke:var(--bg-deep);stroke-width:1.6;stroke-linejoin:round;paint-order:stroke}
+.celula.conflict{
+  background-image:repeating-linear-gradient(135deg,var(--dungi-conflict) 0 3px,transparent 3px 8px);
+  box-shadow:inset 0 0 0 2px var(--neon-magenta);
+}
+.celula.indiciu::after{
+  content:"";position:absolute;inset:var(--space-1);pointer-events:none;
+  border:3px solid var(--amber);border-radius:2px;
+  animation:puls 0.45s ease-in-out 4 alternate;
+}
+@keyframes puls{from{opacity:1}to{opacity:0.25}}
+.tabla.gata{box-shadow:var(--glow-amber)}
+.tabla.gata .celula{cursor:default}
+.tabla.gata .ico-x,.tabla.gata .ico-auto{display:none}
+.tabla.gata .ico-coroana{filter:drop-shadow(0 0 5px var(--amber))}
+.tabla.castig .ico-coroana{animation:apare 520ms var(--ease-arcade) both;animation-delay:calc(var(--i) * 70ms)}
+@keyframes apare{from{transform:scale(0.2);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* Comenzi */
+.comenzi{display:flex;gap:var(--space-2);margin-top:var(--space-3)}
+.comenzi .btn{flex:1 1 0;min-width:0}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+  min-height:44px;padding:var(--space-2) var(--space-3);
+  border:1px solid var(--neon-cyan);border-radius:var(--radius-btn);
+  background:var(--bg-panel);color:var(--text);
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  text-decoration:none;cursor:pointer;
+  transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.btn:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.btn:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+.btn.confirma{border-color:var(--amber);color:var(--amber)}
+.btn-numar{color:var(--text-dim);font-weight:400}
+
+/* Comutatorul Auto-✕ */
+.optiuni{display:flex;align-items:center;flex-wrap:wrap;gap:0 var(--space-2);margin-top:var(--space-2)}
+.comutator{
+  display:inline-flex;align-items:center;gap:var(--space-2);min-height:44px;padding:0 var(--space-1);
+  background:none;border:0;border-radius:var(--radius-btn);color:var(--text);cursor:pointer;
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+}
+.comutator-pista{
+  position:relative;flex:none;width:40px;height:22px;border-radius:11px;
+  border:1px solid var(--text-faint);background:var(--bg-deep);
+  transition:background-color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.comutator-pista::after{
+  content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;
+  background:var(--text-dim);transition:transform var(--speed-hover) var(--ease-arcade),background-color var(--speed-hover) ease;
+}
+.comutator[aria-checked="true"] .comutator-pista{border-color:var(--neon-cyan);background:color-mix(in srgb,var(--neon-cyan) 22%,var(--bg-deep))}
+.comutator[aria-checked="true"] .comutator-pista::after{transform:translateX(18px);background:var(--neon-cyan)}
+.comutator:hover:not(:disabled){color:var(--amber)}
+.comutator:hover:not(:disabled) .comutator-pista{border-color:var(--amber)}
+.comutator .ico-inline{color:currentColor;stroke-width:3.2}
+.optiuni-nota{font-size:0.8rem;color:var(--text-dim)}
+
+/* Rezultat */
+.rezultat{
+  text-align:center;margin-top:var(--space-4);padding:var(--space-4) var(--space-3);
+  background:var(--bg-panel);border:var(--border-neon);border-radius:var(--radius-panel);
+}
+.rezultat-titlu{font-family:var(--font-display);font-size:1.45rem;font-weight:700;letter-spacing:0.04em;line-height:1.3;color:var(--text-dim)}
+.rezultat-titlu span{color:var(--live);font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.rezultat-detalii{margin:var(--space-2) 0 var(--space-4);font-size:0.9rem;line-height:1.5;color:var(--text-dim)}
+.revino{margin-top:var(--space-3);font-size:0.9rem;color:var(--text-dim)}
+
+/* Share — acțiunea principală după câștig (singurul buton cu glow) */
+.share-button{
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:var(--space-2) var(--space-4);
+  border:1px solid var(--neon-cyan);border-radius:var(--radius-btn);
+  background:transparent;color:var(--text);box-shadow:var(--glow-cyan);
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  cursor:pointer;transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.share-button:disabled{color:var(--text-dim);border-color:var(--text-faint);box-shadow:none;cursor:default}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:var(--bg-deep);background:color-mix(in srgb,var(--bg-deep) 88%,transparent);
+  display:none;align-items:center;justify-content:center;z-index:1000;padding:var(--space-3);
+}
+.modal-overlay.active{display:flex}
+.modal-content{
+  background:var(--bg-panel);border:var(--border-neon-strong);
+  border-radius:var(--radius-panel);padding:var(--space-5);
+  max-width:450px;width:100%;text-align:center;
+}
+.modal-title{
+  font-family:var(--font-display);font-size:1.8rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--live);margin-bottom:var(--space-3);
+}
+.modal-message{font-size:1rem;line-height:1.5;color:var(--text-dim);margin-bottom:var(--space-3)}
+.modal-message strong{color:var(--text);font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.modal-streak{font-family:var(--font-mono);font-size:2.2rem;color:var(--neon-cyan);margin:var(--space-3) 0}
+.modal-actiuni{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-3)}
+.modal-btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:var(--space-2) var(--space-4);
+  border:1px solid var(--text-dim);border-radius:var(--radius-btn);
+  background:var(--bg-panel);color:var(--text);
+  font-family:var(--font-mono);font-size:0.8rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  cursor:pointer;transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.modal-btn:hover:not(:disabled){transform:scale(1.05);border-color:var(--amber);color:var(--amber)}
+.modal-content .revino{margin-top:var(--space-4)}
+
+/* Scanlines */
+.scanlines::after{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,0.04) 0 1px,transparent 1px 3px);
+  opacity:0.5;z-index:9998;
+}
+.crt-vignette::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);
+  z-index:9999;
+}
+
+/* Responsive */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+@media (max-width:600px) {
+  .game-title{font-size:1.6rem}
+  .modal-content{padding:var(--space-4)}
+  .modal-title{font-size:1.4rem}
+  .modal-streak{font-size:1.9rem}
+}
+@media (max-width:420px) {
+  .console-header{padding:var(--space-3)}
+  .player-status{gap:var(--space-3)}
+  .btn{padding:var(--space-2) var(--space-1);letter-spacing:0.06em}
+  .cum-corp{flex-direction:column;align-items:flex-start}
+}
+</style>
+<script defer src="/consimtamant.js"></script></head>
+<body class="crt-vignette scanlines">
+<div class="console">
+<header class="console-header">
+  <a href="/" class="logo-glow">GAMES<span>.ro</span></a>
+  <div class="player-status">
+    <div class="clock">
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">--/--/----</div>
+    </div>
+    <div class="status-item">
+      <span class="status-label">STREAK</span>
+      <span class="status-value" id="streak">0</span>
+    </div>
+  </div>
+</header>
+
+<main class="joc" id="joc">
+  <h1 class="game-title">Coroane</h1>
+  <p class="meta-zi" id="meta-zi">Ediția <strong id="editie">#1</strong> · <span id="marime">8×8</span> · <strong id="dificultate">Greu</strong></p>
+  <p class="game-instructions">O coroană pe fiecare rând, coloană și zonă colorată. Două coroane nu se ating, nici pe diagonală.</p>
+
+
+  <div class="bara-info">
+    <div class="info"><span class="info-eticheta">Timp</span><span class="info-valoare cronometru" id="cronometru" role="timer">0:00</span></div>
+    <div class="info"><span class="info-eticheta">Indicii</span><span class="info-valoare" id="nr-indicii">0</span></div>
+  </div>
+
+  <div class="tabla" id="tabla" role="group" aria-label="Tabla de joc" aria-describedby="ajutor-tabla"></div>
+  <p class="sr" id="ajutor-tabla">Săgețile mută între căsuțe; Enter sau Spațiu schimbă căsuța: gol, X, coroană.</p>
+
+  <div class="comenzi" id="comenzi">
+    <button class="btn" id="btn-anuleaza" type="button">Anulează</button>
+    <button class="btn" id="btn-sterge" type="button">Șterge tot</button>
+    <button class="btn" id="btn-indiciu" type="button">Indiciu</button>
+  </div>
+  <div class="optiuni" id="optiuni">
+    <button class="comutator" id="auto-x" type="button" role="switch" aria-checked="true" aria-describedby="nota-auto-x">
+      <span class="comutator-pista" aria-hidden="true"></span>
+      <span>Auto-<svg class="ico-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="sr">X</span></span>
+    </button>
+    <span class="optiuni-nota" id="nota-auto-x">marchează singur căsuțele excluse de coroane</span>
+  </div>
+
+  <section class="rezultat" id="rezultat" hidden aria-labelledby="rez-titlu">
+    <h2 class="rezultat-titlu" id="rez-titlu">Rezolvat în <span id="rez-timp">0:00</span></h2>
+    <p class="rezultat-detalii" id="rez-detalii"></p>
+    <button class="share-button" id="share-button" type="button">SHARE</button>
+    <p class="revino">Revino mâine pentru un puzzle nou.</p>
+  </section>
+
+  <details class="cum" id="cum">
+    <summary>Cum se joacă<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="cum-corp">
+      <svg class="cum-exemplu" viewBox="0 0 84 84" role="img" aria-label="Exemplu rezolvat: o tablă de 4 pe 4 cu 4 zone și câte o coroană pe fiecare rând, coloană și zonă">
+        <rect class="ex-a" x="2" y="2" width="40" height="20"/><rect class="ex-a" x="2" y="22" width="60" height="20"/>
+        <rect class="ex-f" x="42" y="2" width="40" height="20"/><rect class="ex-f" x="62" y="22" width="20" height="40"/>
+        <rect class="ex-c" x="2" y="42" width="40" height="20"/><rect class="ex-c" x="2" y="62" width="20" height="20"/>
+        <rect class="ex-g" x="42" y="42" width="20" height="20"/><rect class="ex-g" x="22" y="62" width="60" height="20"/>
+        <path class="ex-fin" d="M22 2V82M42 2V82M62 2V82M2 22H82M2 42H82M2 62H82"/>
+        <path class="ex-gros" d="M42 22H62M2 42H62M22 62H42M62 62H82M22 62V82M42 2V22M42 42V62M62 22V62"/>
+        <rect x="1.1" y="1.1" width="81.8" height="81.8" rx="1.5" class="ex-gros"/>
+        <g class="ico-coroana">
+          <g transform="translate(24.6 4.6) scale(0.62)"><path d="M4.5 17.2 3.2 8.6l5.1 3.6L12 5.6l3.7 6.6 5.1-3.6-1.3 8.6z"/><circle cx="3.2" cy="7.4" r="1.6"/><circle cx="12" cy="4.3" r="1.6"/><circle cx="20.8" cy="7.4" r="1.6"/><rect x="4.5" y="18.4" width="15" height="2.6" rx=".9"/></g>
+          <g transform="translate(64.6 24.6) scale(0.62)"><path d="M4.5 17.2 3.2 8.6l5.1 3.6L12 5.6l3.7 6.6 5.1-3.6-1.3 8.6z"/><circle cx="3.2" cy="7.4" r="1.6"/><circle cx="12" cy="4.3" r="1.6"/><circle cx="20.8" cy="7.4" r="1.6"/><rect x="4.5" y="18.4" width="15" height="2.6" rx=".9"/></g>
+          <g transform="translate(4.6 44.6) scale(0.62)"><path d="M4.5 17.2 3.2 8.6l5.1 3.6L12 5.6l3.7 6.6 5.1-3.6-1.3 8.6z"/><circle cx="3.2" cy="7.4" r="1.6"/><circle cx="12" cy="4.3" r="1.6"/><circle cx="20.8" cy="7.4" r="1.6"/><rect x="4.5" y="18.4" width="15" height="2.6" rx=".9"/></g>
+          <g transform="translate(44.6 64.6) scale(0.62)"><path d="M4.5 17.2 3.2 8.6l5.1 3.6L12 5.6l3.7 6.6 5.1-3.6-1.3 8.6z"/><circle cx="3.2" cy="7.4" r="1.6"/><circle cx="12" cy="4.3" r="1.6"/><circle cx="20.8" cy="7.4" r="1.6"/><rect x="4.5" y="18.4" width="15" height="2.6" rx=".9"/></g>
+        </g>
+        <path class="ex-x" d="M69.5 9.5l5 5M74.5 9.5l-5 5M29.5 29.5l5 5M34.5 29.5l-5 5M49.5 49.5l5 5M54.5 49.5l-5 5"/>
+      </svg>
+      <ul class="cum-reguli">
+        <li>Pune câte o coroană pe fiecare rând, pe fiecare coloană și în fiecare zonă colorată.</li>
+        <li>Două coroane nu se pot atinge, nici pe diagonală.</li>
+        <li>Atinge o căsuță o dată pentru <svg class="ico-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="sr">X</span> (notița „nu aici”), de două ori pentru coroană.</li>
+        <li>Trage peste mai multe căsuțe ca să pui (sau să ștergi) mai multe <svg class="ico-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="sr">X</span> deodată.</li>
+      </ul>
+    </div>
+  </details>
+
+  <p class="sr" id="anunt" aria-live="polite"></p>
+</main>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+    <div class="modal-title" id="modal-title">Felicitări!</div>
+    <div class="modal-message" id="modal-message"></div>
+    <div class="modal-streak" id="modal-streak"></div>
+    <div class="modal-actiuni">
+      <button class="share-button" id="modal-share" type="button">SHARE</button>
+      <button class="modal-btn" id="modal-close" type="button">ÎNCHIDE</button>
+    </div>
+    <p class="revino">Revino mâine pentru un puzzle nou.</p>
+  </div>
+</div>
+
+<script type="module">
+// ==== Coroane — logica paginii (v1, 24.09.2026) ====
+// Datele și regulile stau în ./coroane.js (testate în Node); aici: DOM, input, cronometru, stare.
+import { GamesRO } from "/shell.js";
+import {
+  GOL, X, COROANA, DIFICULTATE, puzzleZilei, zoneDin, conflicte, coroaneInConflict,
+  excluse, eRezolvat, indiciu, formatTimp, textShare, grilaShare, stareDin, stareText,
+} from "./coroane.js?v=1";
+
+const SLUG = "coroane";
+const ZI = GamesRO.seedAzi();
+const { puzzle: P, editie: EDITIE } = puzzleZilei(ZI);
+const N = P.n;
+const ZONE = zoneDin(P);
+const PREFIX_STARE = "gro:" + SLUG + ":stare:";
+// id-ul puzzle-ului e în cheie: dacă bancul se regenerează în timpul zilei, starea veche nu se aplică noului puzzle
+const STATE_KEY = PREFIX_STARE + ZI + ":" + P.id;
+const CHEIE_AUTOX = "gro:" + SLUG + ":autox";
+const CHEIE_VAZUT = "gro:" + SLUG + ":vazut";
+const NUME_ZONA = ["rubin", "rugină", "oliv", "brad", "petrol", "safir", "lavandă", "prun", "vișină"];
+
+const $ = (id) => document.getElementById(id);
+const tablaEl = $("tabla"), cronometruEl = $("cronometru"), nrIndiciiEl = $("nr-indicii");
+const btnAnuleaza = $("btn-anuleaza"), btnSterge = $("btn-sterge"), btnIndiciu = $("btn-indiciu");
+const comenziEl = $("comenzi"), optiuniEl = $("optiuni"), autoXBtn = $("auto-x"), cumEl = $("cum");
+const rezultatEl = $("rezultat"), rezTimp = $("rez-timp"), rezDetalii = $("rez-detalii");
+const shareButton = $("share-button"), modalShare = $("modal-share");
+const anuntEl = $("anunt"), streakEl = $("streak"), clockTimeEl = $("clock-time"), clockDateEl = $("clock-date");
+const modal = $("modal"), modalMessage = $("modal-message"), modalStreak = $("modal-streak"), modalClose = $("modal-close");
+
+// ─── Stare ───
+let tabla = new Uint8Array(N * N);   // 0 = gol, 1 = ✕, 2 = coroană
+let istoric = [];                    // pentru „Anulează": tabla dinaintea fiecărei mutări
+let indicii = 0;
+let gata = false;
+let timpBaza = 0;                    // secunde adunate până la ultima pauză
+let pornitLa = null;                 // performance.now() de când merge cronometrul; null = oprit
+let autoX = true;
+
+// Pictograme — SVG inline, fără emoji în interfață
+const SVG_X = '<svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+const SVG_AUTO = '<svg class="ico-auto" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+const SVG_COROANA = '<svg class="ico-coroana" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 17.2 3.2 8.6l5.1 3.6L12 5.6l3.7 6.6 5.1-3.6-1.3 8.6z"/><circle cx="3.2" cy="7.4" r="1.6"/><circle cx="12" cy="4.3" r="1.6"/><circle cx="20.8" cy="7.4" r="1.6"/><rect x="4.5" y="18.4" width="15" height="2.6" rx=".9"/></svg>';
+
+// ─── Stocare (try/catch peste tot: private mode / stocare blocată) ───
+function citeste(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function scrie(k, v) { try { localStorage.setItem(k, v); } catch { /* stocare indisponibilă */ } }
+
+function salveazaStare() {
+  try {
+    localStorage.setItem(STATE_KEY, stareText(tabla, secunde(), indicii, gata));
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(PREFIX_STARE) === 0 && k !== STATE_KEY) localStorage.removeItem(k);
+    }
+  } catch { /* private mode / stocare blocată */ }
+}
+
+// ─── Cronometru: pornește la prima mutare, stă pe loc cât fila e ascunsă ───
+function secunde() { return timpBaza + (pornitLa === null ? 0 : (performance.now() - pornitLa) / 1000); }
+function pornesteCeasul() { if (!gata && pornitLa === null && !document.hidden) pornitLa = performance.now(); }
+function opresteCeasul() { if (pornitLa !== null) { timpBaza = secunde(); pornitLa = null; } }
+let ultimulTimp = "";
+function afiseazaTimp() {
+  const t = formatTimp(secunde());
+  if (t !== ultimulTimp) { cronometruEl.textContent = t; ultimulTimp = t; }
+}
+
+// ─── Tabla: construcție ───
+const celule = [];
+let focusX = 0; // căsuța cu tabindex 0 (focus „itinerant")
+
+function construiesteTabla() {
+  tablaEl.style.gridTemplateColumns = "repeat(" + N + ", 1fr)";
+  tablaEl.style.gridTemplateRows = "repeat(" + N + ", 1fr)";
+  tablaEl.setAttribute("aria-label", "Tabla de joc, " + N + " pe " + N);
+  for (let x = 0; x < N * N; x++) {
+    const r = Math.floor(x / N), c = x % N;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "celula z-" + "abcdefghi"[ZONE[x]];
+    if (r > 0) b.classList.add(ZONE[x - N] === ZONE[x] ? "sus-fin" : "sus-gros");
+    if (c > 0) b.classList.add(ZONE[x - 1] === ZONE[x] ? "st-fin" : "st-gros");
+    b.dataset.x = String(x);
+    b.tabIndex = x === 0 ? 0 : -1;
+    celule.push(b);
+    tablaEl.appendChild(b);
+  }
+}
+
+// ─── Tabla: afișare ───
+const DESCRIERE = {
+  gol: "goală", x: "marcată „nu aici”", auto: "exclusă de o coroană",
+  coroana: "coroană", conflict: "coroană în conflict",
+};
+
+function randeaza() {
+  const ex = autoX ? excluse(N, ZONE, tabla) : null;
+  const conf = coroaneInConflict(N, ZONE, tabla);
+  let coroane = 0;
+  for (let x = 0; x < N * N; x++) {
+    const v = tabla[x];
+    const stare = v === COROANA ? (conf[x] ? "conflict" : "coroana") : v === X ? "x" : ex && ex[x] ? "auto" : "gol";
+    const b = celule[x];
+    if (v === COROANA) b.style.setProperty("--i", String(coroane++));
+    if (b.dataset.stare === stare) continue;
+    b.dataset.stare = stare;
+    b.innerHTML = stare === "coroana" || stare === "conflict" ? SVG_COROANA : stare === "x" ? SVG_X : stare === "auto" ? SVG_AUTO : "";
+    b.classList.toggle("conflict", stare === "conflict");
+    const r = Math.floor(x / N), c = x % N;
+    b.setAttribute("aria-label", "Rândul " + (r + 1) + ", coloana " + (c + 1) + ", zona " + NUME_ZONA[ZONE[x]] + ": " + DESCRIERE[stare]);
+  }
+  tablaEl.classList.toggle("gata", gata);
+  for (const b of celule) {
+    if (gata) b.setAttribute("aria-disabled", "true");
+    else b.removeAttribute("aria-disabled");
+  }
+  btnAnuleaza.disabled = gata || istoric.length === 0;
+  btnSterge.disabled = gata || tabla.every((v) => v === GOL);
+  btnIndiciu.disabled = gata;
+  nrIndiciiEl.textContent = String(indicii);
+  comenziEl.hidden = optiuniEl.hidden = gata;
+  rezultatEl.hidden = !gata;
+  if (gata) completeazaRezultat();
+  afiseazaTimp();
+}
+
+// ─── Mutări ───
+const anunta = (t) => { anuntEl.textContent = ""; requestAnimationFrame(() => { anuntEl.textContent = t; }); };
+const MOTIV = {
+  rand: "două coroane pe același rând", coloana: "două coroane pe aceeași coloană",
+  zona: "două coroane în aceeași zonă", atingere: "două coroane care se ating",
+};
+
+/** Aplică o mutare (fn modifică tabla); o pune în istoric doar dacă schimbă ceva. */
+function muta(fn, celula = -1) {
+  if (gata) return false;
+  const inainte = tabla.slice();
+  const conflicteInainte = conflicte(N, ZONE, tabla).length;
+  fn();
+  if (inainte.every((v, i) => v === tabla[i])) return false;
+  istoric.push(inainte);
+  dupaMutare(conflicteInainte, celula);
+  return true;
+}
+
+function dupaMutare(conflicteInainte, celula = -1) {
+  pornesteCeasul();
+  const acum = conflicte(N, ZONE, tabla);
+  if (acum.length > conflicteInainte) {
+    const nou = acum.find((c) => c.a === celula || c.b === celula) || acum[acum.length - 1];
+    anunta("Atenție: " + MOTIV[nou.motiv] + ".");
+  }
+  if (eRezolvat(N, ZONE, tabla)) castiga();
+  salveazaStare();
+  randeaza();
+}
+
+function atinge(x) {
+  muta(() => { tabla[x] = (tabla[x] + 1) % 3; }, x); // gol → ✕ → coroană → gol
+}
+
+function anuleaza() {
+  if (gata || !istoric.length) return;
+  tabla = istoric.pop();
+  salveazaStare();
+  randeaza();
+  anunta("Mutarea a fost anulată.");
+}
+
+let confirmaTimer = null;
+function renuntaLaConfirmare() {
+  clearTimeout(confirmaTimer);
+  confirmaTimer = null;
+  btnSterge.textContent = "Șterge tot";
+  btnSterge.classList.remove("confirma");
+}
+function stergeTot() {
+  if (gata || tabla.every((v) => v === GOL)) return;
+  if (!confirmaTimer) {
+    btnSterge.textContent = "Sigur?";
+    btnSterge.classList.add("confirma");
+    confirmaTimer = setTimeout(renuntaLaConfirmare, 3000);
+    anunta("Apasă din nou în 3 secunde ca să ștergi toată tabla.");
+    return;
+  }
+  renuntaLaConfirmare();
+  muta(() => tabla.fill(GOL));
+  anunta("Tabla a fost ștearsă. Poți anula.");
+}
+
+let indiciuTimer = null;
+function cereIndiciu() {
+  if (gata) return;
+  const h = indiciu(P, tabla);
+  if (!h) return;
+  indicii++;
+  muta(() => { tabla[h.celula] = h.valoare; }, h.celula);
+  const b = celule[h.celula];
+  celule.forEach((c) => c.classList.remove("indiciu"));
+  void b.offsetWidth; // repornește animația
+  b.classList.add("indiciu");
+  clearTimeout(indiciuTimer);
+  indiciuTimer = setTimeout(() => b.classList.remove("indiciu"), 1900);
+  const r = Math.floor(h.celula / N) + 1, c = (h.celula % N) + 1;
+  const unde = "rândul " + r + ", coloana " + c;
+  if (!gata) {
+    anunta(h.motiv === "coroana-gresita" ? "Indiciu: coroana de pe " + unde + " nu era bună — acum e X."
+      : h.motiv === "x-gresit" ? "Indiciu: pe " + unde + " era X, dar acolo e o coroană."
+      : "Indiciu: coroană pe " + unde + ".");
+  }
+}
+
+// ─── Input: atingere, tragere (✕ în serie), tastatură ───
+let trag = null;           // { start, id, mod: "pune" | "sterge" | null, vizitate, inainte, conflicte, aIesit }
+let inghiteClick = false;  // după o tragere, click-ul pe care îl mai trimite browserul nu e o atingere
+
+function celulaDin(el) {
+  const b = el && el.closest ? el.closest(".celula") : null;
+  return b && b.parentElement === tablaEl ? Number(b.dataset.x) : -1;
+}
+function aplicaTragere(x) {
+  if (trag.mod === "pune" && tabla[x] === GOL) tabla[x] = X;
+  else if (trag.mod === "sterge" && tabla[x] === X) tabla[x] = GOL;
+}
+
+tablaEl.addEventListener("pointerdown", (e) => {
+  inghiteClick = false; // o atingere nouă începe mereu cu pointerdown: nu înghițim click-ul ei
+  if (gata || !e.isPrimary || e.button !== 0) return;
+  const x = celulaDin(e.target);
+  if (x < 0) return;
+  const v = tabla[x];
+  // pornită pe gol → pune ✕; pornită pe ✕ → șterge ✕; pornită pe coroană → nu face nimic (coroanele nu se trag)
+  trag = { start: x, id: e.pointerId, mod: v === GOL ? "pune" : v === X ? "sterge" : null, vizitate: new Set([x]), inainte: tabla.slice(), conflicte: conflicte(N, ZONE, tabla).length, aIesit: false };
+});
+tablaEl.addEventListener("pointermove", (e) => {
+  if (!trag || e.pointerId !== trag.id) return;
+  const x = celulaDin(document.elementFromPoint(e.clientX, e.clientY));
+  if (x < 0 || trag.vizitate.has(x)) return;
+  if (!trag.aIesit) {
+    trag.aIesit = true;
+    if (trag.mod) aplicaTragere(trag.start);
+  }
+  trag.vizitate.add(x);
+  if (trag.mod) { aplicaTragere(x); randeaza(); }
+});
+function gataTragerea(e) {
+  if (!trag || e.pointerId !== trag.id) return;
+  const t = trag;
+  trag = null;
+  if (!t.aIesit) return; // a rămas în aceeași căsuță: e o atingere, o tratează click-ul
+  inghiteClick = true;
+  if (t.inainte.every((v, i) => v === tabla[i])) return;
+  istoric.push(t.inainte);
+  dupaMutare(t.conflicte);
+}
+document.addEventListener("pointerup", gataTragerea);
+document.addEventListener("pointercancel", gataTragerea);
+tablaEl.addEventListener("contextmenu", (e) => e.preventDefault());
+
+tablaEl.addEventListener("click", (e) => {
+  // detail > 0 = click de mouse/deget; 0 = Enter/Spațiu sau tehnologie asistivă (nu se înghite niciodată)
+  if (e.detail > 0 && inghiteClick) { inghiteClick = false; return; }
+  const x = celulaDin(e.target);
+  if (x < 0 || gata) return;
+  atinge(x);
+});
+
+function focuseaza(x) {
+  celule[focusX].tabIndex = -1;
+  focusX = x;
+  celule[x].tabIndex = 0;
+  celule[x].focus();
+}
+tablaEl.addEventListener("focusin", (e) => {
+  const x = celulaDin(e.target);
+  if (x >= 0 && x !== focusX) { celule[focusX].tabIndex = -1; focusX = x; celule[x].tabIndex = 0; }
+});
+tablaEl.addEventListener("keydown", (e) => {
+  const x = celulaDin(e.target);
+  if (x < 0) return;
+  let r = Math.floor(x / N), c = x % N;
+  if (e.key === "ArrowUp") r = Math.max(0, r - 1);
+  else if (e.key === "ArrowDown") r = Math.min(N - 1, r + 1);
+  else if (e.key === "ArrowLeft") c = Math.max(0, c - 1);
+  else if (e.key === "ArrowRight") c = Math.min(N - 1, c + 1);
+  else if (e.key === "Home") c = 0;
+  else if (e.key === "End") c = N - 1;
+  else return;
+  e.preventDefault();
+  focuseaza(r * N + c);
+});
+document.addEventListener("keydown", (e) => {
+  if (modal.classList.contains("active")) return;
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "z") {
+    const tinta = e.target;
+    if (tinta && (tinta.isContentEditable || /^(INPUT|TEXTAREA)$/.test(tinta.tagName))) return;
+    e.preventDefault();
+    anuleaza();
+  }
+});
+
+// ─── Auto-✕ ───
+function arataAutoX() { autoXBtn.setAttribute("aria-checked", autoX ? "true" : "false"); }
+autoXBtn.addEventListener("click", () => {
+  autoX = !autoX;
+  scrie(CHEIE_AUTOX, autoX ? "1" : "0");
+  arataAutoX();
+  randeaza();
+});
+
+// ─── Final: rezultat, modal, share ───
+const cuIndicii = (k) => (k === 0 ? "fără indicii" : k === 1 ? "cu un indiciu" : k < 20 ? "cu " + k + " indicii" : "cu " + k + " de indicii");
+
+function completeazaRezultat() {
+  rezTimp.textContent = formatTimp(secunde());
+  rezDetalii.textContent = "Ediția #" + EDITIE + " · " + N + "×" + N + " · " + DIFICULTATE[P.dif] + " · " + cuIndicii(indicii);
+}
+
+function castiga() {
+  gata = true;
+  opresteCeasul();
+  const sec = Math.floor(secunde());
+  GamesRO.marcheazaJucat(SLUG, { timp: sec });
+  actualizeazaStreak();
+  renuntaLaConfirmare();
+  tablaEl.classList.add("castig");
+  anunta("Felicitări! Ai pus toate cele " + N + " coroane în " + formatTimp(sec) + ".");
+  setTimeout(arataModal, 900);
+}
+
+function arataModal() {
+  modalMessage.innerHTML = "";
+  modalMessage.append("Ai pus toate cele " + N + " coroane în ");
+  const t = document.createElement("strong");
+  t.textContent = formatTimp(secunde());
+  modalMessage.append(t, ", " + cuIndicii(indicii) + ".");
+  modalStreak.textContent = "STREAK " + GamesRO.streak(SLUG);
+  modal.classList.add("active");
+  modalShare.focus();
+}
+
+function inchideModal() {
+  if (!modal.classList.contains("active")) return;
+  modal.classList.remove("active");
+  shareButton.focus();
+}
+
+const shareTimere = new Map();
+function feedbackShare(btn, text) {
+  btn.textContent = text;
+  clearTimeout(shareTimere.get(btn));
+  shareTimere.set(btn, setTimeout(() => { btn.textContent = "SHARE"; }, 1500));
+}
+async function distribuie(btn) {
+  if (!gata) return;
+  const out = await GamesRO.share(SLUG, grilaShare(N), textShare(EDITIE, Math.floor(secunde()), indicii));
+  if (out === "copied") feedbackShare(btn, "COPIAT!");
+  else if (out === false) feedbackShare(btn, "COPIAZĂ MANUAL");
+}
+
+// ─── Header: ceas + streak ───
+function actualizeazaStreak() { streakEl.textContent = GamesRO.streak(SLUG); }
+function updateClock() {
+  const now = new Date();
+  clockTimeEl.textContent = now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+  clockDateEl.textContent = now.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+// ─── Pornire ───
+function init() {
+  updateClock();
+  setInterval(updateClock, 1000);
+  actualizeazaStreak();
+  $("editie").textContent = "#" + EDITIE;
+  $("marime").textContent = N + "×" + N;
+  $("dificultate").textContent = DIFICULTATE[P.dif];
+  autoX = citeste(CHEIE_AUTOX) !== "0";
+  arataAutoX();
+  // prima vizită: regulile sunt deschise; după aceea, închise
+  if (citeste(CHEIE_VAZUT) === null) { cumEl.open = true; scrie(CHEIE_VAZUT, "1"); }
+  construiesteTabla();
+  const s = stareDin(citeste(STATE_KEY), P);
+  if (s) {
+    tabla = s.tabla;
+    timpBaza = s.timp;
+    indicii = s.indicii;
+    gata = s.gata;
+    // o partidă începută continuă cronometrul; una terminată rămâne terminată (fără modal)
+    if (!gata && (timpBaza > 0 || tabla.some((v) => v !== GOL))) pornesteCeasul();
+  }
+  randeaza();
+  let salvatLa = -1;
+  setInterval(() => {
+    afiseazaTimp();
+    const sec = Math.floor(secunde());
+    if (pornitLa !== null && sec % 10 === 0 && sec !== salvatLa) { salvatLa = sec; salveazaStare(); } // la 10 s, pentru închideri bruște
+  }, 250);
+}
+
+btnAnuleaza.addEventListener("click", anuleaza);
+btnSterge.addEventListener("click", stergeTot);
+btnIndiciu.addEventListener("click", cereIndiciu);
+shareButton.addEventListener("click", () => distribuie(shareButton));
+modalShare.addEventListener("click", () => distribuie(modalShare));
+modalClose.addEventListener("click", inchideModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) inchideModal(); });
+document.addEventListener("keydown", (e) => {
+  if (!modal.classList.contains("active")) return;
+  if (e.key === "Escape") { e.preventDefault(); inchideModal(); }
+  else if (e.key === "Tab") { // focusul rămâne între cele două butoane ale modalului
+    e.preventDefault();
+    (document.activeElement === modalShare ? modalClose : modalShare).focus();
+  }
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { opresteCeasul(); salveazaStare(); }
+  else if (!gata && (timpBaza > 0 || tabla.some((v) => v !== GOL))) pornesteCeasul();
+});
+window.addEventListener("pagehide", () => { opresteCeasul(); salveazaStare(); });
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted && !document.hidden && !gata && (timpBaza > 0 || tabla.some((v) => v !== GOL))) pornesteCeasul();
+});
+
+init();
+</script>
+</body>
+</html>

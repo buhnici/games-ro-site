@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zi și Noapte — GAMES.ro</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Puzzle logic zilnic: umple grila cu sori și luni, câte trei din fiecare pe fiecare rând și coloană. Luni e ușor, duminică e greu.">
+<link rel="canonical" href="https://games.ro/joc/zi-si-noapte">
+<meta property="og:title" content="Zi și Noapte — GAMES.ro">
+<meta property="og:description" content="Puzzle logic zilnic: umple grila cu sori și luni, câte trei din fiecare pe fiecare rând și coloană. Luni e ușor, duminică e greu.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://games.ro/joc/zi-si-noapte">
+<style>
+/* ==== SURSA: site-new/tokens.css — nu edita aici ==== */
+:root {
+  --bg-deep: #05060f;
+  --bg-mid: #0b0d1f;
+  --bg-panel: rgba(10, 14, 28, 0.92);
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e88;
+  --amber: #ffb300;
+  --live: #39ff88;
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;
+  --tracking-label: 0.22em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+}
+/* ==== Zi și Noapte — proprietăți proprii (umpluturile jocului), derivate din tokenuri ==== */
+:root {
+  --zn-soare: var(--amber);              /* soarele: disc cu raze */
+  --zn-luna: var(--neon-cyan);           /* luna: semilună */
+  --zn-gap: var(--space-2);              /* spațiul dintre căsuțe */
+  --zn-semn: 20px;                       /* diametrul insignei „=" / „×" */
+  --zn-celula: var(--bg-mid);            /* căsuță liberă */
+  --zn-fixa: var(--bg-deep);             /* căsuță fixă: puțin mai închisă */
+  --zn-margine: var(--text-faint);       /* marginea căsuței libere */
+  --zn-margine-fixa: var(--bg-mid);      /* marginea căsuței fixe */
+}
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  :root {
+    --zn-celula: color-mix(in srgb, var(--neon-cyan) 7%, var(--bg-panel-solid));
+    --zn-margine: color-mix(in srgb, var(--neon-cyan) 34%, var(--bg-panel-solid));
+    --zn-margine-fixa: color-mix(in srgb, var(--text-faint) 40%, var(--bg-deep));
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important} /* clasele cu display:flex/grid nu au voie să învingă atributul hidden */
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+
+/* Header */
+.console-header{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
+  border:var(--border-neon-strong);border-radius:var(--radius-panel);
+  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+}
+.logo-glow{
+  font-family:var(--font-mono);font-weight:700;font-size:1.3rem;
+  letter-spacing:var(--tracking-display);color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-decoration:none;
+}
+.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
+.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
+.status-value{color:var(--text);font-weight:700}
+.clock{text-align:right;font-family:var(--font-mono)}
+.clock-time{font-size:1rem;color:var(--neon-cyan)}
+.clock-date{font-size:0.7rem;color:var(--text-dim)}
+
+/* Accesibilitate */
+:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:3px}
+button{font:inherit;color:var(--text)} /* <button> nu moștenește culoarea: fără asta, UA-ul pune negru pe fundal negru */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Titlu */
+.game-title{
+  font-family:var(--font-display);font-size:2rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-align:center;margin:var(--space-4) 0 var(--space-3);
+}
+.game-instructions{
+  font-size:0.9rem;line-height:1.5;color:var(--text-dim);text-align:center;margin-bottom:var(--space-4);
+}
+.joc{max-width:480px;margin:0 auto}
+.demo{
+  margin:0 auto var(--space-3);padding:var(--space-2) var(--space-3);
+  border:1px dashed var(--amber);border-radius:var(--radius-btn);
+  font-family:var(--font-mono);font-size:0.72rem;line-height:1.5;letter-spacing:0.04em;
+  color:var(--amber);text-align:center;
+}
+
+/* Bara de stare: ediție, nivel, cronometru, indicii */
+.bara-stare{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2) var(--space-3);
+  margin-bottom:var(--space-3);
+  font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);
+}
+.stare-stanga,.stare-dreapta{display:flex;align-items:center;gap:var(--space-2) var(--space-3);flex-wrap:wrap}
+.editie{color:var(--text);font-weight:700}
+.trepte{display:inline-flex;gap:3px}
+.trepte i{display:block;width:6px;height:11px;border:1px solid var(--text-faint);border-radius:1px}
+.trepte i.plin{background:var(--neon-cyan);border-color:var(--neon-cyan)}
+.cronometru{display:inline-flex;align-items:center;gap:6px;color:var(--text);font-size:0.95rem;font-weight:700;letter-spacing:0.04em;font-variant-numeric:tabular-nums}
+.cronometru svg{width:15px;height:15px;color:var(--neon-cyan);flex:none}
+.nr-indicii b{color:var(--text)}
+
+/* Tabla */
+.tabla-cadru{position:relative;width:100%;margin:0 auto var(--space-2);border-radius:var(--radius-btn)}
+.tabla{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));
+  gap:var(--zn-gap);width:100%;aspect-ratio:1 / 1;
+  touch-action:none; /* tragerea peste căsuțe nu derulează pagina */
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+}
+.celula{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:0;padding:0;
+  background:var(--zn-celula);border:1px solid var(--zn-margine);border-radius:var(--radius-btn);
+  color:var(--text);cursor:pointer;
+  transition:border-color var(--speed-hover) ease;
+}
+.celula:hover:not(:disabled):not(.fixa):not(.blocat):not(.triplu){border-color:var(--neon-cyan)}
+.celula.fixa{background:var(--zn-fixa);border-color:var(--zn-margine-fixa);cursor:default}
+.celula.blocat{cursor:default}
+.celula .sim{position:relative;z-index:1;display:none;width:62%;height:62%}
+.celula.v1 .sim,.celula.v2 .sim{display:block}
+.celula.v1{color:var(--zn-soare)}
+.celula.v2{color:var(--zn-luna)}
+.celula:not(.fixa) .sim{opacity:0.82} /* piesele puse de tine: puțin mai stinse decât cele fixe */
+.celula.triplu{border-color:var(--neon-magenta)}
+.celula.triplu::before{ /* dungi magenta: trei la fel unul lângă altul */
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:repeating-linear-gradient(135deg,var(--neon-magenta) 0 3px,transparent 3px 9px);opacity:0.5;
+}
+.celula.indiciu{box-shadow:inset 0 0 0 3px var(--amber)}
+.celula:focus-visible{outline-offset:2px;z-index:3}
+
+/* Stratul peste tablă: semnele dintre căsuțe și marcajul liniilor cu prea multe simboluri */
+.strat{position:absolute;inset:0;pointer-events:none;z-index:2}
+.semn{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  width:var(--zn-semn);height:var(--zn-semn);transform:translate(-50%,-50%);
+  background:var(--bg-deep);border:1px solid var(--text-dim);border-radius:50%;color:var(--text);
+}
+.semn svg{width:72%;height:72%}
+.semn.incalcat{border-color:var(--neon-magenta);color:var(--neon-magenta)}
+/* poziții: s = latura unei căsuțe = (100% − 5 · gap) / 6 */
+.semn.oriz{
+  left:calc((100% - 5 * var(--zn-gap)) / 6 * (var(--c) + 1) + var(--zn-gap) * var(--c) + var(--zn-gap) / 2);
+  top:calc((100% - 5 * var(--zn-gap)) / 6 * (var(--r) + 0.5) + var(--zn-gap) * var(--r));
+}
+.semn.vert{
+  left:calc((100% - 5 * var(--zn-gap)) / 6 * (var(--c) + 0.5) + var(--zn-gap) * var(--c));
+  top:calc((100% - 5 * var(--zn-gap)) / 6 * (var(--r) + 1) + var(--zn-gap) * var(--r) + var(--zn-gap) / 2);
+}
+.linie-rea{position:absolute;border:2px dashed var(--neon-magenta);border-radius:calc(var(--radius-btn) + 4px)}
+.linie-rea.rand{
+  left:calc(var(--zn-gap) / -2);right:calc(var(--zn-gap) / -2);
+  top:calc((100% - 5 * var(--zn-gap)) / 6 * var(--r) + var(--zn-gap) * var(--r) - var(--zn-gap) / 2);
+  height:calc((100% - 5 * var(--zn-gap)) / 6 + var(--zn-gap));
+}
+.linie-rea.col{
+  top:calc(var(--zn-gap) / -2);bottom:calc(var(--zn-gap) / -2);
+  left:calc((100% - 5 * var(--zn-gap)) / 6 * var(--c) + var(--zn-gap) * var(--c) - var(--zn-gap) / 2);
+  width:calc((100% - 5 * var(--zn-gap)) / 6 + var(--zn-gap));
+}
+
+/* Câștig: singurul loc cu glow, pe lângă acțiunea principală */
+.tabla-cadru.castig{box-shadow:var(--glow-cyan)}
+.tabla-cadru.castig .celula{border-color:var(--live)}
+.tabla-cadru.animat .celula{animation:zn-val 520ms var(--ease-arcade) both;animation-delay:calc(var(--d) * 40ms)}
+@keyframes zn-val{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+
+.mesaj{min-height:2.9em;margin-bottom:var(--space-2);font-size:0.85rem;line-height:1.45;color:var(--amber);text-align:center}
+
+/* Butoane */
+.actiuni{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2);margin-bottom:var(--space-4)}
+.btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  min-height:60px;padding:var(--space-2) var(--space-1);
+  border:1px solid var(--neon-cyan);border-radius:var(--radius-btn);
+  background:var(--bg-panel);color:var(--text);
+  font-family:var(--font-mono);font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;
+  transition:transform var(--speed-hover) var(--ease-arcade),color var(--speed-hover) ease,border-color var(--speed-hover) ease;
+}
+.btn svg{width:18px;height:18px;flex:none}
+.btn:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.btn:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+.btn.sigur,.btn.sigur:hover:not(:disabled){border-color:var(--neon-magenta);color:var(--neon-magenta)}
+
+/* Rezultat */
+.rezultat{
+  text-align:center;margin-bottom:var(--space-4);padding:var(--space-4) var(--space-3);
+  background:var(--bg-panel);border:var(--border-neon);border-radius:var(--radius-panel);
+}
+.rezultat-titlu{
+  font-family:var(--font-display);font-size:1.35rem;font-weight:700;letter-spacing:0.04em;line-height:1.3;
+  color:var(--text-dim);
+}
+.rezultat-titlu span{color:var(--live);font-variant-numeric:tabular-nums}
+.rezultat-detalii{margin:var(--space-1) 0 var(--space-4);font-size:0.9rem;color:var(--text-dim)}
+.revino{margin-top:var(--space-3);font-size:0.85rem;color:var(--text-dim)}
+
+/* Share */
+.share-button{
+  display:inline-block;min-height:44px;padding:12px 28px;border:1px solid var(--neon-cyan);
+  background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.75rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;cursor:pointer;
+  transition:all var(--speed-hover) var(--ease-arcade);
+}
+.share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.share-button:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+
+/* Cum se joacă */
+.cum{margin-bottom:var(--space-4);background:var(--bg-panel);border:1px solid var(--text-faint);border-radius:var(--radius-panel)}
+.cum summary{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);
+  min-height:48px;padding:var(--space-2) var(--space-3);cursor:pointer;list-style:none;
+  color:var(--text);font-family:var(--font-mono);font-size:0.78rem;font-weight:700;
+  letter-spacing:var(--tracking-display);text-transform:uppercase;border-radius:var(--radius-panel);
+}
+.cum summary::-webkit-details-marker{display:none}
+.cum summary svg{width:16px;height:16px;flex:none;color:var(--neon-cyan);transition:transform var(--speed-hover) ease}
+.cum[open] summary svg{transform:rotate(180deg)}
+.cum-corp{padding:0 var(--space-3) var(--space-3)}
+.cum ul{list-style:none;display:grid;gap:var(--space-2);font-size:0.9rem;line-height:1.45;color:var(--text)}
+.cum li{position:relative;padding-left:18px}
+.cum li::before{content:"";position:absolute;left:3px;top:0.55em;width:6px;height:6px;border-radius:50%;background:var(--neon-cyan)}
+.exemplu{display:block;width:100%;max-width:320px;height:auto;margin:var(--space-3) auto var(--space-2)}
+.exemplu .ex-cel{fill:var(--zn-celula);stroke:var(--zn-margine)}
+.exemplu .ex-soare{color:var(--zn-soare)}
+.exemplu .ex-luna{color:var(--zn-luna)}
+.exemplu .ex-semn{fill:var(--bg-deep);stroke:var(--text-dim)}
+.exemplu .ex-glif{color:var(--text)}
+.exemplu text{fill:var(--text-dim);font-family:var(--font-mono);font-size:9px;letter-spacing:0.04em}
+.cum-nota{font-size:0.8rem;line-height:1.5;color:var(--text-dim)}
+.cum-nota + .cum-nota{margin-top:var(--space-1)}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:var(--bg-deep);background:color-mix(in srgb,var(--bg-deep) 88%,transparent);
+  display:none;align-items:center;justify-content:center;z-index:1000;
+}
+.modal-overlay.active{display:flex}
+.modal-content{
+  background:var(--bg-panel);border:var(--border-neon-strong);
+  border-radius:var(--radius-panel);padding:var(--space-5);
+  max-width:450px;width:90%;text-align:center;
+  box-shadow:var(--glow-cyan);
+}
+.modal-title{
+  font-family:var(--font-display);font-size:1.8rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--live);margin-bottom:var(--space-3);
+  text-shadow:var(--text-glow-cyan);
+}
+.modal-message{font-size:1rem;line-height:1.5;color:var(--text-dim);margin-bottom:var(--space-3)}
+.modal-streak{font-family:var(--font-mono);font-size:2.5rem;color:var(--neon-cyan);margin:var(--space-3) 0}
+.modal-actiuni{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-2) var(--space-3)}
+.modal-btn{
+  display:inline-block;min-height:44px;padding:12px 28px;border:1px solid var(--neon-cyan);
+  background:var(--bg-panel);color:var(--text);font-family:var(--font-mono);font-size:0.8rem;
+  font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+  border-radius:var(--radius-btn);text-decoration:none;
+  transition:all var(--speed-hover) var(--ease-arcade);
+  cursor:pointer;
+}
+.modal-btn:hover:not(:disabled){transform:scale(1.05);border-color:var(--amber);color:var(--amber)}
+
+/* Scanlines */
+.scanlines::after{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,0.04) 0 1px,transparent 1px 3px);
+  opacity:0.5;z-index:9998;
+}
+.crt-vignette::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%);
+  z-index:9999;
+}
+
+/* Responsive */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+@media (max-width:600px) {
+  .game-title{font-size:1.5rem}
+  .modal-content{padding:var(--space-4)}
+  .modal-title{font-size:1.4rem}
+  .modal-streak{font-size:2rem}
+}
+@media (max-width:400px) {
+  :root{--zn-semn:18px}
+  .console-header{padding:var(--space-3)}
+  .player-status{gap:var(--space-3)}
+  .btn{letter-spacing:0.05em}
+}
+</style>
+<script defer src="/consimtamant.js"></script></head>
+<body class="crt-vignette scanlines">
+<svg class="sr" aria-hidden="true" focusable="false">
+  <symbol id="zn-soare" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4.4" fill="currentColor"/>
+    <path d="M19 12h2.8M12 19v2.8M5 12H2.2M12 5V2.2M16.95 16.95l1.98 1.98M7.05 16.95l-1.98 1.98M7.05 7.05L5.07 5.07M16.95 7.05l1.98-1.98" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="zn-luna" viewBox="0 0 24 24">
+    <path d="M10.1 4.02A8.6 8.6 0 1 0 19.83 14.65A7.4 7.4 0 0 1 10.1 4.02Z" fill="currentColor"/>
+  </symbol>
+  <symbol id="zn-egal" viewBox="0 0 24 24">
+    <path d="M6 9.2h12M6 14.8h12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="zn-diferit" viewBox="0 0 24 24">
+    <path d="M7.4 7.4l9.2 9.2M16.6 7.4l-9.2 9.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  </symbol>
+</svg>
+<div class="console">
+<header class="console-header">
+  <a href="/" class="logo-glow">GAMES<span>.ro</span></a>
+  <div class="player-status">
+    <div class="clock">
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">--/--/----</div>
+    </div>
+    <div class="status-item">
+      <span class="status-label">STREAK</span>
+      <span class="status-value" id="streak">0</span>
+    </div>
+  </div>
+</header>
+
+<main class="joc" id="joc">
+  <h1 class="game-title">Zi și Noapte</h1>
+  <p class="game-instructions">Umple grila cu sori și luni: câte 3 din fiecare pe fiecare rând și coloană. Apasă o căsuță ca s-o schimbi: soare, lună, gol.</p>
+  <p class="demo" id="demo" hidden></p>
+
+  <div class="bara-stare">
+    <div class="stare-stanga">
+      <span class="editie" id="editie">#1</span>
+      <span id="nivel-text">—</span>
+      <span class="trepte" id="trepte" role="img" aria-label="Dificultate"></span>
+    </div>
+    <div class="stare-dreapta">
+      <span class="cronometru" role="timer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg>
+        <span class="sr">Timp scurs: </span><span id="timp">0:00</span>
+      </span>
+      <span class="nr-indicii">Indicii <b id="nr-indicii">0</b></span>
+    </div>
+  </div>
+
+  <div class="tabla-cadru" id="tabla-cadru">
+    <div class="tabla" id="tabla" role="group" aria-label="Grila 6 pe 6. Săgețile mută între căsuțe; Enter sau Spațiu schimbă simbolul."></div>
+    <div class="strat" id="strat" aria-hidden="true"></div>
+  </div>
+  <p class="mesaj" id="mesaj" aria-live="polite"></p>
+
+  <div class="actiuni" id="actiuni">
+    <button class="btn" id="btn-anuleaza" type="button" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      <span>Anulează</span>
+    </button>
+    <button class="btn" id="btn-sterge" type="button" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+      <span id="btn-sterge-text">Șterge tot</span>
+    </button>
+    <button class="btn" id="btn-indiciu" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg>
+      <span>Indiciu</span>
+    </button>
+  </div>
+
+  <section class="rezultat" id="rezultat" hidden>
+    <h2 class="rezultat-titlu">Rezolvat în <span id="rez-timp">0:00</span></h2>
+    <p class="rezultat-detalii" id="rez-detalii"></p>
+    <button class="share-button" id="share-button" type="button">SHARE</button>
+    <p class="revino">Revino mâine pentru un puzzle nou.</p>
+  </section>
+
+  <details class="cum" id="cum">
+    <summary>Cum se joacă
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="cum-corp">
+      <ul>
+        <li>Umple grila cu sori și luni.</li>
+        <li>Pe fiecare rând și pe fiecare coloană: 3 sori și 3 luni.</li>
+        <li>Cel mult doi la fel, unul lângă altul (pe orizontală sau pe verticală).</li>
+        <li>„=” între două căsuțe: același simbol. „×”: simboluri diferite.</li>
+      </ul>
+      <svg class="exemplu" viewBox="0 0 254 50" role="img" aria-label="Exemple: după doi sori alăturați urmează o lună; două căsuțe cu „=” între ele au același simbol; cu „×” între ele, simboluri diferite.">
+        <g>
+          <rect class="ex-cel" x="1" y="1" width="28" height="28" rx="4"/>
+          <rect class="ex-cel" x="33" y="1" width="28" height="28" rx="4"/>
+          <rect class="ex-cel" x="65" y="1" width="28" height="28" rx="4"/>
+          <use href="#zn-soare" class="ex-soare" x="5" y="5" width="20" height="20"/>
+          <use href="#zn-soare" class="ex-soare" x="37" y="5" width="20" height="20"/>
+          <use href="#zn-luna" class="ex-luna" x="69" y="5" width="20" height="20"/>
+          <text x="47" y="46" text-anchor="middle">nu 3 la rând</text>
+        </g>
+        <g>
+          <rect class="ex-cel" x="113" y="1" width="28" height="28" rx="4"/>
+          <rect class="ex-cel" x="151" y="1" width="28" height="28" rx="4"/>
+          <use href="#zn-luna" class="ex-luna" x="117" y="5" width="20" height="20"/>
+          <use href="#zn-luna" class="ex-luna" x="155" y="5" width="20" height="20"/>
+          <circle class="ex-semn" cx="146" cy="15" r="7"/>
+          <use href="#zn-egal" class="ex-glif" x="140.5" y="9.5" width="11" height="11"/>
+          <text x="146" y="46" text-anchor="middle">la fel</text>
+        </g>
+        <g>
+          <rect class="ex-cel" x="187" y="1" width="28" height="28" rx="4"/>
+          <rect class="ex-cel" x="225" y="1" width="28" height="28" rx="4"/>
+          <use href="#zn-soare" class="ex-soare" x="191" y="5" width="20" height="20"/>
+          <use href="#zn-luna" class="ex-luna" x="229" y="5" width="20" height="20"/>
+          <circle class="ex-semn" cx="220" cy="15" r="7"/>
+          <use href="#zn-diferit" class="ex-glif" x="214.5" y="9.5" width="11" height="11"/>
+          <text x="220" y="46" text-anchor="middle">diferite</text>
+        </g>
+      </svg>
+      <p class="cum-nota">Apasă o căsuță (sau trage peste mai multe): gol → soare → lună → gol. Greșelile se colorează imediat în magenta.</p>
+      <p class="cum-nota">Tastatură: săgeți, Enter sau Spațiu; S = soare, L = lună, Delete = gol. Un puzzle nou în fiecare zi: luni e cel mai ușor, duminică cel mai greu.</p>
+    </div>
+  </details>
+
+  <p class="sr" id="anunt" aria-live="polite"></p>
+</main>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+    <div class="modal-title" id="modal-title">Rezolvat!</div>
+    <div class="modal-message" id="modal-message"></div>
+    <div class="modal-streak" id="modal-streak"></div>
+    <div class="modal-actiuni">
+      <button class="modal-btn" id="modal-share" type="button">SHARE</button>
+      <button class="modal-btn" id="modal-close" type="button">ÎNCHIDE</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ==== Zi și Noapte — logica paginii (v1, 24.09.2026) ====
+// Datele și logica pură stau în ./zi-si-noapte.js (testate în Node); aici: DOM, stare, cronometru.
+import { GamesRO } from "/shell.js";
+import {
+  SLUG, NUME, N, CELULE, GOL, SOARE, LUNA, BANC, ETICHETE, ZILE,
+  pregateste, analizeaza, eCastig, pasulUrmator, tablaDin, sirDin, puzzleulZilei, ziuaNivelului,
+} from "./zi-si-noapte.js?v=1";
+
+const ZI = GamesRO.seedAzi();
+// ?nr=12 → previzualizarea puzzle-ului #12 (pentru verificare): nu se salvează, nu intră în streak
+const NR_PREVIEW = Number(new URLSearchParams(location.search).get("nr"));
+const PREVIEW = Number.isInteger(NR_PREVIEW) && NR_PREVIEW >= 1 && NR_PREVIEW <= BANC.length;
+const ziua = puzzleulZilei(ZI);
+const EDITIE = PREVIEW ? NR_PREVIEW : ziua.editie;
+const P = PREVIEW ? BANC[NR_PREVIEW - 1] : ziua.puzzle;
+const pz = pregateste(P);
+const PREFIX_STARE = "gro:" + SLUG + ":stare:";
+// id-ul puzzle-ului e în cheie: dacă bancul se schimbă în timpul zilei, starea veche nu se aplică noului puzzle
+const STATE_KEY = PREFIX_STARE + ZI + ":" + P.id;
+
+const $ = (id) => document.getElementById(id);
+const tablaEl = $("tabla"), stratEl = $("strat"), cadruEl = $("tabla-cadru");
+const mesajEl = $("mesaj"), anuntEl = $("anunt"), timpEl = $("timp"), nrIndiciiEl = $("nr-indicii");
+const actiuniEl = $("actiuni"), btnAnuleaza = $("btn-anuleaza"), btnSterge = $("btn-sterge"), btnStergeText = $("btn-sterge-text");
+const btnIndiciu = $("btn-indiciu");
+const rezultatEl = $("rezultat"), rezTimp = $("rez-timp"), rezDetalii = $("rez-detalii"), shareButton = $("share-button");
+const streakEl = $("streak"), clockTimeEl = $("clock-time"), clockDateEl = $("clock-date");
+const modal = $("modal"), modalMessage = $("modal-message"), modalStreak = $("modal-streak");
+const modalShare = $("modal-share"), modalClose = $("modal-close");
+
+// ─── Starea ───
+let tabla = pz.fixe.slice();   // 0 gol, 1 soare, 2 lună
+let istoric = [];              // tablele (ca șiruri) de dinaintea fiecărei acțiuni — Anulează fără limită
+let indicii = 0;
+let gata = false;
+let pornit = false;            // cronometrul pornește la prima mutare
+let msAcumulat = 0;            // timpul scurs până la ultima oprire a cronometrului
+let pornitLa = null;           // performance.now() de la ultima pornire; null = oprit
+let ultimaSalvare = 0;
+
+const fmt = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+const NUME_SIMBOL = ["gol", "soare", "lună"];
+const CU_ARTICOL = ["gol", "un soare", "o lună"];
+const randul = (i) => Math.floor(i / N), coloana = (i) => i % N;
+const numeLinie = (k) => (k < N ? "rândul " + (k + 1) : "coloana " + (k - N + 1));
+const mare = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+/** „1 indiciu”, „2 indicii”, „20 de indicii” — acordul numeralului în română. */
+const cate = (n, sg, pl) => (n === 1 ? "1 " + sg : n + (n >= 20 && (n % 100 === 0 || n % 100 >= 20) ? " de " : " ") + pl);
+
+// ─── Cronometru: pornește la prima mutare, stă pe loc cât fila e ascunsă, se oprește la final ───
+function msScurs() { return msAcumulat + (pornitLa !== null ? performance.now() - pornitLa : 0); }
+function secunde() { return Math.floor(msScurs() / 1000); }
+function pornesteCeas() {
+  if (pornitLa === null && pornit && !gata && !document.hidden) pornitLa = performance.now();
+}
+function opresteCeas() {
+  if (pornitLa === null) return;
+  msAcumulat += performance.now() - pornitLa;
+  pornitLa = null;
+}
+let afisat = -1;
+function afiseazaTimp() {
+  const s = secunde();
+  if (s !== afisat) { afisat = s; timpEl.textContent = fmt(s); }
+}
+
+// ─── Salvare (localStorage, cu try/catch: private mode / stocare blocată) ───
+function salveaza() {
+  ultimaSalvare = performance.now();
+  if (PREVIEW) return;
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      tabla: sirDin(tabla), ms: Math.round(msScurs()), indicii, gata, pornit, istoric: istoric.slice(-400),
+    }));
+  } catch { /* stocare indisponibilă */ }
+  curataVechi();
+}
+
+/** Șterge stările altor zile (același prefix, altă cheie). Nu și în previzualizare: acolo cheia e a
+ *  puzzle-ului previzualizat, iar starea reală a zilei trebuie să rămână neatinsă. */
+function curataVechi() {
+  if (PREVIEW) return;
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(PREFIX_STARE) === 0 && k !== STATE_KEY) localStorage.removeItem(k);
+    }
+  } catch { /* stocare indisponibilă */ }
+}
+
+function citesteStare() {
+  if (PREVIEW) return null;
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    const t = s && tablaDin(s.tabla);
+    if (!t) return null;
+    for (let i = 0; i < CELULE; i++) if (pz.fixe[i] && t[i] !== pz.fixe[i]) return null; // altă tablă
+    return {
+      tabla: t,
+      ms: Number.isFinite(s.ms) && s.ms >= 0 ? s.ms : 0,
+      indicii: Number.isInteger(s.indicii) && s.indicii >= 0 ? s.indicii : 0,
+      gata: s.gata === true && eCastig(pz, t),
+      pornit: s.pornit === true,
+      istoric: Array.isArray(s.istoric) ? s.istoric.filter((x) => tablaDin(x)) : [],
+    };
+  } catch { return null; }
+}
+
+/** A mai jucat vreodată (pe acest dispozitiv)? Dacă nu, „Cum se joacă” pornește deschis. */
+function aMaiJucat() {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf("gro:" + SLUG + ":") === 0) return true;
+    }
+  } catch { /* stocare indisponibilă */ }
+  return false;
+}
+
+// ─── Construcția tablei ───
+const celule = [];
+const semneEl = [];
+const liniiEl = [];
+let cursor = 0;                // căsuța cu tabindex 0 (focus „itinerant”)
+
+function construiesteTabla() {
+  for (let i = 0; i < CELULE; i++) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "celula" + (pz.fixe[i] ? " fixa" : "");
+    b.dataset.i = i;
+    b.tabIndex = -1;
+    b.style.setProperty("--d", randul(i) + coloana(i));
+    b.innerHTML = '<svg class="sim" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#zn-soare"></use></svg>';
+    celule.push(b);
+    tablaEl.appendChild(b);
+  }
+  cursor = pz.fixe.findIndex((v) => v === GOL);
+  if (cursor < 0) cursor = 0;
+  celule[cursor].tabIndex = 0;
+  for (let k = 0; k < 2 * N; k++) {
+    const el = document.createElement("div");
+    el.className = "linie-rea " + (k < N ? "rand" : "col");
+    el.style.setProperty(k < N ? "--r" : "--c", k < N ? k : k - N);
+    el.hidden = true;
+    liniiEl.push(el);
+    stratEl.appendChild(el);
+  }
+  for (const m of pz.semne) {
+    const el = document.createElement("div");
+    el.className = "semn " + (m.b === m.a + 1 ? "oriz" : "vert");
+    el.style.setProperty("--r", randul(m.a));
+    el.style.setProperty("--c", coloana(m.a));
+    el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#' + (m.egal ? "zn-egal" : "zn-diferit") + '"></use></svg>';
+    semneEl.push(el);
+    stratEl.appendChild(el);
+  }
+}
+
+/** Relațiile unei căsuțe cu vecinele, pentru cititoarele de ecran. */
+const RELATII = (() => {
+  const r = Array.from({ length: CELULE }, () => []);
+  for (const m of pz.semne) {
+    const oriz = m.b === m.a + 1;
+    const rel = m.egal ? "egal cu" : "diferit de";
+    r[m.a].push(rel + (oriz ? " căsuța din dreapta" : " căsuța de jos"));
+    r[m.b].push(rel + (oriz ? " căsuța din stânga" : " căsuța de sus"));
+  }
+  return r;
+})();
+
+function eticheta(i, an) {
+  let t = "Rândul " + (randul(i) + 1) + ", coloana " + (coloana(i) + 1) + ": " + NUME_SIMBOL[tabla[i]];
+  if (pz.fixe[i]) t += ", fix";
+  if (an.triple.has(i)) t += ", trei la rând";
+  for (const r of RELATII[i]) t += "; " + r;
+  return t;
+}
+
+// ─── Afișare ───
+function randeaza() {
+  const an = analizeaza(pz, tabla);
+  celule.forEach((b, i) => {
+    const v = tabla[i];
+    b.classList.toggle("v1", v === SOARE);
+    b.classList.toggle("v2", v === LUNA);
+    b.classList.toggle("triplu", an.triple.has(i));
+    b.classList.toggle("blocat", gata);
+    if (v) b.firstChild.firstChild.setAttribute("href", v === SOARE ? "#zn-soare" : "#zn-luna");
+    b.setAttribute("aria-label", eticheta(i, an));
+    b.setAttribute("aria-disabled", pz.fixe[i] || gata ? "true" : "false");
+  });
+  semneEl.forEach((el, j) => el.classList.toggle("incalcat", an.semne.includes(j)));
+  liniiEl.forEach((el, k) => { el.hidden = !an.linii.some((x) => x.k === k); });
+
+  const areMutari = tabla.some((v, i) => v && !pz.fixe[i]);
+  btnAnuleaza.disabled = gata || !istoric.length;
+  btnSterge.disabled = gata || !areMutari;
+  if (btnSterge.disabled) dezarmeaza();
+  btnIndiciu.disabled = gata;
+  nrIndiciiEl.textContent = indicii;
+  actiuniEl.hidden = gata;
+  rezultatEl.hidden = !gata;
+  cadruEl.classList.toggle("castig", gata);
+  if (gata) {
+    rezTimp.textContent = fmt(secunde());
+    rezDetalii.textContent = (indicii ? "cu " + cate(indicii, "indiciu", "indicii") : "fără indicii") + " · puzzle-ul #" + EDITIE;
+  }
+  if (an.plina && !an.castig) mesaj("Grila e plină, dar ceva nu se potrivește: caută marcajele magenta.", "plina");
+  else if (mesajTip === "plina") mesaj("");
+  afiseazaTimp();
+}
+
+let mesajTip = "";
+function mesaj(t, tip = "") { mesajEl.textContent = t; mesajTip = t ? tip : ""; }
+const anunta = (t) => { anuntEl.textContent = t; }; // doar pentru cititoarele de ecran
+
+// ─── Mutări ───
+function porneste() {
+  if (!pornit) pornit = true;
+  pornesteCeas();
+}
+
+/** După orice schimbare a tablei: afișare, câștig sau salvare. */
+function dupaMutare() {
+  porneste();
+  randeaza();
+  if (eCastig(pz, tabla)) castiga();
+  else salveaza();
+}
+
+/** Un „tap” pe căsuța i: gol → soare → lună → gol. */
+function apasa(i) {
+  if (gata || pz.fixe[i]) return;
+  istoric.push(sirDin(tabla));
+  tabla[i] = (tabla[i] + 1) % 3;
+  dezarmeaza();
+  if (mesajTip === "indiciu") mesaj("");
+  dupaMutare();
+}
+
+/** Tastele S / L / Delete: pune direct un simbol. */
+function pune(i, v) {
+  if (gata || pz.fixe[i] || tabla[i] === v) return;
+  istoric.push(sirDin(tabla));
+  tabla[i] = v;
+  dezarmeaza();
+  if (mesajTip === "indiciu") mesaj("");
+  dupaMutare();
+}
+
+/** Mută căsuța cu tabindex 0 (focus „itinerant”) pe i; cuFocus: o și focalizează (din tastatură). */
+function seteazaCursor(i, cuFocus) {
+  if (celule[cursor]) celule[cursor].tabIndex = -1;
+  cursor = i;
+  celule[i].tabIndex = 0;
+  if (cuFocus) celule[i].focus();
+}
+
+// Pointer (mouse, deget, creion): apăsarea schimbă căsuța; tragerea pune același simbol pe căsuțele
+// libere care aveau aceeași valoare ca prima (ex.: pornești de pe gol → umpli golurile cu sori).
+// O tragere întreagă = o singură intrare în Anulează.
+let gest = null;
+let ultimaActivare = -1e9;     // ca click-ul care urmează după pointerdown / tastă să nu mai schimbe o dată
+
+tablaEl.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  const b = e.target.closest(".celula");
+  if (!b || gest) return;
+  const i = Number(b.dataset.i);
+  ultimaActivare = performance.now();
+  // focusul îl mută browserul (fără inel de focus la mouse); aici doar căsuța cu tabindex 0
+  seteazaCursor(i, false);
+  if (gata || pz.fixe[i]) return;
+  const v0 = tabla[i];
+  gest = { id: e.pointerId, v0, v1: (v0 + 1) % 3, inainte: sirDin(tabla), atinse: new Set([i]) };
+  tabla[i] = gest.v1;
+  dezarmeaza();
+  if (mesajTip === "indiciu") mesaj("");
+  porneste();
+  randeaza();
+});
+
+// mișcarea și ridicarea se ascultă pe window: tragerea se termină corect și dacă iese din tablă
+window.addEventListener("pointermove", (e) => {
+  if (!gest || e.pointerId !== gest.id) return;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const b = el && el.closest ? el.closest(".celula") : null;
+  if (!b || !tablaEl.contains(b)) return;
+  const i = Number(b.dataset.i);
+  if (gest.atinse.has(i) || pz.fixe[i] || tabla[i] !== gest.v0) return;
+  gest.atinse.add(i);
+  tabla[i] = gest.v1;
+  randeaza();
+});
+
+function terminaGest(e) {
+  if (!gest || e.pointerId !== gest.id) return;
+  const g = gest;
+  gest = null;
+  ultimaActivare = performance.now();
+  if (sirDin(tabla) !== g.inainte) {
+    istoric.push(g.inainte);
+    dupaMutare();
+  }
+}
+window.addEventListener("pointerup", terminaGest);
+window.addEventListener("pointercancel", terminaGest);
+
+// Click fără pointerdown înainte = activare din tastatură sau cititor de ecran.
+tablaEl.addEventListener("click", (e) => {
+  const b = e.target.closest(".celula");
+  if (!b || performance.now() - ultimaActivare < 700) return;
+  const i = Number(b.dataset.i);
+  seteazaCursor(i, false);
+  apasa(i);
+});
+
+tablaEl.addEventListener("keydown", (e) => {
+  const b = e.target.closest(".celula");
+  if (!b || e.altKey || e.ctrlKey || e.metaKey) return;
+  const i = Number(b.dataset.i), r = randul(i), c = coloana(i);
+  let j = -1;
+  switch (e.key) {
+    case "ArrowRight": j = c < N - 1 ? i + 1 : i; break;
+    case "ArrowLeft": j = c > 0 ? i - 1 : i; break;
+    case "ArrowDown": j = r < N - 1 ? i + N : i; break;
+    case "ArrowUp": j = r > 0 ? i - N : i; break;
+    case "Home": j = r * N; break;
+    case "End": j = r * N + N - 1; break;
+    case "Enter": case " ": case "Spacebar":
+      e.preventDefault();
+      ultimaActivare = performance.now();
+      apasa(i);
+      return;
+    case "s": case "S": case "1": e.preventDefault(); pune(i, SOARE); return;
+    case "l": case "L": case "2": e.preventDefault(); pune(i, LUNA); return;
+    case "Delete": case "Backspace": case "0": e.preventDefault(); pune(i, GOL); return;
+    default: return;
+  }
+  e.preventDefault();
+  seteazaCursor(j, true);
+});
+
+// ─── Anulează / Șterge tot / Indiciu ───
+function anuleaza() {
+  if (gata || !istoric.length) return;
+  tabla = tablaDin(istoric.pop());
+  dezarmeaza();
+  mesaj("");
+  randeaza();
+  salveaza();
+}
+
+let armat = null;              // „Șterge tot” așteaptă confirmarea (al doilea click în 3 s)
+function dezarmeaza() {
+  if (!armat) return;
+  clearTimeout(armat);
+  armat = null;
+  btnSterge.classList.remove("sigur");
+  btnStergeText.textContent = "Șterge tot";
+  if (mesajTip === "sterge") mesaj("");
+}
+function sterge() {
+  if (gata || btnSterge.disabled) return;
+  if (!armat) {
+    armat = setTimeout(dezarmeaza, 3000);
+    btnSterge.classList.add("sigur");
+    btnStergeText.textContent = "Sigur?";
+    mesaj("Apasă încă o dată în 3 secunde ca să ștergi tot.", "sterge");
+    return;
+  }
+  dezarmeaza();
+  istoric.push(sirDin(tabla));
+  for (let i = 0; i < CELULE; i++) if (!pz.fixe[i]) tabla[i] = GOL;
+  mesaj("Grila e din nou goală. Anulează aduce totul înapoi.");
+  dupaMutare();
+}
+
+/** Explicația unui pas logic (v = simbolul pus), pentru mesajul de sub tablă. */
+function explica(pas, v) {
+  const unde = pas.k === undefined ? "" : numeLinie(pas.k);
+  const sori = pas.simbol === SOARE;
+  const pereche = sori ? "doi sori" : "două luni";
+  switch (pas.regula) {
+    case "pereche": return mare(pereche) + (sori ? " alăturați" : " alăturate") + " pe " + unde + ": lângă " + (sori ? "ei" : "ele") + " vine " + CU_ARTICOL[v] + ".";
+    case "intre": return "Între " + pereche + " (" + unde + ") nu poate sta tot " + CU_ARTICOL[pas.simbol] + ", deci e " + CU_ARTICOL[v] + ".";
+    case "echilibru": return mare(unde) + " are deja 3 " + (sori ? "sori" : "luni") + ", deci restul sunt " + (sori ? "luni" : "sori") + ".";
+    case "semn": return (pas.egal ? "Semnul „=” cere același simbol ca vecina" : "Semnul „×” cere simbolul opus vecinei") + ", deci aici e " + CU_ARTICOL[v] + ".";
+    case "privire": return "Încearcă toate variantele posibile pentru " + unde + ": în toate, aici e " + CU_ARTICOL[v] + ".";
+    default: return "Rândul " + (randul(pas.i) + 1) + ", coloana " + (coloana(pas.i) + 1) + ": " + CU_ARTICOL[v] + ".";
+  }
+}
+
+let indiciuTimer = null;
+function indiciu() {
+  if (gata) return;
+  dezarmeaza();
+  const an = analizeaza(pz, tabla);
+  const gresite = [];
+  for (let i = 0; i < CELULE; i++) if (!pz.fixe[i] && tabla[i] && tabla[i] !== pz.sol[i]) gresite.push(i);
+  let i, text;
+  if (gresite.length) {
+    // întâi o greșeală care se vede deja (dungi, linie marcată, semn încălcat), apoi oricare
+    const vizibila = (x) => an.triple.has(x) || an.linii.some((l) => l.k === randul(x) || l.k === N + coloana(x)) ||
+      an.semne.some((j) => pz.semne[j].a === x || pz.semne[j].b === x);
+    i = gresite.find(vizibila);
+    if (i === undefined) i = gresite[0];
+    text = "Căsuța de pe rândul " + (randul(i) + 1) + ", coloana " + (coloana(i) + 1) + " era greșită: acolo e " + CU_ARTICOL[pz.sol[i]] + ".";
+  } else {
+    const pas = pasulUrmator(pz, tabla);
+    i = pas ? pas.i : tabla.findIndex((v) => v === GOL);
+    if (i < 0) return;
+    text = explica(pas || { i }, pz.sol[i]);
+  }
+  istoric.push(sirDin(tabla));
+  tabla[i] = pz.sol[i];
+  indicii++;
+  seteazaCursor(i, false);
+  celule.forEach((b) => b.classList.remove("indiciu"));
+  celule[i].classList.add("indiciu");
+  clearTimeout(indiciuTimer);
+  indiciuTimer = setTimeout(() => celule[i].classList.remove("indiciu"), 1600);
+  mesaj("Indiciu: " + text, "indiciu");
+  dupaMutare();
+}
+
+// ─── Final: câștig, modal, share ───
+function castiga() {
+  opresteCeas();
+  gata = true;
+  const s = secunde();
+  if (!PREVIEW) GamesRO.marcheazaJucat(SLUG, { timp: s });
+  salveaza();
+  actualizeazaStreak();
+  randeaza();
+  if (mesajTip !== "indiciu") mesaj("");
+  anunta("Rezolvat în " + fmt(s) + ".");
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    cadruEl.classList.add("animat");
+    setTimeout(() => cadruEl.classList.remove("animat"), 1400);
+  }
+  setTimeout(arataModal, 700);
+}
+
+function textRezultat() {
+  return NUME + " #" + EDITIE + " · " + fmt(secunde()) + (indicii === 0 ? " · fără indicii" : "");
+}
+
+function arataModal() {
+  modalMessage.textContent = "Ai rezolvat puzzle-ul #" + EDITIE + " în " + fmt(secunde()) +
+    (indicii ? ", cu " + cate(indicii, "indiciu", "indicii") : ", fără indicii") + ". Revino mâine pentru un puzzle nou.";
+  modalStreak.textContent = "STREAK " + GamesRO.streak(SLUG);
+  modalShare.hidden = PREVIEW;
+  modal.classList.add("active");
+  (PREVIEW ? modalClose : modalShare).focus();
+}
+
+function inchideModal() {
+  if (!modal.classList.contains("active")) return;
+  modal.classList.remove("active");
+  if (!rezultatEl.hidden) (PREVIEW ? $("cum").querySelector("summary") : shareButton).focus();
+}
+
+async function distribuie(btn) {
+  if (!gata || PREVIEW) return;
+  const EMOJI = String.fromCodePoint(0x2600, 0xfe0f, 0x1f319); // soare + lună — emoji doar în textul de share, nu în interfață
+  const out = await GamesRO.share(SLUG, EMOJI, textRezultat());
+  if (out === "copied") feedbackShare(btn, "COPIAT!");
+  else if (out === false) feedbackShare(btn, "COPIAZĂ MANUAL");
+}
+
+const shareTimere = new Map();
+function feedbackShare(btn, t) {
+  btn.textContent = t;
+  clearTimeout(shareTimere.get(btn));
+  shareTimere.set(btn, setTimeout(() => { btn.textContent = "SHARE"; }, 1500));
+}
+
+// ─── Header: ceas + streak ───
+function actualizeazaStreak() { streakEl.textContent = GamesRO.streak(SLUG); }
+
+function updateClock() {
+  const now = new Date();
+  clockTimeEl.textContent = now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+  clockDateEl.textContent = now.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+// ─── Pornire ───
+function init() {
+  updateClock();
+  setInterval(updateClock, 1000);
+  actualizeazaStreak();
+
+  $("editie").textContent = "#" + EDITIE;
+  $("nivel-text").textContent = ZILE[ziuaNivelului(P.nivel)] + " · " + ETICHETE[P.nivel];
+  const trepte = $("trepte");
+  for (let k = 1; k <= 7; k++) {
+    const t = document.createElement("i");
+    if (k <= P.nivel) t.className = "plin";
+    trepte.appendChild(t);
+  }
+  trepte.setAttribute("aria-label", "Dificultate " + P.nivel + " din 7");
+  if (PREVIEW) {
+    const d = $("demo");
+    d.hidden = false;
+    d.textContent = "PREVIEW — puzzle-ul #" + EDITIE + " (" + ETICHETE[P.nivel] + "). Nu se salvează și nu intră în streak.";
+  }
+
+  $("cum").open = !PREVIEW && !aMaiJucat();
+  construiesteTabla();
+  const s = citesteStare();
+  curataVechi();
+  if (s) {
+    tabla = s.tabla; msAcumulat = s.ms; indicii = s.indicii; gata = s.gata; pornit = s.pornit; istoric = s.istoric;
+  }
+  randeaza();                  // la reîncărcarea unei zile terminate nu mai apare modalul
+  pornesteCeas();              // reia cronometrul unui joc început (dacă fila e vizibilă)
+  setInterval(() => {
+    afiseazaTimp();
+    if (pornitLa !== null && performance.now() - ultimaSalvare > 5000) salveaza();
+  }, 250);
+}
+
+btnAnuleaza.addEventListener("click", anuleaza);
+btnSterge.addEventListener("click", sterge);
+btnIndiciu.addEventListener("click", indiciu);
+shareButton.addEventListener("click", () => distribuie(shareButton));
+modalShare.addEventListener("click", () => distribuie(modalShare));
+modalClose.addEventListener("click", inchideModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) inchideModal(); });
+document.addEventListener("keydown", (e) => {
+  if (!modal.classList.contains("active")) return;
+  if (e.key === "Escape") { e.preventDefault(); inchideModal(); return; }
+  if (e.key === "Tab") { // focusul rămâne în modal
+    const butoane = [modalShare, modalClose].filter((b) => !b.hidden);
+    const k = butoane.indexOf(document.activeElement);
+    e.preventDefault();
+    butoane[(k + (e.shiftKey ? butoane.length - 1 : 1)) % butoane.length].focus();
+  }
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { opresteCeas(); salveaza(); }
+  else { pornesteCeas(); afiseazaTimp(); }
+});
+window.addEventListener("pagehide", () => { opresteCeas(); salveaza(); });
+window.addEventListener("pageshow", (e) => { if (e.persisted) pornesteCeas(); });
+
+init();
+</script>
+</body>
+</html>
