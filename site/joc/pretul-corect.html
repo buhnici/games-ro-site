@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prețul Corect — GAMES.ro</title>
-<meta name="description" content="Ghicește prețul real al produselor. Provocare zilnică cu 5 produse reale.">
+<meta name="description" content="Cât costă viața în România? Ghicește 5 prețuri reale pe zi — de la biletul de metrou la litrul de lapte. Fiecare preț vine cu sursa.">
 <link rel="canonical" href="https://games.ro/joc/pretul-corect">
 <meta property="og:title" content="Prețul Corect — GAMES.ro">
-<meta property="og:description" content="Ghicește prețul real al produselor. Provocare zilnică cu 5 produse reale.">
+<meta property="og:description" content="Cât costă viața în România? Ghicește 5 prețuri reale pe zi — de la biletul de metrou la litrul de lapte. Fiecare preț vine cu sursa.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://games.ro/joc/pretul-corect">
 <style>
@@ -162,8 +162,16 @@ body{
   transition:transform var(--speed-hover) var(--ease-arcade),box-shadow var(--speed-hover) ease,color var(--speed-hover) ease;
   cursor:pointer;
 }
-.share-button:hover{transform:scale(1.04);border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber)}
-.share-button:disabled{opacity:0.3;cursor:default}
+.share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber);box-shadow:var(--glow-amber)}
+.share-button:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+
+/* Pictogramele categoriilor (SVG inline, currentColor) */
+.ico{display:inline-flex;flex:none;color:var(--neon-cyan)}
+.ico svg{width:100%;height:100%}
+.ico-mare{width:88px;height:88px;padding:22px;border:var(--border-neon);border-radius:var(--radius-cabinet);background:var(--bg-panel-solid)}
+.ico-mic{width:28px;height:28px}
+#pret-input:focus{outline:none}
+#pret-input:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:2px}
 
 /* Modal */
 .modal-overlay{
@@ -240,7 +248,7 @@ body{
 </header>
 
 <h1 class="game-title">Prețul Corect</h1>
-<p class="game-instructions">Ghicește prețul real al 5 produse. Scor maxim 500.</p>
+<p class="game-instructions">Ghicește 5 prețuri reale din România, de la biletul de metrou la litrul de lapte. Scor maxim 500.</p>
 
 <div class="products-list" id="products-list"></div>
 
@@ -270,8 +278,37 @@ import { PRODUSE, produseleZilei, scor } from "./pretul-corect.js";
 
 const SLUG = "pretul-corect";
 const ZI = GamesRO.seedAzi();
-const STATE_KEY = "gro:" + SLUG + ":stare:" + ZI;
+// :v2 = prețurile de zi cu zi (23.09.2026); starea salvată pe produsele gb.ro nu se mai potrivește
+const STATE_KEY = "gro:" + SLUG + ":stare:" + ZI + ":v2";
 const PRAG_VICTORIE = 300;
+
+// Pictograme per categorie — SVG inline, fără imagini externe
+const SVG = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>";
+const ICON = {
+  transport: SVG('<rect x="4" y="3" width="16" height="15" rx="2"/><path d="M4 11h16M8 18v2.5M16 18v2.5"/><circle cx="8" cy="14.5" r="1"/><circle cx="16" cy="14.5" r="1"/>'),
+  taxe: SVG('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>'),
+  alimente: SVG('<path d="M3 5h2l2 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/>'),
+  carburant: SVG('<path d="M5 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h14M5 10h10"/><path d="M15 8l3 3v6a1.5 1.5 0 0 0 3 0V9l-2-2"/>'),
+  abonamente: SVG('<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M10 8.5v5l4.5-2.5z"/><path d="M8 21h8"/>'),
+  altele: SVG('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>'),
+};
+const ETICHETA = { transport: "Transport", taxe: "Taxe și acte", alimente: "Coșul zilnic", carburant: "Carburant", abonamente: "Abonamente", altele: "Diverse" };
+
+const fmtLei = (x) => x.toLocaleString("ro-RO", { minimumFractionDigits: Number.isInteger(x) ? 0 : 2, maximumFractionDigits: 2 }) + " lei";
+const fmtData = (iso) => iso.split("-").reverse().join(".");
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+// „7,49", „7.49", „1.500" (mii, stil românesc), „1.500,50", „12 lei"
+function citestePret(s) {
+  s = s.replace(/lei|ron|\s/gi, "");
+  if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, "");
+  return parseFloat(s.replace(",", "."));
+}
+
+function sursaHTML(p) {
+  return '<a href="' + esc(p.sursa) + '" target="_blank" rel="noopener nofollow" style="color:var(--text-dim);font-size:0.75rem">sursa: ' +
+    esc(p.sursa_nume) + " · " + fmtData(p.verificat) + "</a>";
+}
 
 const productsList = document.getElementById("products-list");
 const feedbackArea = document.getElementById("feedback-area");
@@ -316,23 +353,18 @@ function salveazaStare() {
 
 const total = () => puncte.reduce((a, b) => a + b, 0);
 
-function linkGB(p) {
-  return p.url + "?utm_source=games.ro&utm_medium=joc&utm_campaign=pretul-corect";
-}
-
 function randeazaIstoric() {
   productsReveal.innerHTML = "";
   produse.slice(0, runda).forEach((p, i) => {
     const row = document.createElement("div");
     row.className = "reveal-row";
-    row.style.cssText = "display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,229,255,0.2)";
-    const dif = ghiciri[i] != null ? " (tu: " + ghiciri[i].toFixed(0) + ")" : "";
+    row.style.cssText = "display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,229,255,0.2);flex-wrap:wrap";
+    const tu = ghiciri[i] != null ? " (tu: " + fmtLei(ghiciri[i]) + ")" : "";
     row.innerHTML =
-      '<img src="' + p.imagine + '" alt="" loading="lazy" referrerpolicy="no-referrer" style="width:44px;height:44px;object-fit:cover;border-radius:6px">' +
-      '<span style="flex:1;color:var(--text-dim);font-size:0.85rem">' + p.nume + '</span>' +
-      '<span style="font-family:var(--font-mono);color:var(--neon-cyan)">' + p.pret.toFixed(2) + ' RON' + dif + '</span>' +
-      '<span style="font-family:var(--font-mono);color:' + (puncte[i] >= 70 ? "var(--live)" : puncte[i] >= 30 ? "var(--amber)" : "var(--text-faint)") + '">+' + puncte[i] + '</span>' +
-      '<a href="' + linkGB(p) + '" target="_blank" rel="noopener" style="color:var(--amber);font-size:0.75rem;white-space:nowrap">Vezi pe GB.ro →</a>';
+      '<span class="ico ico-mic">' + ICON[p.categorie] + "</span>" +
+      '<span style="flex:1;min-width:160px;color:var(--text-dim);font-size:0.85rem;line-height:1.5">' + esc(p.nume) + "<br>" + sursaHTML(p) + "</span>" +
+      '<span style="font-family:var(--font-mono);color:var(--neon-cyan)">' + fmtLei(p.pret) + tu + "</span>" +
+      '<span style="font-family:var(--font-mono);color:' + (puncte[i] >= 70 ? "var(--live)" : puncte[i] >= 30 ? "var(--amber)" : "var(--neon-magenta)") + '">+' + puncte[i] + "</span>";
     productsReveal.appendChild(row);
   });
 }
@@ -343,7 +375,7 @@ function randeazaRunda() {
   if (done) {
     feedbackArea.style.display = "block";
     feedbackMsg.textContent = win
-      ? "Ai terminat ziua cu " + total() + " din 500. Revino mâine pentru alte produse!"
+      ? "Ai terminat ziua cu " + total() + " din 500. Revino mâine pentru alte prețuri!"
       : "Ai terminat cu " + total() + " din 500. Pragul e " + PRAG_VICTORIE + ". Revanșa: mâine!";
     feedbackMsg.className = "feedback-msg " + (win ? "correct" : "wrong");
     randeazaIstoric();
@@ -354,27 +386,27 @@ function randeazaRunda() {
   card.className = "product-card";
   card.innerHTML =
     '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
-    '<img src="' + p.imagine + '" alt="' + p.nume.replace(/"/g, "&quot;") + '" loading="lazy" referrerpolicy="no-referrer" style="width:96px;height:96px;object-fit:cover;border-radius:8px;border:var(--border-neon)">' +
+    '<span class="ico ico-mare">' + ICON[p.categorie] + "</span>" +
     '<div style="flex:1;min-width:200px">' +
-    '<div class="product-name" style="color:var(--text);margin-bottom:4px">' + p.nume + '</div>' +
-    '<div class="product-tip" style="color:var(--text-faint);font-size:0.75rem;text-transform:uppercase;letter-spacing:var(--tracking-label)">Runda ' + (runda + 1) + ' din 5' + (p.tip ? " · " + p.tip : "") + '</div>' +
-    '</div>' +
+    '<div class="product-name" style="color:var(--text);margin-bottom:4px;font-size:1rem">' + esc(p.nume) + "</div>" +
+    '<div class="product-tip" style="color:var(--text-dim);font-size:0.75rem;text-transform:uppercase;letter-spacing:var(--tracking-label)">Runda ' + (runda + 1) + " din 5 · " + ETICHETA[p.categorie] + "</div>" +
+    "</div>" +
     '<div style="display:flex;gap:8px;align-items:center">' +
-    '<input type="number" inputmode="decimal" min="1" step="1" id="pret-input" placeholder="Preț în RON" style="width:140px;padding:12px;background:var(--bg-cabinet);border:var(--border-neon);border-radius:var(--radius-btn);color:var(--text);font-family:var(--font-mono);font-size:1rem">' +
-    '<button id="trimite-btn" class="share-button" style="opacity:1">TRIMITE</button>' +
-    '</div></div>';
+    '<input type="text" inputmode="decimal" autocomplete="off" id="pret-input" placeholder="Preț în lei" aria-label="Prețul estimat, în lei" style="width:140px;padding:12px;background:var(--bg-cabinet);border:var(--border-neon);border-radius:var(--radius-btn);color:var(--text);font-family:var(--font-mono);font-size:1rem">' +
+    '<button id="trimite-btn" class="share-button">TRIMITE</button>' +
+    "</div></div>";
   productsList.appendChild(card);
 
   const input = card.querySelector("#pret-input");
   const btn = card.querySelector("#trimite-btn");
   const trimite = () => {
-    const val = parseFloat(input.value);
-    if (isNaN(val) || val <= 0) { input.focus(); return; }
+    const val = citestePret(input.value);
+    if (!isFinite(val) || val <= 0) { input.focus(); return; }
     const pct = scor(val, p.pret);
     puncte.push(pct);
     ghiciri.push(val);
     feedbackArea.style.display = "block";
-    feedbackMsg.textContent = "Prețul real: " + p.pret.toFixed(2) + " RON. Estimarea ta: " + val.toFixed(0) + " RON → +" + pct + " puncte.";
+    feedbackMsg.textContent = "Prețul real: " + fmtLei(p.pret) + " (" + p.sursa_nume + ", " + fmtData(p.verificat) + "). Estimarea ta: " + fmtLei(val) + " → +" + pct + " puncte.";
     feedbackMsg.className = "feedback-msg " + (pct >= 70 ? "correct" : pct >= 30 ? "aproape" : "wrong");
     runda++;
     if (runda >= 5) {
