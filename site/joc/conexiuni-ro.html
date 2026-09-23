@@ -107,16 +107,18 @@ body{
   padding:var(--space-3);text-align:center;font-size:1.1rem;font-weight:600;
   cursor:pointer;transition:all var(--speed-hover) var(--ease-arcade);
   font-family:var(--font-body);
+  color:var(--text); /* <button> nu moștenește culoarea: fără asta, UA-ul pune negru pe fundal negru */
 }
 .word-cell:hover:not(:disabled){
   transform:scale(1.05);border-color:var(--neon-cyan);
   box-shadow:var(--glow-cyan);
 }
 .word-cell:disabled{
-  opacity:0.3;cursor:default;
+  opacity:0.5;cursor:default;
 }
-.word-cell.selected{
-  border-color:var(--neon-magenta);box-shadow:var(--glow-magenta);
+.word-cell.selected,.word-cell.selected:hover{ /* :hover inclus — pe mobil hover-ul rămâne lipit după tap */
+  border-color:var(--neon-magenta);box-shadow:var(--glow-magenta),inset 0 0 0 1px var(--neon-magenta);
+  background:color-mix(in srgb,var(--neon-magenta) 18%,var(--bg-cabinet));
 }
 
 /* Feedback */
@@ -129,7 +131,7 @@ body{
 }
 .feedback-message.correct{color:var(--live)}
 .feedback-message.wrong{color:var(--neon-magenta)}
-.feedback-message.approx{color:var(--amber)}
+.feedback-message.aproape{color:var(--amber)}
 .group-reveal{
   display:flex;flex-wrap:wrap;gap:var(--space-2);
   justify-content:center;margin-top:var(--space-3);
@@ -160,8 +162,8 @@ body{
   text-decoration:none;cursor:pointer;
   transition:all var(--speed-hover) var(--ease-arcade);
 }
-.verify-btn:hover{transform:scale(1.05);border-color:var(--neon-magenta);color:var(--neon-magenta)}
-.verify-btn:disabled{opacity:0.3;cursor:default;border-color:var(--text-dim)}
+.verify-btn:hover:not(:disabled){transform:scale(1.05);border-color:var(--neon-magenta);color:var(--neon-magenta)}
+.verify-btn:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
 .back-btn:hover{transform:scale(1.05);border-color:var(--amber);color:var(--amber)}
 
 /* Share */
@@ -174,6 +176,7 @@ body{
   transition:all var(--speed-hover) var(--ease-arcade);
 }
 .share-button:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.share-button:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
 
 /* Modal */
 .modal-overlay{
