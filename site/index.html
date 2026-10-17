@@ -130,7 +130,7 @@ body{
 .stare.jucat{border-color:rgba(57,255,136,.6);color:var(--live)}
 
 /* Clasice */
-.clasice{display:grid;grid-template-columns:repeat(9,1fr);gap:12px}
+.clasice{display:grid;grid-template-columns:repeat(10,1fr);gap:12px}
 .clasic{
   display:grid;justify-items:center;align-content:center;gap:10px;padding:18px 6px;min-height:104px;
   border:1px solid rgba(0,229,255,.16);border-radius:var(--radius-cabinet);background:rgba(8,11,24,.7);
@@ -273,6 +273,20 @@ body{
       </div>
     </section>
 
+    <section class="sectiune" id="puzzle-uri" aria-labelledby="titlu-puzzle-uri">
+      <div class="sectiune-cap">
+        <h2 id="titlu-puzzle-uri">Mai multe puzzle-uri zilnice</h2>
+        <p>Logică și cuvinte, câte unul nou în fiecare zi.</p>
+      </div>
+      <div class="jocuri">
+        <a class="joc" href="/joc/coroane" data-play="coroane">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 33 L7 15 L17 23 L24 11 L31 23 L41 15 L39 33 Z" fill="none" stroke="#ffb300" stroke-width="2.4" stroke-linejoin="round"/><path d="M9 38h30" stroke="#00e5ff" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="11" r="2.2" fill="#ff2e88"/><circle cx="7" cy="15" r="2" fill="#39ff88"/><circle cx="41" cy="15" r="2" fill="#39ff88"/></svg></span>
+          <span><span class="joc-titlu">Coroane</span><span class="joc-desc">O coroană pe fiecare rând, coloană și zonă.</span><span class="joc-meta" data-streak="coroane"></span></span>
+          <span class="stare" data-stare="coroane"></span>
+        </a>
+      </div>
+    </section>
+
     <section class="sectiune" id="clasice" aria-labelledby="titlu-clasice">
       <div class="sectiune-cap">
         <h2 id="titlu-clasice">Clasice arcade</h2>
@@ -307,6 +321,7 @@ body{
       <div class="panou">
         <h2>Noutăți</h2>
         <ul>
+          <li><span class="data">oct 2026</span>Puzzle zilnic nou: <a href="/joc/coroane">Coroane</a>.</li>
           <li><span class="data">oct 2026</span><a href="/joc/sania">Sania</a>: cobori pârtia zilei prin Carpați, de la apus până la zori, cu un singur deget.</li>
           <li><span class="data">sept 2026</span><a href="/joc/pretul-corect">Prețul Corect</a> are acum prețuri de zi cu zi: biletul de metrou, litrul de lapte, pașaportul. Fiecare cu sursa lui.</li>
           <li><span class="data">sept 2026</span>Patru jocuri noi: <a href="/joc/conexiuni-ro">Conexiuni RO</a>, <a href="/joc/pretul-corect">Prețul Corect</a>, <a href="/joc/headline-sau-fake">Headline sau Fake?</a> și <a href="/joc/type-racer-ro">Type Racer RO</a>.</li>
@@ -358,6 +373,16 @@ body{
     if (s.jucatAzi) jucateAzi += 1;
     else if (!urmator) urmator = slug;
     if (s.streak > maxStreak) maxStreak = s.streak;
+    const stare = document.querySelector(`[data-stare="${slug}"]`);
+    if (stare) { stare.textContent = s.jucatAzi ? "Jucat" : "Nou azi"; stare.classList.toggle("jucat", s.jucatAzi); }
+    const meta = document.querySelector(`[data-streak="${slug}"]`);
+    if (meta && s.streak > 1) meta.textContent = `Streak ${s.streak} zile`;
+  }
+  /* Celelalte puzzle-uri zilnice: stare și streak pe card, dar nu intră în cele șase */
+  const ALTE = ["coroane"];
+  const statsAlte = GamesRO.statsToate(ALTE);
+  for (const slug of ALTE) {
+    const s = statsAlte[slug];
     const stare = document.querySelector(`[data-stare="${slug}"]`);
     if (stare) { stare.textContent = s.jucatAzi ? "Jucat" : "Nou azi"; stare.classList.toggle("jucat", s.jucatAzi); }
     const meta = document.querySelector(`[data-streak="${slug}"]`);
