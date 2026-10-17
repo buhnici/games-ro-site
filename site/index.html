@@ -284,6 +284,11 @@ body{
           <span><span class="joc-titlu">Coroane</span><span class="joc-desc">O coroană pe fiecare rând, coloană și zonă.</span><span class="joc-meta" data-streak="coroane"></span></span>
           <span class="stare" data-stare="coroane"></span>
         </a>
+        <a class="joc" href="/joc/zi-si-noapte" data-play="zi-si-noapte">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="16" cy="17" r="6" fill="#ffb300"/><path d="M16 5v3M16 26v3M4 17h3M25 17h3M7.5 8.5l2 2M22.5 23.5l2 2M7.5 25.5l2-2M22.5 10.5l2-2" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><path d="M38 26a9 9 0 1 0 4 15 7 7 0 0 1-4-15z" fill="none" stroke="#00e5ff" stroke-width="2.4" stroke-linejoin="round"/></svg></span>
+          <span><span class="joc-titlu">Zi și Noapte</span><span class="joc-desc">Sori și luni, câte trei pe fiecare rând și coloană.</span><span class="joc-meta" data-streak="zi-si-noapte"></span></span>
+          <span class="stare" data-stare="zi-si-noapte"></span>
+        </a>
       </div>
     </section>
 
@@ -321,7 +326,7 @@ body{
       <div class="panou">
         <h2>Noutăți</h2>
         <ul>
-          <li><span class="data">oct 2026</span>Puzzle zilnic nou: <a href="/joc/coroane">Coroane</a>.</li>
+          <li><span class="data">oct 2026</span>Puzzle-uri zilnice noi: <a href="/joc/coroane">Coroane</a> și <a href="/joc/zi-si-noapte">Zi și Noapte</a>.</li>
           <li><span class="data">oct 2026</span><a href="/joc/sania">Sania</a>: cobori pârtia zilei prin Carpați, de la apus până la zori, cu un singur deget.</li>
           <li><span class="data">sept 2026</span><a href="/joc/pretul-corect">Prețul Corect</a> are acum prețuri de zi cu zi: biletul de metrou, litrul de lapte, pașaportul. Fiecare cu sursa lui.</li>
           <li><span class="data">sept 2026</span>Patru jocuri noi: <a href="/joc/conexiuni-ro">Conexiuni RO</a>, <a href="/joc/pretul-corect">Prețul Corect</a>, <a href="/joc/headline-sau-fake">Headline sau Fake?</a> și <a href="/joc/type-racer-ro">Type Racer RO</a>.</li>
@@ -379,7 +384,7 @@ body{
     if (meta && s.streak > 1) meta.textContent = `Streak ${s.streak} zile`;
   }
   /* Celelalte puzzle-uri zilnice: stare și streak pe card, dar nu intră în cele șase */
-  const ALTE = ["coroane"];
+  const ALTE = ["coroane", "zi-si-noapte"];
   const statsAlte = GamesRO.statsToate(ALTE);
   for (const slug of ALTE) {
     const s = statsAlte[slug];
