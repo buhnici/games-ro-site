@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sania — GAMES.ro</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Sania: coboară pârtia zilei prin Carpați, de la apus până la zori. Sari peste râpe, fă salturi mortale, adună clopoței. Un singur deget, zero download.">
+<link rel="canonical" href="https://games.ro/joc/sania">
+<meta property="og:title" content="Sania — GAMES.ro">
+<meta property="og:description" content="Coboară pârtia zilei prin Carpați, de la apus până la zori. Sari peste râpe, fă salturi mortale, adună clopoței.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://games.ro/joc/sania">
+<style>
+/* ==== SURSA: site-new/tokens.css — nu edita aici ==== */
+:root {
+  --bg-deep: #05060f;
+  --bg-mid: #0b0d1f;
+  --bg-panel: rgba(10, 14, 28, 0.92);
+  --bg-panel-solid: #0a0e1c;
+  --bg-cabinet: rgba(8, 11, 24, 0.96);
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e88;
+  --amber: #ffb300;
+  --live: #39ff88;
+  --text: #f2f4ff;
+  --text-dim: #9aa3c0;
+  --text-faint: #5a6284;
+  --font-display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tracking-display: 0.14em;
+  --tracking-label: 0.22em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --radius-panel: 14px;
+  --radius-cabinet: 10px;
+  --radius-btn: 6px;
+  --border-neon: 1px solid rgba(0, 229, 255, 0.55);
+  --border-neon-strong: 2px solid var(--neon-cyan);
+  --border-magenta: 1px solid rgba(255, 46, 136, 0.5);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.55), 0 0 28px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.08);
+  --glow-magenta: 0 0 10px rgba(255, 46, 136, 0.5), 0 0 24px rgba(255, 46, 136, 0.2);
+  --glow-amber: 0 0 12px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.25);
+  --text-glow-cyan: 0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 229, 255, 0.5);
+  --text-glow-magenta: 0 0 10px var(--neon-magenta);
+  --chromatic: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta);
+  --ease-arcade: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --speed-hover: 150ms;
+  --speed-pulse: 3.5s;
+  --speed-marquee: 4s;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important} /* clasele cu display:flex/grid nu au voie să învingă atributul hidden */
+:root{
+  --tinta:44px;           /* ținta minimă de atingere */
+  --bordura:1px;
+}
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.console{max-width:1200px;margin:0 auto;padding:var(--space-4) var(--space-3) var(--space-5)}
+
+/* Header */
+.console-header{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);
+  border:var(--border-neon-strong);border-radius:var(--radius-panel);
+  background:linear-gradient(135deg,rgba(0,229,255,0.10) 0%,var(--bg-panel-solid) 100%);
+}
+.logo-glow{
+  font-family:var(--font-mono);font-weight:700;font-size:1.3rem;
+  letter-spacing:var(--tracking-display);color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-decoration:none;
+}
+.logo-glow span{color:var(--neon-magenta);text-shadow:var(--text-glow-magenta)}
+.player-status{display:flex;gap:var(--space-4);font-family:var(--font-mono);font-size:0.85rem}
+.status-label{color:var(--text-dim);text-transform:uppercase;letter-spacing:var(--tracking-label);font-size:0.7rem}
+.status-value{color:var(--text);font-weight:700}
+.clock{text-align:right;font-family:var(--font-mono)}
+.clock-time{font-size:1rem;color:var(--neon-cyan)}
+.clock-date{font-size:0.7rem;color:var(--text-dim)}
+
+/* Accesibilitate */
+:focus-visible{outline:2px solid var(--neon-cyan);outline-offset:3px}
+button{font:inherit;color:var(--text)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Titlu */
+.game-title{
+  font-family:var(--font-display);font-size:2rem;letter-spacing:var(--tracking-display);
+  text-transform:uppercase;color:var(--text);
+  text-shadow:var(--chromatic),var(--text-glow-cyan);
+  text-align:center;margin:var(--space-4) 0 var(--space-3);
+}
+.game-instructions{
+  font-size:0.9rem;line-height:1.5;color:var(--text-dim);text-align:center;margin-bottom:var(--space-4);
+  max-width:600px;margin-left:auto;margin-right:auto;
+}
+.joc{max-width:960px;margin:0 auto}
+
+/* Bordul: pârtia · azi · record */
+.bord{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:var(--space-2) var(--space-4);
+  margin-bottom:var(--space-3);font-family:var(--font-mono);
+}
+.bord-item{display:flex;align-items:baseline;gap:var(--space-2)}
+.bord-label{font-size:0.7rem;letter-spacing:var(--tracking-label);color:var(--text-dim)}
+.bord-val{font-size:1rem;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* Cum se joacă */
+.reguli{
+  max-width:640px;margin:0 auto var(--space-3);border:var(--bordura) solid var(--text-faint);border-radius:var(--radius-btn);
+  background:var(--bg-cabinet);
+}
+.reguli summary{
+  display:flex;align-items:center;gap:var(--space-2);min-height:var(--tinta);padding:var(--space-2) var(--space-3);
+  cursor:pointer;list-style:none;color:var(--text);
+  font-family:var(--font-mono);font-size:0.78rem;font-weight:700;letter-spacing:var(--tracking-display);text-transform:uppercase;
+}
+.reguli summary::-webkit-details-marker{display:none}
+.reguli summary svg{width:14px;height:14px;flex:none;color:var(--neon-cyan);transition:transform var(--speed-hover) ease}
+.reguli[open] summary svg{transform:rotate(90deg)}
+.reguli summary:hover{color:var(--neon-cyan)}
+.reguli ol{padding:0 var(--space-3) var(--space-3) calc(var(--space-3) * 2);display:grid;gap:var(--space-1)}
+.reguli li{font-size:0.88rem;line-height:1.45;color:var(--text-dim)}
+.reguli li::marker{color:var(--neon-cyan);font-family:var(--font-mono);font-size:0.8rem}
+
+/* Scena: canvasul + HUD + ecranele de start/final */
+.scena{
+  position:relative;width:100%;height:480px;overflow:hidden;
+  border:var(--border-neon);border-radius:var(--radius-panel);box-shadow:var(--glow-cyan);
+  background:#0b0d1f;cursor:pointer;
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+}
+.scena canvas{display:block;position:absolute;inset:0}
+.hud{
+  position:absolute;top:12px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;
+  pointer-events:none;font-family:var(--font-mono);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6);
+}
+.hud-metri{font-size:1.7rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.hud-mic{margin-top:4px;font-size:0.7rem;letter-spacing:var(--tracking-label);opacity:0.9;font-variant-numeric:tabular-nums}
+.hud-clopotei{display:flex;align-items:center;gap:6px;font-size:1.1rem;font-weight:700;font-variant-numeric:tabular-nums}
+.hud-clopotei svg{width:18px;height:18px;color:#f5c542;filter:drop-shadow(0 0 4px rgba(245,197,66,0.7))}
+.sunet{
+  position:absolute;right:10px;bottom:10px;width:var(--tinta);height:var(--tinta);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.28);border-radius:50%;background:rgba(5,6,15,0.45);cursor:pointer;
+}
+.sunet svg{width:20px;height:20px}
+.sunet:hover{border-color:var(--neon-cyan)}
+.ecran{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);
+  text-align:center;padding:var(--space-3);
+  background:radial-gradient(ellipse at center,rgba(5,6,15,0.05) 0%,rgba(5,6,15,0.35) 100%);
+}
+.ecran-titlu{
+  font-family:var(--font-display);font-size:clamp(2.6rem,9vw,4.4rem);font-weight:700;letter-spacing:0.2em;
+  text-transform:uppercase;color:#fff;text-shadow:var(--chromatic),var(--text-glow-cyan);padding-left:0.2em;
+}
+.ecran-sub{
+  font-family:var(--font-mono);font-size:0.8rem;letter-spacing:var(--tracking-label);text-transform:uppercase;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,0.7);animation:respira 1.8s ease-in-out infinite;
+}
+.ecran-nota{font-size:0.82rem;color:rgba(255,255,255,0.8);text-shadow:0 1px 3px rgba(0,0,0,0.7);max-width:340px}
+@keyframes respira{0%,100%{opacity:1}50%{opacity:0.45}}
+
+/* Panoul de final */
+.panou{
+  width:min(360px,100%);padding:var(--space-4) var(--space-3);
+  background:var(--bg-panel);border:var(--border-neon-strong);border-radius:var(--radius-panel);box-shadow:var(--glow-cyan);
+  cursor:default;
+}
+.panou-titlu{font-family:var(--font-display);font-size:1.5rem;letter-spacing:var(--tracking-display);text-transform:uppercase}
+.panou-motiv{margin-top:var(--space-1);font-size:0.85rem;color:var(--text-dim)}
+.panou-scor{margin:var(--space-3) 0 var(--space-1);font-family:var(--font-mono);font-size:2.6rem;font-weight:700;color:var(--neon-cyan);text-shadow:var(--text-glow-cyan);font-variant-numeric:tabular-nums;line-height:1}
+.panou-scor-label{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:var(--tracking-label);color:var(--text-dim)}
+.panou-stat{display:flex;justify-content:center;gap:var(--space-4);margin:var(--space-3) 0;font-family:var(--font-mono)}
+.panou-stat div{display:grid;gap:2px}
+.panou-stat b{font-size:1.1rem;font-variant-numeric:tabular-nums}
+.panou-stat span{font-size:0.62rem;letter-spacing:var(--tracking-label);color:var(--text-dim)}
+.panou-record{min-height:1.3em;margin-bottom:var(--space-3);font-family:var(--font-mono);font-size:0.8rem;color:var(--text-dim)}
+.panou-record.nou{color:var(--amber);text-shadow:var(--glow-amber)}
+.panou-btn{display:flex;gap:var(--space-2);justify-content:center;flex-wrap:wrap}
+.btn{
+  min-height:var(--tinta);padding:var(--space-2) var(--space-4);border:var(--bordura) solid var(--neon-cyan);
+  background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.78rem;font-weight:700;
+  letter-spacing:var(--tracking-display);text-transform:uppercase;border-radius:var(--radius-btn);cursor:pointer;
+  transition:all var(--speed-hover) var(--ease-arcade);
+}
+.btn:hover:not(:disabled){transform:scale(1.04);border-color:var(--amber);color:var(--amber)}
+.btn.primar{background:var(--neon-cyan);color:var(--bg-deep);box-shadow:var(--glow-cyan)}
+.btn.primar:hover{background:var(--amber);color:var(--bg-deep)}
+.btn:disabled{color:var(--text-dim);border-color:var(--text-faint);cursor:default}
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+@media (max-width:600px) {
+  .console{padding:var(--space-3) var(--space-2) var(--space-5)}
+  .game-title{font-size:1.5rem}
+  .hud-metri{font-size:1.35rem}
+  .panou-scor{font-size:2.1rem}
+}
+@media (max-width:420px) {
+  .console-header{padding:var(--space-3)}
+  .player-status{gap:var(--space-3)}
+}
+</style>
+<script defer src="/consimtamant.js"></script></head>
+<body><!-- fără scanlines/vignetă CRT: ar întuneca desenul jocului -->
+<div class="console">
+<header class="console-header">
+  <a href="/" class="logo-glow">GAMES<span>.ro</span></a>
+  <div class="player-status">
+    <div class="clock">
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">--/--/----</div>
+    </div>
+    <div class="status-item">
+      <span class="status-label">STREAK</span>
+      <span class="status-value" id="streak">0</span>
+    </div>
+  </div>
+</header>
+
+<main class="joc" id="joc">
+  <h1 class="game-title">Sania</h1>
+  <p class="game-instructions">Coboară pârtia zilei prin Carpați, de la apus până la zori.</p>
+
+  <div class="bord">
+    <div class="bord-item"><span class="bord-label">PÂRTIA</span><span class="bord-val" id="editie">#1</span></div>
+    <div class="bord-item"><span class="bord-label">AZI</span><span class="bord-val" id="best-azi">0</span></div>
+    <div class="bord-item"><span class="bord-label">RECORD</span><span class="bord-val" id="record">0</span></div>
+  </div>
+
+  <details class="reguli" id="reguli">
+    <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>Cum se joacă</summary>
+    <ol>
+      <li>Atinge ecranul (sau apasă Space) ca să sari.</li>
+      <li>Ține apăsat în aer ca să faci salt mortal. Aterizează cu tălpile saniei pe zăpadă, nu cu capul.</li>
+      <li>Sari peste bolovani și râpe. Clopoțeii aduc puncte.</li>
+      <li>Fiecare salt mortal reușit dă puncte și viteză. Pârtia e aceeași azi pentru toată lumea.</li>
+    </ol>
+  </details>
+
+  <div class="scena" id="scena">
+    <canvas id="c" role="img" aria-label="Sania coboară pârtia printre munți, brazi și sate"></canvas>
+    <div class="hud" id="hud" hidden>
+      <div>
+        <div class="hud-metri" id="hud-metri">0 m</div>
+        <div class="hud-mic" id="hud-puncte">0 PUNCTE</div>
+      </div>
+      <div class="hud-clopotei" aria-label="Clopoței"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a1.6 1.6 0 0 1 1.6 1.6v.5A6.5 6.5 0 0 1 18.5 10.5V15l2 2.5V19h-17v-1.5l2-2.5v-4.5a6.5 6.5 0 0 1 4.9-6.4v-.5A1.6 1.6 0 0 1 12 2Zm-2.6 18h5.2a2.6 2.6 0 0 1-5.2 0Z"/></svg><span id="hud-clopotei">0</span></div>
+    </div>
+    <button class="sunet" id="sunet" type="button" aria-label="Sunet pornit" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path id="sunet-unde" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10"/><path id="sunet-mut" d="M16.5 9.5l5 5M21.5 9.5l-5 5" hidden/></svg>
+    </button>
+
+    <div class="ecran" id="ecran-start">
+      <p class="ecran-titlu" id="start-titlu">Sania</p>
+      <p class="ecran-sub" id="start-sub">Atinge ca să pornești</p>
+      <p class="ecran-nota" id="start-nota">Atinge = săritură · ține apăsat în aer = salt mortal</p>
+    </div>
+
+    <div class="ecran" id="ecran-final" hidden>
+      <section class="panou" aria-labelledby="final-titlu">
+        <h2 class="panou-titlu" id="final-titlu">Bufff!</h2>
+        <p class="panou-motiv" id="final-motiv"></p>
+        <p class="panou-scor" id="final-scor">0</p>
+        <p class="panou-scor-label">PUNCTE</p>
+        <div class="panou-stat">
+          <div><b id="final-metri">0</b><span>METRI</span></div>
+          <div><b id="final-salturi">0</b><span>SALTURI</span></div>
+          <div><b id="final-clopotei">0</b><span>CLOPOȚEI</span></div>
+        </div>
+        <p class="panou-record" id="final-record"></p>
+        <div class="panou-btn">
+          <button class="btn primar" id="din-nou" type="button">Din nou</button>
+          <button class="btn" id="share" type="button">Share</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <p class="sr" id="anunt" aria-live="polite"></p>
+</main>
+</div>
+
+<script type="module">
+// ==== Sania — pagina (v1, 17.10.2026) ====
+// Pârtia, obstacolele și regulile stau în ./sania.js (testate în Node); aici: desen, sunet, input.
+// Totul e procedural: zero imagini, zero fonturi, zero fișiere audio.
+import { GamesRO } from "/shell.js";
+import * as S from "./sania.js?v=2";
+
+const SLUG = "sania";
+const ZI = GamesRO.seedAzi();
+const EDITIE = ZI % 10000;
+const P = S.creeazaPartia(ZI);
+const REDUS = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = (id) => document.getElementById(id);
+
+/* ─── Stocare (poate lipsi: private mode) ─── */
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch { /* fără stocare */ } },
+};
+const citesteJSON = (k) => { try { return JSON.parse(ls.get(k)) || null; } catch { return null; } };
+const CHEIE_AZI = `gro:${SLUG}:${ZI}`;          // aceeași cheie pe care o scrie GamesRO.marcheazaJucat
+const CHEIE_RECORD = `gro:${SLUG}:record`;
+let bestAzi = citesteJSON(CHEIE_AZI);
+let record = citesteJSON(CHEIE_RECORD);
+
+/* ─── Paleta zilei: chei de culoare interpolate după momentul zilei ─── */
+const CHEI = [
+  [0.00, { cer0: "#24305e", cer1: "#8e5d92", cer2: "#ffb991", departe: "#7a6a9a", mijloc: "#56507f", dealuri: "#332f5a", aproape: "#1f1d3d", ceata: "#e9a2a6", munteZ: "#ffd9e0", zapada: "#f7e6ec", umbra: "#b8a6cc", rapa: "#2a2550", brad: "#2a3550", noapte: 0.25, lumini: 0.5 }],
+  [0.10, { cer0: "#3a72c9", cer1: "#86bdf0", cer2: "#e6f3ff", departe: "#a3b9de", mijloc: "#7690bd", dealuri: "#3e5d85", aproape: "#24405f", ceata: "#dbe9f7", munteZ: "#ffffff", zapada: "#f7fbff", umbra: "#b4c8e2", rapa: "#3a5378", brad: "#1f4a4a", noapte: 0, lumini: 0 }],
+  [0.42, { cer0: "#2c69cf", cer1: "#7fb8ee", cer2: "#dcefff", departe: "#a6bcdf", mijloc: "#7590be", dealuri: "#3b5a82", aproape: "#223e5e", ceata: "#d6e6f5", munteZ: "#ffffff", zapada: "#ffffff", umbra: "#bacde5", rapa: "#3a5378", brad: "#1f4848", noapte: 0, lumini: 0 }],
+  [0.53, { cer0: "#3b5aa3", cer1: "#e8a26c", cer2: "#ffd58a", departe: "#a7849a", mijloc: "#7c6184", dealuri: "#433d63", aproape: "#2a2745", ceata: "#f6c592", munteZ: "#ffe2b8", zapada: "#fff1de", umbra: "#d4b2aa", rapa: "#4a3a5a", brad: "#2d3a3f", noapte: 0, lumini: 0.25 }],
+  [0.61, { cer0: "#282c6a", cer1: "#d0587c", cer2: "#ff9a5c", departe: "#70507e", mijloc: "#4f3a69", dealuri: "#2c2549", aproape: "#1c1834", ceata: "#e98080", munteZ: "#ffb7a0", zapada: "#f4d0d6", umbra: "#a98aab", rapa: "#2a1d3c", brad: "#232843", noapte: 0.15, lumini: 0.7 }],
+  [0.69, { cer0: "#11173f", cer1: "#393878", cer2: "#a95f80", departe: "#3c3c6c", mijloc: "#2b2b56", dealuri: "#1b1c3b", aproape: "#12122a", ceata: "#5b4b82", munteZ: "#b8b6e0", zapada: "#aab3d8", umbra: "#6c78a8", rapa: "#12112a", brad: "#151a33", noapte: 0.65, lumini: 1 }],
+  [0.77, { cer0: "#040716", cer1: "#0c1534", cer2: "#1c2a58", departe: "#1d2950", mijloc: "#152041", dealuri: "#0c132c", aproape: "#070c1f", ceata: "#22325d", munteZ: "#7f93c4", zapada: "#8ea4d0", umbra: "#4c6192", rapa: "#050816", brad: "#0b1428", noapte: 1, lumini: 1 }],
+  [0.93, { cer0: "#070a1e", cer1: "#141c45", cer2: "#3a3466", departe: "#2a2c58", mijloc: "#1d2148", dealuri: "#111530", aproape: "#0a0d22", ceata: "#3a3a6e", munteZ: "#9aa0cf", zapada: "#a6aed6", umbra: "#5d6898", rapa: "#08091c", brad: "#0e1530", noapte: 0.85, lumini: 1 }],
+];
+const hexRgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const CHEI_RGB = CHEI.map(([t, c]) => [t, Object.fromEntries(Object.entries(c).map(([k, v]) => [k, typeof v === "string" ? hexRgb(v) : v]))]);
+CHEI_RGB.push([1, CHEI_RGB[0][1]]);
+const rgb = (c, a = 1) => (a >= 1 ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a.toFixed(3)})`);
+const amesteca = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
+function paleta(t) {
+  let i = 0;
+  while (i < CHEI_RGB.length - 2 && CHEI_RGB[i + 1][0] <= t) i++;
+  const [t0, a] = CHEI_RGB[i], [t1, b] = CHEI_RGB[i + 1];
+  let f = (t - t0) / (t1 - t0);
+  f = f * f * (3 - 2 * f);
+  const out = {};
+  for (const k in a) out[k] = typeof a[k] === "number" ? a[k] + (b[k] - a[k]) * f : amesteca(a[k], b[k], f);
+  return out;
+}
+
+/* ─── Canvas, DPR, dimensiuni ─── */
+const scena = $("scena"), cv = $("c"), cx = cv.getContext("2d");
+let cssW = 800, cssH = 450, dpr = 1, sc = 1, W = 800, H = 450;
+function redimensioneaza() {
+  cssW = scena.clientWidth || 800;
+  cssH = Math.round(cssW < 640 ? Math.min(cssW * 1.05, window.innerHeight * 0.68) : cssW * 0.5625);
+  cssH = Math.max(cssH, 320);
+  scena.style.height = cssH + "px";
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.round(cssW * dpr);
+  cv.height = Math.round(cssH * dpr);
+  cv.style.width = cssW + "px";
+  cv.style.height = cssH + "px";
+  const vizibil = cssW < 640 ? 640 : Math.min(cssW, 1000);   // pe telefon, camera se depărtează
+  sc = cssW / vizibil;
+  W = vizibil;
+  H = cssH / sc;
+}
+
+/* Sprite-uri de lumină pre-coapte (nimic cu shadowBlur în bucla de desen) */
+function sprite(r, g, b) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const x = c.getContext("2d");
+  const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, `rgba(${r},${g},${b},1)`);
+  gr.addColorStop(0.22, `rgba(${r},${g},${b},0.42)`);
+  gr.addColorStop(0.55, `rgba(${r},${g},${b},0.10)`);
+  gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  x.fillStyle = gr;
+  x.fillRect(0, 0, 128, 128);
+  return c;
+}
+const LUMINA_SOARE = sprite(255, 214, 150);
+const LUMINA_LUNA = sprite(200, 220, 255);
+const LUMINA_GEAM = sprite(255, 176, 80);
+const LUMINA_AUR = sprite(255, 214, 90);
+
+/* Stele fixe (coordonate relative la ecran) */
+const rndS = S.mulberry32(ZI ^ 0x5eed);
+const STELE = Array.from({ length: 150 }, () => ({ x: rndS(), y: Math.pow(rndS(), 1.4) * 0.62, r: 0.5 + rndS() * 1.3, f: rndS() * 6.28 }));
+let stea = null;                                        // steaua căzătoare de acum (noaptea)
+
+/* Ninsoarea, în coordonate de ecran */
+const FULGI = Array.from({ length: REDUS ? 30 : 80 }, () => ({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.8, v: 18 + Math.random() * 40, f: Math.random() * 6.28 }));
+
+/* ─── Straturile de fundal (parallax) ─── */
+function creasta(seed, u, lung) {
+  const a = 1 - Math.abs(S.zgomot(seed, u / lung));
+  const b = 1 - Math.abs(S.zgomot(seed + 7, u / (lung * 0.37)));
+  const c = S.zgomot(seed + 3, u / (lung * 0.11));
+  return 0.62 * a * a + 0.3 * b + 0.08 * c;
+}
+const STRATURI = [
+  { p: 0.05, baza: 0.52, amp: 0.34, lung: 560, seed: 11, cul: "departe", zap: 0.62 },
+  { p: 0.13, baza: 0.62, amp: 0.26, lung: 340, seed: 23, cul: "mijloc", zap: 0.7 },
+  { p: 0.30, baza: 0.71, amp: 0.13, lung: 300, seed: 37, cul: "dealuri", padure: 0.5, sate: true },
+  { p: 0.52, baza: 0.88, amp: 0.10, lung: 260, seed: 41, cul: "aproape", padure: 0.85 },
+];
+
+/* ─── Starea jocului ─── */
+let stare = "start";            // start | joc | prabusit | final
+let pauza = false;
+let tinut = false;
+let timp = 0, timpFinal = 0;
+const J = { x: S.START_X, y: 0, vx: 0, vy: 0, v: S.V_MIN, rot: 0, sol: true, rotAer: 0, aerT: 0, sarit: false, inRapa: false };
+let bonus = 0, salturi = 0, clopotei = 0, luati = new Set();
+let camX = 0, camY = 0, tremur = 0, motiv = "";
+let particule = [], mesaje = [];
+let fular = [];
+
+function reset() {
+  J.x = S.START_X; J.y = P.h(J.x); J.vx = 0; J.vy = 0; J.v = S.V_MIN;
+  J.rot = P.panta(J.x); J.sol = true; J.rotAer = 0; J.aerT = 0; J.sarit = false; J.inRapa = false;
+  bonus = 0; salturi = 0; clopotei = 0; luati = new Set();
+  particule = []; mesaje = []; tremur = 0; motiv = "";
+  camX = J.x - W * 0.22;
+  camY = J.y - H * 0.36;
+  const [gx, gy] = gat();
+  fular = Array.from({ length: 8 }, (_, i) => ({ x: gx - i * 6, y: gy, px: gx - i * 6, py: gy }));
+}
+const puncte = () => S.metri(J.x) + bonus + clopotei * S.PUNCTE_CLOPOTEL;
+
+/** Punctul gâtului, în coordonate de lume (de acolo pleacă fularul). */
+function gat() {
+  const c = Math.cos(J.rot), s = Math.sin(J.rot), lx = -5, ly = -27;
+  return [J.x + lx * c - ly * s, J.y + lx * s + ly * c];
+}
+
+/* ─── Fizica ─── */
+function sari() {
+  const a = P.panta(J.x);
+  const v = J.sol ? J.v : Math.hypot(J.vx, J.vy);
+  J.vx = v * Math.cos(a) + Math.sin(a) * S.SARITURA;
+  J.vy = v * Math.sin(a) - Math.cos(a) * S.SARITURA;
+  J.sol = false; J.sarit = true; J.rotAer = 0; J.aerT = 0;
+  Sunet.saritura();
+  pufZapada(J.x, J.y, 10, -0.2);
+}
+
+function decoleaza() {
+  const a = P.panta(J.x);
+  J.vx = J.v * Math.cos(a); J.vy = J.v * Math.sin(a);
+  J.sol = false; J.sarit = false; J.rotAer = 0; J.aerT = 0;
+}
+
+function prabusire(text) {
+  if (stare !== "joc") return;
+  stare = "prabusit";
+  motiv = text;
+  timpFinal = timp;
+  if (J.sol) { const a = P.panta(J.x); J.vx = J.v * Math.cos(a); J.vy = J.v * Math.sin(a) - 200; }
+  J.sol = false;
+  tremur = REDUS ? 0 : 14;
+  pufZapada(J.x, J.y, 40, 0);
+  Sunet.prabusire();
+}
+
+function pas(dt) {
+  if (J.sol) {
+    const a = P.panta(J.x);
+    J.v += (S.G * Math.sin(a) * 0.6 - S.frecare(S.metri(J.x)) * J.v * J.v) * dt;   // croazieră: ~450 px/s la start, ~700 după 900 m
+    J.v = Math.min(S.V_MAX, Math.max(S.V_MIN, J.v));
+    J.x += J.v * Math.cos(a) * dt;
+    J.rot += S.normalizeaza(P.panta(J.x) - J.rot) * Math.min(1, dt * 18);
+    if (P.rapa(J.x)) { decoleaza(); J.inRapa = true; }
+    else if (J.v * J.v * P.curbura(J.x) > S.G * Math.cos(a) * 1.6) { J.y = P.h(J.x); decoleaza(); }
+    else J.y = P.h(J.x);
+    if (J.sol && J.v > 380 && Math.random() < dt * 40) pufZapada(J.x - 20, J.y, 1, 0);
+  } else {
+    J.aerT += dt;
+    J.vy += S.G * dt;
+    J.x += J.vx * dt;
+    J.y += J.vy * dt;
+    if (tinut && J.aerT > 0.06) {
+      J.rot -= S.ROTIRE * dt;
+      J.rotAer -= S.ROTIRE * dt;
+    } else {
+      // fără apăsare, sania se îndreaptă singură spre pârtie (blând, doar dacă nu e deja peste cap)
+      const d = S.normalizeaza(P.panta(J.x) - J.rot);
+      if (Math.abs(d) < 1.2) J.rot += Math.sign(d) * Math.min(Math.abs(d), 1.8 * dt);
+    }
+    const z = P.rapa(J.x);
+    if (z) {
+      J.inRapa = true;
+      if (J.y > P.h(J.x) + 380) prabusire("Ai căzut în râpă.");
+    } else if (J.y >= P.h(J.x)) {
+      if (J.inRapa && J.y - P.h(J.x) > 10) { prabusire("Ai lovit malul râpei."); return; }
+      J.inRapa = false;
+      aterizeaza();
+    } else J.inRapa = false;
+  }
+  // bolovani și clopoței din vecinătate
+  const vec = P.intre(J.x - 80, J.x + 80);
+  for (const b of vec.bolovani) {
+    if (Math.abs(J.x - b.x) < b.w / 2 + S.margineBolovan(S.metri(J.x)) && J.y > P.h(b.x) - b.h * 0.8) { prabusire("Ai lovit un bolovan."); return; }
+  }
+  for (const c of vec.clopotei) {
+    if (luati.has(c.id)) continue;
+    const [gx, gy] = [J.x, J.y - 18];
+    if (Math.hypot(gx - c.x, gy - c.y) < 30) {
+      luati.add(c.id); clopotei++;
+      Sunet.clopotel(clopotei);
+      scantei(c.x, c.y);
+      mesaj(c.x, c.y - 16, `+${S.PUNCTE_CLOPOTEL}`, "#ffd75a", 0.8);
+    }
+  }
+}
+
+function aterizeaza() {
+  const a = P.panta(J.x);
+  const tol = S.toleranta(S.metri(J.x));
+  const r = S.aterizare(J.rot, a, tol);
+  if (!r.ok) { J.y = P.h(J.x); prabusire(Math.abs(r.dif) > 2.2 ? "Ai aterizat cu capul în zăpadă." : "Ai aterizat strâmb."); return; }
+  const impact = Math.abs(-J.vx * Math.sin(a) + J.vy * Math.cos(a));
+  J.v = Math.min(S.V_MAX, Math.max(S.V_MIN, 0.92 * (J.vx * Math.cos(a) + J.vy * Math.sin(a))));   // zăpada mai frânează puțin la aterizare
+  J.y = P.h(J.x); J.sol = true; J.rot = a;
+  const n = S.numaraSalturi(J.rotAer, tol);
+  if (n > 0) {
+    salturi += n;
+    bonus += S.bonusSalturi(n);
+    J.v = Math.min(S.V_MAX, J.v + 140 * n);
+    mesaj(J.x, J.y - 70, n === 1 ? "SALT MORTAL!" : n === 2 ? "DUBLU!" : `${n}× SALT MORTAL!`, "#ffffff", 1.2, `+${S.bonusSalturi(n)}`);
+    Sunet.salt(n);
+    anunta(`Salt mortal reușit: ${S.plural(salturi, "salt", "salturi")}.`);
+  }
+  if (impact > 300) {
+    pufZapada(J.x, J.y, Math.min(24, impact / 30), 0);
+    if (!REDUS) tremur = Math.max(tremur, Math.min(6, impact / 160));
+  }
+  Sunet.aterizare(Math.min(1, impact / 700));
+  J.rotAer = 0; J.sarit = false;
+}
+
+function pasPrabusit(dt) {
+  J.vy += S.G * dt;
+  J.x += J.vx * dt;
+  J.y += J.vy * dt;
+  J.rot -= 7 * dt * Math.sign(J.vx || 1) * Math.max(0.2, Math.min(1, Math.hypot(J.vx, J.vy) / 600));
+  if (!P.rapa(J.x) && J.y > P.h(J.x)) {
+    J.y = P.h(J.x);
+    J.vy = -Math.abs(J.vy) * 0.25;
+    J.vx *= 0.55;
+    if (Math.abs(J.vx) > 60) pufZapada(J.x, J.y, 3, 0);
+  }
+}
+
+/* ─── Particule, scântei, mesaje plutitoare ─── */
+const MAX_PART = REDUS ? 60 : 240;
+function pufZapada(x, y, n, sus) {
+  for (let i = 0; i < n && particule.length < MAX_PART; i++) {
+    particule.push({
+      x, y: y - 2, vx: -J.v * 0.15 + (Math.random() - 0.5) * 220, vy: -60 - Math.random() * 200 + sus * 200,
+      t: 0, max: 0.4 + Math.random() * 0.5, r: 1.5 + Math.random() * 2.8, tip: 0,
+    });
+  }
+}
+function scantei(x, y) {
+  for (let i = 0; i < 14 && particule.length < MAX_PART; i++) {
+    const u = Math.random() * 6.28, v = 60 + Math.random() * 160;
+    particule.push({ x, y, vx: Math.cos(u) * v, vy: Math.sin(u) * v, t: 0, max: 0.5 + Math.random() * 0.4, r: 1.2 + Math.random() * 1.8, tip: 1 });
+  }
+}
+function mesaj(x, y, text, cul, durata = 1, sub = "") { mesaje.push({ x, y, text, sub, cul, t: 0, max: durata }); }
+function actualizeazaParticule(dt) {
+  for (const p of particule) { p.t += dt; p.vy += (p.tip ? 200 : 700) * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 1 - 1.5 * dt; }
+  particule = particule.filter((p) => p.t < p.max);
+  for (const m of mesaje) m.t += dt;
+  mesaje = mesaje.filter((m) => m.t < m.max);
+}
+
+/* Fularul: un lanț verlet agățat de gât; mișcarea saniei îl întinde în urmă. */
+function actualizeazaFular(dt) {
+  if (!fular.length) return;
+  const [gx, gy] = gat();
+  fular[0].x = gx; fular[0].y = gy;
+  const vant = Math.sin(timp * 7) * 0.6;
+  for (let i = 1; i < fular.length; i++) {
+    const f = fular[i];
+    const vx = (f.x - f.px) * 0.9, vy = (f.y - f.py) * 0.9;
+    f.px = f.x; f.py = f.y;
+    f.x += vx - 0.4; f.y += vy + 260 * dt * dt + vant * dt * 30;
+  }
+  for (let k = 0; k < 4; k++) {
+    for (let i = 1; i < fular.length; i++) {
+      const a = fular[i - 1], b = fular[i];
+      const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, dif = (d - 6) / d;
+      if (i === 1) { b.x -= dx * dif; b.y -= dy * dif; }
+      else { a.x += dx * dif * 0.5; a.y += dy * dif * 0.5; b.x -= dx * dif * 0.5; b.y -= dy * dif * 0.5; }
+    }
+    fular[0].x = gx; fular[0].y = gy;
+  }
+}
+
+/* ─── Camera ─── */
+function actualizeazaCamera(dt, brusc = false) {
+  const tx = J.x - W * 0.22;
+  const ty = J.y * 0.6 + P.h(J.x + W * 0.3) * 0.4 - H * 0.36;
+  camX = tx;
+  camY = brusc ? ty : camY + (ty - camY) * (1 - Math.exp(-5 * dt));
+  tremur = Math.max(0, tremur - dt * 30);
+}
+
+/* ─── Desen ─── */
+function deseneaza() {
+  const m = stare === "start" ? 0 : S.metri(J.x);
+  const t = S.momentulZilei(m);
+  const pl = paleta(t);
+  cx.setTransform(dpr * sc, 0, 0, dpr * sc, 0, 0);
+
+  // cerul
+  const gc = cx.createLinearGradient(0, 0, 0, H);
+  gc.addColorStop(0, rgb(pl.cer0)); gc.addColorStop(0.55, rgb(pl.cer1)); gc.addColorStop(1, rgb(pl.cer2));
+  cx.fillStyle = gc;
+  cx.fillRect(0, 0, W, H);
+
+  // stelele și steaua căzătoare
+  if (pl.noapte > 0.02) {
+    cx.fillStyle = "#fff";
+    for (const s of STELE) {
+      cx.globalAlpha = pl.noapte * (0.55 + 0.45 * Math.sin(timp * 2 + s.f));
+      const x = ((s.x * W * 1.2 - camX * 0.01) % (W * 1.2) + W * 1.2) % (W * 1.2);
+      cx.fillRect(x, s.y * H, s.r, s.r);
+    }
+    cx.globalAlpha = 1;
+    if (!stea && !REDUS && pl.noapte > 0.7 && Math.random() < 0.004) stea = { x: Math.random() * W, y: Math.random() * H * 0.3, t: 0 };
+    if (stea) {
+      stea.t += 1 / 60;
+      const k = stea.t / 0.8, x = stea.x + k * 260, y = stea.y + k * 90;
+      const gs = cx.createLinearGradient(x - 70, y - 24, x, y);
+      gs.addColorStop(0, "rgba(255,255,255,0)"); gs.addColorStop(1, `rgba(255,255,255,${(0.9 * (1 - k)).toFixed(2)})`);
+      cx.strokeStyle = gs; cx.lineWidth = 1.6;
+      cx.beginPath(); cx.moveTo(x - 70, y - 24); cx.lineTo(x, y); cx.stroke();
+      if (k >= 1) stea = null;
+    }
+  }
+
+  // soarele și luna merg pe un arc peste cer
+  // (arcul stă în dreapta: în stânga ecranului e pârtia, care l-ar acoperi)
+  const astru = (p, sprite, cul, raza, alfa) => {
+    const x = W * (0.42 + 0.5 * p), y = H * 0.68 - Math.sin(p * Math.PI) * H * 0.48;
+    cx.globalCompositeOperation = "lighter";
+    cx.globalAlpha = alfa;
+    const g = raza * 9;
+    cx.drawImage(sprite, x - g / 2, y - g / 2, g, g);
+    cx.globalCompositeOperation = "source-over";
+    cx.globalAlpha = 1;
+    cx.fillStyle = cul;
+    cx.beginPath(); cx.arc(x, y, raza, 0, 6.283); cx.fill();
+    return [x, y];
+  };
+  if (t < 0.645) {
+    const p = t / 0.645;
+    const cald = Math.min(1, Math.max(0, Math.abs(p - 0.5) * 3 - 0.6));
+    astru(p, LUMINA_SOARE, rgb(amesteca([255, 248, 225], [255, 160, 90], cald)), 22, 0.8);
+  } else {
+    const p = (t - 0.645) / 0.355;
+    const [x, y] = astru(p, LUMINA_LUNA, "#f2efe0", 17, 0.55 * pl.noapte);
+    cx.fillStyle = "rgba(170,170,190,0.35)";
+    cx.beginPath(); cx.arc(x - 5, y - 4, 4, 0, 6.283); cx.arc(x + 6, y + 5, 3, 0, 6.283); cx.arc(x + 3, y - 7, 2, 0, 6.283); cx.fill();
+  }
+
+  // munți, dealuri, păduri, sate
+  for (const st of STRATURI) deseneazaStrat(st, pl);
+
+  // lumea (pârtia) — cu tremurul camerei
+  const tx = tremur ? (Math.random() - 0.5) * tremur : 0, ty = tremur ? (Math.random() - 0.5) * tremur : 0;
+  cx.save();
+  cx.translate(-camX + tx, -camY + ty);
+  deseneazaPartia(pl);
+  cx.restore();
+
+  // ninsoarea, peste tot
+  cx.fillStyle = rgb(amesteca(pl.zapada, [255, 255, 255], 0.5), 0.85);
+  for (const f of FULGI) {
+    const x = ((f.x * W) % W + W) % W, y = f.y * H;
+    cx.globalAlpha = 0.35 + f.r * 0.3;
+    cx.beginPath(); cx.arc(x, y, f.r, 0, 6.283); cx.fill();
+  }
+  cx.globalAlpha = 1;
+}
+
+function deseneazaStrat(st, pl) {
+  const off = camX * st.p, pasX = st.padure ? 10 : 8;
+  const col = pl[st.cul];
+  const yLa = (sx) => H * st.baza - st.amp * H * creasta(st.seed, off + sx, st.lung);
+  // silueta
+  cx.fillStyle = rgb(col);
+  cx.beginPath();
+  cx.moveTo(-pasX, H);
+  for (let sx = -pasX; sx <= W + pasX; sx += pasX) cx.lineTo(sx, yLa(sx));
+  cx.lineTo(W + pasX, H);
+  cx.closePath();
+  cx.fill();
+  // zăpada de pe vârfuri
+  if (st.zap) {
+    const prag = st.zap;
+    cx.fillStyle = rgb(amesteca(pl.munteZ, col, 0.12));
+    cx.beginPath();
+    let in_ = false;
+    const pts = [];
+    for (let sx = -pasX; sx <= W + pasX; sx += pasX) pts.push([sx, creasta(st.seed, off + sx, st.lung)]);
+    for (let i = 0; i < pts.length; i++) {
+      const [sx, c] = pts[i];
+      if (c > prag) {
+        const y = H * st.baza - st.amp * H * c;
+        const jos = y + (c - prag) * st.amp * H * 0.9 * (0.75 + 0.25 * Math.sin(sx * 0.21));
+        if (!in_) { cx.moveTo(sx, y); in_ = []; }
+        cx.lineTo(sx, y);
+        in_.push([sx, jos]);
+      } else if (in_) {
+        for (let j = in_.length - 1; j >= 0; j--) cx.lineTo(in_[j][0], in_[j][1]);
+        cx.closePath();
+        in_ = false;
+      }
+    }
+    if (in_) { for (let j = in_.length - 1; j >= 0; j--) cx.lineTo(in_[j][0], in_[j][1]); cx.closePath(); }
+    cx.fill();
+  }
+  // brazi și sate pe creastă
+  if (st.padure) {
+    const celula = st.p > 0.4 ? 15 : 11;
+    const i0 = Math.floor((off - 40) / celula), i1 = Math.ceil((off + W + 40) / celula);
+    const brazCol = rgb(amesteca(col, pl.brad, 0.35));
+    for (let i = i0; i <= i1; i++) {
+      const u = i * celula;
+      const inSat = ((u % 700) + 700) % 700;
+      const sat = st.sate && (S.hash2(91, Math.floor(u / 700)) % 100 < 60) && inSat > 200 && inSat < 520;
+      const r = S.hash2(st.seed * 13, i) / 4294967296;
+      const sx = u - off, y = yLa(sx) + 2;
+      if (sat) {
+        if (i % 3 === 0) casa(sx, y, r, pl, col, inSat > 352 && inSat <= 352 + celula * 3);
+        continue;
+      }
+      if (r > st.padure) continue;
+      const hb = (st.p > 0.4 ? 26 : 13) + r * (st.p > 0.4 ? 40 : 18);
+      brad(sx, y, hb, brazCol, st.p > 0.4 ? null : rgb(amesteca(pl.munteZ, col, 0.55), 0.6));
+    }
+  }
+  // ceață între straturi
+  const gf = cx.createLinearGradient(0, H * (st.baza - st.amp * 0.35), 0, H * st.baza + 30);
+  gf.addColorStop(0, rgb(pl.ceata, 0));
+  gf.addColorStop(1, rgb(pl.ceata, st.padure ? 0.28 : 0.45));
+  cx.fillStyle = gf;
+  cx.fillRect(0, H * (st.baza - st.amp * 0.35), W, H);
+}
+
+function brad(x, y, h, col, zap) {
+  const w = h * 0.36;
+  cx.fillStyle = col;
+  cx.beginPath();
+  for (let k = 0; k < 4; k++) {
+    const ty = y - h + k * h * 0.2, by = ty + h * 0.38, ww = w * (0.42 + k * 0.2);
+    cx.moveTo(x, ty); cx.lineTo(x + ww, by); cx.lineTo(x - ww, by); cx.closePath();
+  }
+  cx.rect(x - h * 0.04, y - h * 0.1, h * 0.08, h * 0.12);
+  cx.fill();
+  if (zap) {
+    cx.fillStyle = zap;
+    cx.beginPath();
+    for (let k = 0; k < 4; k++) {
+      const ty = y - h + k * h * 0.2, ww = w * (0.42 + k * 0.2) * 0.38;
+      cx.moveTo(x, ty); cx.lineTo(x + ww, ty + h * 0.14); cx.lineTo(x - ww, ty + h * 0.14); cx.closePath();
+    }
+    cx.fill();
+  }
+}
+
+/** O casă de sat (sau, o dată pe sat, biserica de lemn cu turla înaltă). Noaptea, geamurile se aprind. */
+function casa(x, y, r, pl, col, biserica) {
+  const corp = rgb(amesteca(col, [0, 0, 0], 0.15));
+  const acoperis = rgb(amesteca(col, pl.munteZ, 0.35));
+  cx.fillStyle = corp;
+  if (biserica) {
+    cx.fillRect(x - 7, y - 16, 14, 16);
+    cx.beginPath(); cx.moveTo(x - 10, y - 15); cx.lineTo(x, y - 24); cx.lineTo(x + 10, y - 15); cx.closePath(); cx.fill();
+    cx.fillRect(x - 2.5, y - 32, 5, 10);
+    cx.beginPath(); cx.moveTo(x - 4, y - 31); cx.lineTo(x, y - 54); cx.lineTo(x + 4, y - 31); cx.closePath(); cx.fill();
+    cx.fillRect(x - 0.5, y - 60, 1, 7); cx.fillRect(x - 2.5, y - 58, 5, 1);
+  } else {
+    const w = 10 + r * 6, h = 7 + r * 3;
+    cx.fillRect(x - w / 2, y - h, w, h);
+    cx.fillStyle = acoperis;
+    cx.beginPath(); cx.moveTo(x - w / 2 - 2, y - h + 1); cx.lineTo(x, y - h - 6 - r * 2); cx.lineTo(x + w / 2 + 2, y - h + 1); cx.closePath(); cx.fill();
+    // fum din horn
+    cx.fillStyle = rgb(pl.ceata, 0.18);
+    for (let k = 0; k < 3; k++) {
+      const f = ((timp * 0.35 + k / 3 + r) % 1);
+      cx.beginPath(); cx.arc(x + w * 0.25 + f * 9, y - h - 8 - f * 22, 1.5 + f * 4, 0, 6.283); cx.fill();
+    }
+  }
+  if (pl.lumini > 0.05) {
+    const a = pl.lumini * (0.85 + 0.15 * Math.sin(timp * 3 + r * 20));
+    cx.globalCompositeOperation = "lighter";
+    cx.globalAlpha = a * 0.55;
+    cx.drawImage(LUMINA_GEAM, x - 14, y - (biserica ? 22 : 18), 28, 28);
+    cx.globalCompositeOperation = "source-over";
+    cx.globalAlpha = a;
+    cx.fillStyle = "#ffc46b";
+    if (biserica) cx.fillRect(x - 1.5, y - 11, 3, 5);
+    else { cx.fillRect(x - 3, y - 5, 2.4, 2.4); if (r > 0.4) cx.fillRect(x + 1.2, y - 5, 2.4, 2.4); }
+    cx.globalAlpha = 1;
+  }
+}
+
+function deseneazaPartia(pl) {
+  const x0 = camX - 60, x1 = camX + W + 60, jos = camY + H + 60;
+  const vec = P.intre(x0, x1);
+
+  // râpele: întuneric între maluri
+  for (const z of vec.rape) {
+    const g = cx.createLinearGradient(0, P.h(z.a), 0, P.h(z.a) + 420);
+    g.addColorStop(0, rgb(pl.rapa, 0.75)); g.addColorStop(1, rgb(amesteca(pl.rapa, [0, 0, 0], 0.5)));
+    cx.fillStyle = g;
+    cx.beginPath(); cx.moveTo(z.a, P.h(z.a)); cx.lineTo(z.b, P.h(z.b)); cx.lineTo(z.b, jos); cx.lineTo(z.a, jos); cx.closePath(); cx.fill();
+  }
+
+  // brazi de lângă pârtie (decor, în spatele zăpezii)
+  const brazCol = rgb(amesteca(pl.brad, pl.umbra, 0.1));
+  const zapBrad = rgb(pl.zapada, 0.9);
+  for (let i = Math.floor(x0 / 150); i <= Math.ceil(x1 / 150); i++) {
+    const r = S.hash2(ZI ^ 0xb7ad, i) / 4294967296;
+    if (r > 0.42 || i * 150 < 0) continue;
+    const x = i * 150 + r * 200;
+    if (P.rapa(x) || P.rapa(x + 30) || P.rapa(x - 30)) continue;
+    brad(x, P.h(x) + 10, 58 + r * 90, brazCol, zapBrad);
+  }
+
+  // zăpada: segmente continue, tăiate de râpe
+  const gz = cx.createLinearGradient(0, camY, 0, camY + H);
+  gz.addColorStop(0, rgb(pl.zapada)); gz.addColorStop(1, rgb(pl.umbra));
+  const segm = [];
+  let st = x0;
+  for (const z of vec.rape) { if (z.a > st) segm.push([st, Math.min(z.a, x1)]); st = Math.max(st, z.b); }
+  if (st < x1) segm.push([st, x1]);
+  for (const [a, b] of segm) {
+    cx.fillStyle = gz;
+    cx.beginPath();
+    cx.moveTo(a, jos);
+    for (let x = a; x < b; x += 8) cx.lineTo(x, P.h(x));
+    cx.lineTo(b, P.h(b));
+    cx.lineTo(b, jos);
+    cx.closePath();
+    cx.fill();
+    // buza zăpezii: o linie luminoasă și o umbră moale sub ea
+    cx.strokeStyle = rgb(pl.umbra, 0.35); cx.lineWidth = 9;
+    cx.beginPath(); for (let x = a; x <= b; x += 8) cx.lineTo(x, P.h(x) + 7); cx.stroke();
+    cx.strokeStyle = rgb(amesteca(pl.zapada, [255, 255, 255], 0.6)); cx.lineWidth = 2.5;
+    cx.beginPath(); for (let x = a; x <= b; x += 8) cx.lineTo(x, P.h(x) + 1); cx.stroke();
+  }
+  // malurile râpelor: perete de stâncă zimțat sub buza de zăpadă
+  for (const z of vec.rape) { mal(z.a, 1, pl, jos); mal(z.b, -1, pl, jos); }
+
+  // bolovani
+  const piatra = amesteca([92, 100, 122], pl.rapa, 0.25 + 0.5 * pl.noapte);
+  for (const b of vec.bolovani) {
+    const y0 = P.h(b.x) + 5;
+    cx.fillStyle = rgb(piatra);
+    cx.beginPath();
+    for (let j = 0; j <= 8; j++) {
+      const u = Math.PI + (j / 8) * Math.PI, k = 0.82 + 0.22 * Math.sin(j * 2.3 + b.forma * 9);
+      const x = b.x + Math.cos(u) * b.w * 0.5 * k, y = y0 + Math.sin(u) * (b.h + 5) * k;
+      j ? cx.lineTo(x, y) : cx.moveTo(x, y);
+    }
+    cx.closePath(); cx.fill();
+    cx.fillStyle = rgb(amesteca(piatra, [0, 0, 0], 0.3), 0.6);
+    cx.beginPath(); cx.ellipse(b.x + b.w * 0.15, y0 - b.h * 0.35, b.w * 0.32, b.h * 0.42, 0, 0, 6.283); cx.fill();
+    cx.fillStyle = rgb(pl.zapada);
+    cx.beginPath(); cx.ellipse(b.x - b.w * 0.05, y0 - b.h * 0.92, b.w * 0.33, b.h * 0.2, -0.1, 0, 6.283); cx.fill();
+  }
+
+  // clopoței
+  for (const c of vec.clopotei) if (!luati.has(c.id)) clopotel(c.x, c.y + Math.sin(timp * 3 + c.x) * 3);
+
+  // particule
+  for (const p of particule) {
+    const a = 1 - p.t / p.max;
+    cx.globalAlpha = a;
+    cx.fillStyle = p.tip ? "#ffd75a" : rgb(amesteca(pl.zapada, [255, 255, 255], 0.4));
+    cx.beginPath(); cx.arc(p.x, p.y, p.r * (p.tip ? 1 : 0.6 + a * 0.6), 0, 6.283); cx.fill();
+  }
+  cx.globalAlpha = 1;
+
+  // fularul, apoi sania cu copilul
+  deseneazaFular();
+  deseneazaSania(pl);
+
+  // mesaje plutitoare
+  const fs = Math.round(18 / sc);
+  cx.textAlign = "center";
+  for (const m of mesaje) {
+    const k = m.t / m.max, y = m.y - k * 50;
+    cx.globalAlpha = k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
+    cx.font = `700 ${fs}px ui-monospace,"SF Mono",Menlo,Consolas,monospace`;
+    cx.fillStyle = "rgba(5,6,15,0.55)"; cx.fillText(m.text, m.x + 1.5, y + 1.5);
+    cx.fillStyle = m.cul; cx.fillText(m.text, m.x, y);
+    if (m.sub) {
+      cx.font = `700 ${Math.round(fs * 0.8)}px ui-monospace,"SF Mono",Menlo,Consolas,monospace`;
+      cx.fillStyle = "rgba(5,6,15,0.55)"; cx.fillText(m.sub, m.x + 1.5, y + fs + 1.5);
+      cx.fillStyle = "#ffd75a"; cx.fillText(m.sub, m.x, y + fs);
+    }
+  }
+  cx.globalAlpha = 1;
+}
+
+/** Peretele de stâncă al unei râpe: dir = +1 pe malul dinainte, -1 pe malul de după. */
+function mal(x, dir, pl, jos) {
+  const y = P.h(x), r = S.hash2(ZI, Math.round(x)) / 4294967296;
+  const piatra = amesteca(pl.umbra, pl.rapa, 0.55);
+  const gm = cx.createLinearGradient(x + dir * 6, 0, x - dir * 28, 0);   // stânca se topește spre interiorul zăpezii
+  gm.addColorStop(0, rgb(piatra)); gm.addColorStop(0.55, rgb(piatra, 0.75)); gm.addColorStop(1, rgb(piatra, 0));
+  cx.fillStyle = gm;
+  cx.beginPath();
+  cx.moveTo(x + dir * 1, y + 4);
+  cx.lineTo(x + dir * (5 + r * 4), y + 26);
+  cx.lineTo(x - dir * 1, y + 52);
+  cx.lineTo(x + dir * (4 + r * 3), y + 96);
+  cx.lineTo(x + dir * 1, y + 150);
+  cx.lineTo(x + dir * 2, jos);
+  cx.lineTo(x - dir * 26, jos);
+  cx.lineTo(x - dir * 18, y + 120);
+  cx.lineTo(x - dir * 24, y + 60);
+  cx.lineTo(x - dir * 14, y + 16);
+  cx.closePath();
+  cx.fill();
+  cx.fillStyle = rgb(amesteca(pl.rapa, [0, 0, 0], 0.3), 0.5);
+  cx.beginPath();
+  cx.moveTo(x - dir * 10, y + 30); cx.lineTo(x - dir * 4, y + 70); cx.lineTo(x - dir * 12, y + 140); cx.lineTo(x - dir * 16, y + 80);
+  cx.closePath();
+  cx.fill();
+  // buza de zăpadă care atârnă peste margine
+  cx.fillStyle = rgb(pl.zapada);
+  cx.beginPath(); cx.ellipse(x - dir * 4, y + 3, 12, 6, 0, 0, 6.283); cx.fill();
+}
+
+function clopotel(x, y) {
+  cx.globalCompositeOperation = "lighter";
+  cx.globalAlpha = 0.55;
+  cx.drawImage(LUMINA_AUR, x - 26, y - 26, 52, 52);
+  cx.globalCompositeOperation = "source-over";
+  cx.globalAlpha = 1;
+  cx.save();
+  cx.translate(x, y);
+  cx.rotate(Math.sin(timp * 5 + x * 0.1) * 0.28);
+  cx.strokeStyle = "#b8861c"; cx.lineWidth = 1.6;
+  cx.beginPath(); cx.arc(0, -11, 2.4, 0, 6.283); cx.stroke();
+  cx.fillStyle = "#f2c14e";
+  cx.beginPath();
+  cx.moveTo(-8, 5); cx.quadraticCurveTo(-8, -9, 0, -9.5); cx.quadraticCurveTo(8, -9, 8, 5);
+  cx.lineTo(10, 7.5); cx.lineTo(-10, 7.5); cx.closePath(); cx.fill();
+  cx.fillStyle = "rgba(255,255,255,0.6)";
+  cx.beginPath(); cx.ellipse(-3, -3, 1.8, 4, 0.2, 0, 6.283); cx.fill();
+  cx.fillStyle = "#b8861c";
+  cx.beginPath(); cx.arc(0, 9.5, 2.4, 0, 6.283); cx.fill();
+  cx.restore();
+}
+
+function deseneazaFular() {
+  if (fular.length < 2) return;
+  cx.lineCap = "round"; cx.lineJoin = "round";
+  for (let i = 1; i < fular.length; i++) {
+    cx.strokeStyle = i % 3 === 2 ? "#f4f1ea" : "#d8303c";
+    cx.lineWidth = 5.5 - i * 0.45;
+    cx.beginPath(); cx.moveTo(fular[i - 1].x, fular[i - 1].y); cx.lineTo(fular[i].x, fular[i].y); cx.stroke();
+  }
+}
+
+function deseneazaSania(pl) {
+  cx.save();
+  cx.translate(J.x, J.y);
+  cx.rotate(J.rot);
+  // umbra pe zăpadă (doar pe sol)
+  if (J.sol) { cx.fillStyle = rgb(pl.umbra, 0.5); cx.beginPath(); cx.ellipse(0, 2, 26, 3, 0, 0, 6.283); cx.fill(); }
+  // tălpile
+  cx.strokeStyle = "#5e3a1f"; cx.lineWidth = 3; cx.lineCap = "round";
+  cx.beginPath(); cx.moveTo(-24, -1); cx.lineTo(20, -1); cx.quadraticCurveTo(29, -2, 27, -10); cx.quadraticCurveTo(25, -14, 21, -11); cx.stroke();
+  // stâlpișori și scândura
+  cx.lineWidth = 2.4;
+  cx.beginPath(); cx.moveTo(-15, -1); cx.lineTo(-15, -8); cx.moveTo(11, -1); cx.lineTo(11, -8); cx.stroke();
+  cx.fillStyle = "#b9824f";
+  cx.fillRect(-21, -11, 38, 4);
+  cx.fillStyle = "#8a5a34";
+  cx.fillRect(-21, -8, 38, 1.2);
+  // copilul: geaca, picioarele, cizmele
+  cx.fillStyle = "#1f2a44";
+  cx.beginPath(); cx.moveTo(-6, -12); cx.lineTo(14, -13); cx.lineTo(14, -18); cx.lineTo(-4, -19); cx.closePath(); cx.fill();
+  cx.fillStyle = "#3a2418";
+  cx.beginPath(); cx.ellipse(16, -15, 3.6, 3.2, 0, 0, 6.283); cx.fill();
+  cx.fillStyle = "#2f5fae";
+  cx.beginPath(); cx.ellipse(-6, -21, 8, 10.5, -0.12, 0, 6.283); cx.fill();
+  cx.fillStyle = "#264f93";
+  cx.beginPath(); cx.ellipse(-3, -18, 4, 6, -0.5, 0, 6.283); cx.fill();
+  // brațul care ține sfoara saniei
+  cx.strokeStyle = "#2f5fae"; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(-4, -24); cx.lineTo(8, -17); cx.stroke();
+  cx.strokeStyle = "#c9a36a"; cx.lineWidth = 1;
+  cx.beginPath(); cx.moveTo(9, -17); cx.quadraticCurveTo(18, -16, 22, -11); cx.stroke();
+  cx.fillStyle = "#e8c09a";
+  cx.beginPath(); cx.arc(9, -17, 2.2, 0, 6.283); cx.fill();
+  // capul și căciula cu moț
+  cx.fillStyle = "#f1c7a5";
+  cx.beginPath(); cx.arc(-4, -34, 6.8, 0, 6.283); cx.fill();
+  cx.fillStyle = "#e4977f";
+  cx.beginPath(); cx.arc(0.5, -32.5, 1.6, 0, 6.283); cx.fill();
+  cx.fillStyle = "#d6343c";
+  cx.beginPath(); cx.arc(-4.5, -35.5, 7.2, Math.PI * 1.02, Math.PI * 2.02); cx.closePath(); cx.fill();
+  cx.fillStyle = "#f4f1ea";
+  cx.fillRect(-12, -36.5, 15, 2.6);
+  cx.beginPath(); cx.arc(-10, -42.5, 3.4, 0, 6.283); cx.fill();
+  cx.restore();
+}
+
+/* ─── Sunetul (sintetizat, Web Audio) ─── */
+const Sunet = {
+  ac: null, master: null, vantG: null, vantF: null, alunG: null, alb: null,
+  pornit: ls.get(`gro:${SLUG}:sunet`) !== "0",
+  init() {
+    if (this.ac) { if (this.ac.state === "suspended") this.ac.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try { this.ac = new AC(); } catch { return; }
+    const ac = this.ac, n = ac.sampleRate * 2;
+    this.master = ac.createGain();
+    this.master.gain.value = this.pornit ? 0.7 : 0;
+    this.master.connect(ac.destination);
+    this.alb = ac.createBuffer(1, n, ac.sampleRate);
+    const d = this.alb.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    const maro = ac.createBuffer(1, n, ac.sampleRate), m = maro.getChannelData(0);
+    let b = 0;
+    for (let i = 0; i < n; i++) { b = (b + 0.02 * (Math.random() * 2 - 1)) / 1.02; m[i] = b * 3.5; }
+    // vântul: zgomot maro, filtrat după viteză
+    const v = ac.createBufferSource(); v.buffer = maro; v.loop = true;
+    this.vantF = ac.createBiquadFilter(); this.vantF.type = "bandpass"; this.vantF.frequency.value = 400; this.vantF.Q.value = 0.6;
+    this.vantG = ac.createGain(); this.vantG.gain.value = 0;
+    v.connect(this.vantF); this.vantF.connect(this.vantG); this.vantG.connect(this.master); v.start();
+    // fâșâitul tălpilor pe zăpadă
+    const a = ac.createBufferSource(); a.buffer = this.alb; a.loop = true;
+    const f = ac.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 3000;
+    this.alunG = ac.createGain(); this.alunG.gain.value = 0;
+    a.connect(f); f.connect(this.alunG); this.alunG.connect(this.master); a.start();
+  },
+  seteaza(viteza, sol, activ) {
+    if (!this.ac) return;
+    const t = this.ac.currentTime, k = Math.max(0, Math.min(1, (viteza - 250) / 850));
+    this.vantG.gain.setTargetAtTime(activ ? 0.10 + 0.32 * k : 0.06, t, 0.25);
+    this.vantF.frequency.setTargetAtTime(activ ? 300 + 900 * k : 260, t, 0.3);
+    this.alunG.gain.setTargetAtTime(activ && sol ? 0.012 + 0.03 * k : 0, t, 0.05);
+  },
+  zgomot(dur, tip, f0, f1, vol, cand = 0) {
+    if (!this.ac) return;
+    const ac = this.ac, t = ac.currentTime + cand;
+    const s = ac.createBufferSource(); s.buffer = this.alb;
+    const f = ac.createBiquadFilter(); f.type = tip; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = ac.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(this.master); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  },
+  ton(f0, f1, dur, vol, tip = "sine", cand = 0) {
+    if (!this.ac) return;
+    const ac = this.ac, t = ac.currentTime + cand;
+    const o = ac.createOscillator(); o.type = tip;
+    o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.master); o.start(t); o.stop(t + dur + 0.05);
+  },
+  saritura() { this.zgomot(0.22, "bandpass", 500, 1800, 0.35); },
+  aterizare(forta) { this.ton(140, 45, 0.18, 0.25 + 0.4 * forta); this.zgomot(0.14, "lowpass", 2200, 300, 0.2 + 0.3 * forta); },
+  clopotel(i) {
+    const scara = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
+    const f = 784 * Math.pow(2, scara[(i - 1) % scara.length] / 12);
+    this.ton(f, f, 1.1, 0.16); this.ton(f * 2.76, f * 2.76, 0.45, 0.05); this.ton(f * 5.4, f * 5.4, 0.2, 0.025);
+  },
+  salt(n) {
+    const note = [523, 659, 784, 1047, 1319];
+    for (let i = 0; i < Math.min(5, 2 + n); i++) this.ton(note[i], note[i], 0.5, 0.12, "triangle", i * 0.07);
+  },
+  prabusire() { this.zgomot(0.7, "lowpass", 1400, 120, 0.6); this.ton(110, 40, 0.4, 0.4); },
+  comuta() {
+    this.pornit = !this.pornit;
+    ls.set(`gro:${SLUG}:sunet`, this.pornit ? "1" : "0");
+    if (this.master) this.master.gain.setTargetAtTime(this.pornit ? 0.7 : 0, this.ac.currentTime, 0.03);
+    afiseazaSunet();
+  },
+};
+
+/* ─── UI: HUD, ecrane, bord ─── */
+const hud = $("hud"), hudMetri = $("hud-metri"), hudPuncte = $("hud-puncte"), hudClop = $("hud-clopotei");
+const ecranStart = $("ecran-start"), ecranFinal = $("ecran-final");
+const anuntEl = $("anunt");
+let hudVechi = "";
+function anunta(t) { anuntEl.textContent = t; }
+function actualizeazaHud() {
+  const cheie = `${S.metri(J.x)}|${puncte()}|${clopotei}`;
+  if (cheie === hudVechi) return;
+  hudVechi = cheie;
+  hudMetri.textContent = `${S.formatNumar(S.metri(J.x))} m`;
+  hudPuncte.textContent = `${S.formatNumar(puncte())} PUNCTE`;
+  hudClop.textContent = clopotei;
+}
+function actualizeazaBord() {
+  $("editie").textContent = `#${EDITIE}`;
+  $("best-azi").textContent = S.formatNumar(bestAzi ? bestAzi.scor : 0);
+  $("record").textContent = S.formatNumar(record ? record.scor : 0);
+  $("streak").textContent = GamesRO.streak(SLUG);
+}
+function afiseazaSunet() {
+  const b = $("sunet");
+  b.setAttribute("aria-pressed", String(Sunet.pornit));
+  b.setAttribute("aria-label", Sunet.pornit ? "Sunet pornit" : "Sunet oprit");
+  $("sunet-unde").toggleAttribute("hidden", !Sunet.pornit);
+  $("sunet-mut").toggleAttribute("hidden", Sunet.pornit);
+}
+
+const TITLURI = {
+  "Ai lovit un bolovan.": "Bufff!",
+  "Ai căzut în râpă.": "Hopa!",
+  "Ai lovit malul râpei.": "Pac!",
+  "Ai aterizat strâmb.": "Ups!",
+  "Ai aterizat cu capul în zăpadă.": "Zdup!",
+};
+let rezultat = null;
+function arataFinal() {
+  stare = "final";
+  timpFinal = timp;
+  const r = { scor: puncte(), metri: S.metri(J.x), salturi, clopotei };
+  rezultat = r;
+  let nota = "";
+  const eraAzi = bestAzi ? bestAzi.scor : -1;
+  if (!bestAzi || r.scor > bestAzi.scor) { bestAzi = r; GamesRO.marcheazaJucat(SLUG, r); }
+  if (!record || r.scor > record.scor) {
+    const aveaRecord = !!record && record.scor > 0;
+    record = r; ls.set(CHEIE_RECORD, JSON.stringify(r));
+    nota = aveaRecord ? "RECORD NOU!" : "Primul tău record. Acum bate-l!";
+  } else if (r.scor > eraAzi && eraAzi >= 0) nota = "Cel mai bun scor de azi!";
+  else nota = `Azi: ${S.formatNumar(bestAzi.scor)} · Record: ${S.formatNumar(record.scor)}`;
+  $("final-titlu").textContent = TITLURI[motiv] || "Gata!";
+  $("final-motiv").textContent = motiv;
+  $("final-scor").textContent = S.formatNumar(r.scor);
+  $("final-metri").textContent = S.formatNumar(r.metri);
+  $("final-salturi").textContent = r.salturi;
+  $("final-clopotei").textContent = r.clopotei;
+  const rec = $("final-record");
+  rec.textContent = nota;
+  rec.classList.toggle("nou", nota === "RECORD NOU!" || nota.startsWith("Cel mai bun"));
+  $("share").disabled = false;
+  $("share").textContent = "Share";
+  hud.hidden = true;
+  ecranFinal.hidden = false;
+  actualizeazaBord();
+  anunta(`${motiv} ${S.plural(r.scor, "punct", "puncte").replace(/^\d+/, S.formatNumar(r.scor))}, ${S.plural(r.metri, "metru", "metri")}.`);
+  $("din-nou").focus({ preventScroll: true });
+}
+
+function porneste() {
+  Sunet.init();
+  reset();
+  stare = "joc";
+  pauza = false;
+  tinut = false;
+  ecranStart.hidden = true;
+  ecranFinal.hidden = true;
+  hud.hidden = false;
+  hudVechi = "";
+  actualizeazaHud();
+  anunta("Ai pornit la vale.");
+}
+
+async function distribuie() {
+  const b = bestAzi || rezultat;
+  if (!b) return;
+  const r = await GamesRO.share(SLUG, S.grilaShare(b), S.textScor(b.scor));
+  if (r === "copied") feedbackShare("Copiat!");
+  else if (r === false) feedbackShare("Copiază manual");
+}
+let shareTimer = null;
+function feedbackShare(t) {
+  $("share").textContent = t;
+  clearTimeout(shareTimer);
+  shareTimer = setTimeout(() => { $("share").textContent = "Share"; }, 1500);
+}
+
+/* ─── Input: un singur deget ─── */
+let ignoraRidicarea = false;
+function apasa() {
+  Sunet.init();
+  if (stare === "start") { porneste(); ignoraRidicarea = true; return; }
+  if (stare === "final") { if (timp - timpFinal > 0.5) { porneste(); ignoraRidicarea = true; } return; }
+  if (pauza) { pauza = false; ecranStart.hidden = true; hud.hidden = false; ignoraRidicarea = true; return; }
+  if (stare !== "joc") return;
+  tinut = true;
+  if (J.sol || (!J.sarit && J.aerT < 0.1)) sari();   // o fracțiune de secundă de grație după o creastă
+}
+function ridica() { tinut = false; ignoraRidicarea = false; }
+
+scena.addEventListener("pointerdown", (e) => {
+  if (e.target.closest("button, a, .panou")) return;
+  if (e.button !== undefined && e.button > 0) return;
+  e.preventDefault();
+  try { scena.setPointerCapture(e.pointerId); } catch { /* nu e critic */ }
+  apasa();
+});
+scena.addEventListener("pointerup", ridica);
+scena.addEventListener("pointercancel", ridica);
+scena.addEventListener("contextmenu", (e) => e.preventDefault());
+document.addEventListener("keydown", (e) => {
+  const tasta = e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW";
+  if (!tasta) return;
+  if (e.target.closest && e.target.closest("button, a, summary, input")) return;
+  e.preventDefault();
+  if (!e.repeat) apasa();
+});
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") ridica();
+});
+$("sunet").addEventListener("click", () => { Sunet.init(); Sunet.comuta(); });
+$("din-nou").addEventListener("click", porneste);
+$("share").addEventListener("click", distribuie);
+
+function puneInPauza() {
+  if (stare !== "joc" || pauza) return;
+  pauza = true; tinut = false;
+  $("start-titlu").textContent = "Pauză";
+  $("start-sub").textContent = "Atinge ca să continui";
+  $("start-nota").textContent = "";
+  ecranStart.hidden = false;
+  hud.hidden = true;
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { puneInPauza(); if (Sunet.ac) Sunet.ac.suspend(); }
+  else if (Sunet.ac) Sunet.ac.resume();
+});
+
+/* ─── Bucla ─── */
+let ultim = performance.now();
+function cadru(acum) {
+  let dt = (acum - ultim) / 1000;
+  ultim = acum;
+  if (!(dt > 0)) dt = 0;
+  tick(Math.min(dt, 0.05));
+  deseneaza();
+  requestAnimationFrame(cadru);
+}
+function tick(dt) {
+  if (!pauza) {
+    timp += dt;
+    if (stare === "joc") {
+      let rest = dt;
+      while (rest > 1e-6 && stare === "joc") { const h = Math.min(1 / 120, rest); pas(h); rest -= h; }
+      actualizeazaHud();
+    } else if (stare === "prabusit") {
+      const lent = timp - timpFinal < 0.25 ? 0.35 : 1;      // o clipă de încetinire la impact
+      pasPrabusit(dt * lent);
+      if (timp - timpFinal > 1.3) arataFinal();
+    } else if (stare === "start") {
+      J.y = P.h(J.x) + Math.sin(timp * 2) * 0.4;
+    }
+    actualizeazaParticule(dt);
+    actualizeazaFular(dt);
+    actualizeazaCamera(dt);
+    // ninsoarea se mișcă în sens opus camerei
+    const dx = (camX - (cadru.camVechi ?? camX));
+    cadru.camVechi = camX;
+    for (const f of FULGI) {
+      f.y += (f.v * dt) / H;
+      f.x += (Math.sin(timp + f.f) * 10 * dt - dx * (0.25 + f.r * 0.25)) / W;
+      if (f.y > 1.02) { f.y = -0.02; f.x = Math.random(); }
+    }
+    Sunet.seteaza(stare === "joc" ? (J.sol ? J.v : Math.hypot(J.vx, J.vy)) : 0, J.sol, stare === "joc");
+  }
+}
+
+/* ─── Header: ceas ─── */
+function ceas() {
+  const now = new Date();
+  $("clock-time").textContent = now.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" });
+  $("clock-date").textContent = now.toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function init() {
+  redimensioneaza();
+  reset();
+  actualizeazaCamera(0, true);
+  actualizeazaBord();
+  afiseazaSunet();
+  ceas();
+  setInterval(ceas, 15000);
+  if (!bestAzi && GamesRO.streak(SLUG) === 0) $("reguli").open = true;
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => { redimensioneaza(); actualizeazaCamera(0, true); }).observe(scena);
+  else window.addEventListener("resize", () => { redimensioneaza(); actualizeazaCamera(0, true); });
+  requestAnimationFrame((t) => { ultim = t; cadru(t); });
+}
+
+init();
+</script>
+</body>
+</html>
