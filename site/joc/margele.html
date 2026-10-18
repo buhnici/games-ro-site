@@ -389,7 +389,8 @@ const scena = $("scena"), cv = $("c"), cx = cv.getContext("2d");
 let cssW = 600, cssH = 660, k = 1, dpr = 1, fundal = null;
 function redimensioneaza() {
   const st = getComputedStyle(scena);
-  cssW = Math.round((scena.clientWidth || 600) - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight));
+  const lat = (scena.clientWidth || 0) - (parseFloat(st.paddingLeft) || 0) - (parseFloat(st.paddingRight) || 0);
+  cssW = Math.round(lat > 60 ? lat : 580);   // scena încă nemăsurată (ex. pagină ascunsă): o lățime de rezervă, nu zero
   k = cssW / M.LUME_L;
   cssH = Math.round(M.LUME_H * k);
   dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -1013,7 +1014,7 @@ function pas(dt) {
 /* ─── Desen ─── */
 function deseneaza() {
   cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (fundal) cx.drawImage(fundal, 0, 0, cssW, cssH);
+  if (fundal && fundal.width && fundal.height) cx.drawImage(fundal, 0, 0, cssW, cssH);
   cx.setTransform(dpr * k, 0, 0, dpr * k, 0, 0);
   if (!TR) return;
 
@@ -1338,6 +1339,7 @@ document.addEventListener("visibilitychange", () => {
 /* ─── Bucla ─── */
 let ultim = performance.now();
 function cadru(acum) {
+  requestAnimationFrame(cadru);                 // întâi programează cadrul următor: o eroare de desen nu oprește jocul
   let dt = (acum - ultim) / 1000;
   ultim = acum;
   if (!(dt > 0)) dt = 0;
@@ -1348,7 +1350,6 @@ function cadru(acum) {
     while (rest > 1e-6) { const h = Math.min(1 / 120, rest); pas(h); rest -= h; }
   }
   deseneaza();
-  requestAnimationFrame(cadru);
 }
 
 /* ─── Header: ceas ─── */
