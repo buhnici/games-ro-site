@@ -304,6 +304,11 @@ body{
           <span><span class="joc-titlu">Categoria</span><span class="joc-desc">Ghicește categoria zilei din cinci indicii.</span><span class="joc-meta" data-streak="categoria"></span></span>
           <span class="stare" data-stare="categoria"></span>
         </a>
+        <a class="joc" href="/joc/vitraliu" data-play="vitraliu">
+          <span class="joc-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 42V20a14 14 0 0 1 28 0v22z" fill="none" stroke="#00e5ff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="24" cy="17" r="4.5" fill="#ffb300"/><path d="M24 21.5V30M10 30h28M24 30v12M17 30v12M31 30v12" stroke="#ff2e88" stroke-width="2.2" stroke-linecap="round" opacity=".85"/></svg></span>
+          <span><span class="joc-titlu">Vitraliul</span><span class="joc-desc">Rotește sticla până se aprinde toată fereastra.</span><span class="joc-meta" data-streak="vitraliu"></span></span>
+          <span class="stare" data-stare="vitraliu"></span>
+        </a>
       </div>
     </section>
 
@@ -341,6 +346,7 @@ body{
       <div class="panou">
         <h2>Noutăți</h2>
         <ul>
+          <li><span class="data">oct 2026</span><a href="/joc/vitraliu">Vitraliul</a>: rotești bucăți de sticlă colorată până când lumina din rozetă aprinde toată fereastra.</li>
           <li><span class="data">oct 2026</span>Puzzle-uri zilnice noi: <a href="/joc/coroane">Coroane</a>, <a href="/joc/zi-si-noapte">Zi și Noapte</a>, <a href="/joc/traseu">Traseu</a>, <a href="/joc/scara">Scara</a> și <a href="/joc/categoria">Categoria</a>.</li>
           <li><span class="data">oct 2026</span><a href="/joc/sania">Sania</a>: cobori pârtia zilei prin Carpați, de la apus până la zori, cu un singur deget.</li>
           <li><span class="data">sept 2026</span><a href="/joc/pretul-corect">Prețul Corect</a> are acum prețuri de zi cu zi: biletul de metrou, litrul de lapte, pașaportul. Fiecare cu sursa lui.</li>
@@ -399,7 +405,7 @@ body{
     if (meta && s.streak > 1) meta.textContent = `Streak ${s.streak} zile`;
   }
   /* Celelalte puzzle-uri zilnice: stare și streak pe card, dar nu intră în cele șase */
-  const ALTE = ["coroane", "zi-si-noapte", "traseu", "scara", "categoria"];
+  const ALTE = ["coroane", "zi-si-noapte", "traseu", "scara", "categoria", "vitraliu"];
   const statsAlte = GamesRO.statsToate(ALTE);
   for (const slug of ALTE) {
     const s = statsAlte[slug];
