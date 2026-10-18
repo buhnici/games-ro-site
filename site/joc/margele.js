@@ -49,9 +49,14 @@ const neted = (a, b, t) => { t = Math.min(1, Math.max(0, t)); t = t * t * (3 - 2
 
 /** „Broasca țestoasă”: pornește din (x, y) cu direcția în grade (0 = est, 90 = sud) și desenează. */
 function testoasa(x, y, grade) {
-  const p = [[x, y]];
-  let u = grade * GRAD;
+  const p = [[x, y]], repere = [];
+  let u = grade * GRAD, lung = 0;
   const t = {
+    /** Notează un reper (unde pagina pune un monument): aici, sau centrul unui viraj de rază r la dreapta. */
+    semn(tip, r = 0) {
+      repere.push({ tip, s: lung, x: x + Math.cos(u + Math.PI / 2) * r, y: y + Math.sin(u + Math.PI / 2) * r });
+      return t;
+    },
     drept(len, unda = 0, lungUnda = 160) {
       const n = Math.max(1, Math.ceil(Math.abs(len) / 2));
       const nx = -Math.sin(u), ny = Math.cos(u);
@@ -59,7 +64,7 @@ function testoasa(x, y, grade) {
         const s = (len * i) / n, w = unda ? Math.sin((s / lungUnda) * Math.PI * 2) * unda * Math.sin((Math.PI * i) / n) : 0;
         p.push([x + Math.cos(u) * s + nx * w, y + Math.sin(u) * s + ny * w]);
       }
-      x += Math.cos(u) * len; y += Math.sin(u) * len;
+      x += Math.cos(u) * len; y += Math.sin(u) * len; lung += Math.abs(len);
       return t;
     },
     /** Viraj: grade > 0 = la dreapta (sens orar pe ecran), < 0 = la stânga. */
@@ -71,98 +76,107 @@ function testoasa(x, y, grade) {
         const a = a0 + (tot * i) / n;
         p.push([cxa + Math.cos(a) * r, cya + Math.sin(a) * r]);
       }
-      u += tot; x = p[p.length - 1][0]; y = p[p.length - 1][1];
+      u += tot; x = p[p.length - 1][0]; y = p[p.length - 1][1]; lung += Math.abs(tot) * r;
       return t;
     },
-    puncte: () => p,
+    puncte: () => Object.assign(p, { repere }),
   };
   return t;
 }
 
+/** Ocolul unui monument dintr-o piață (girație): o umflătură în drum, fără schimbarea direcției. */
+const girație = (t, r, tip = "piata") => t.arc(r, -60).semn(tip, r).arc(r, 120).arc(r, -60);
+/** O buclă de meandru, spre stânga (sens 1) sau spre dreapta (sens -1). */
+const meandru = (t, r, a, sens) => t.arc(r, -a * sens).arc(r, 2 * a * sens).arc(r, -a * sens);
+
 export const TRASEE = [
   {
     id: "sighisoara", nume: "Sighișoara", loc: "Cetatea medievală",
-    descriere: "Șiragul urcă pe zidurile cetății, pe lângă turnurile breslelor, spre Turnul cu Ceas.",
-    capat: "Turnul cu Ceas", tragator: { x: 300, y: 352 },
-    // zidul cetății: o spirală ușor ovală, cu bastioane (umflături mici) din loc în loc
-    puncte: () => polar({
-      cx: 300, cy: 352, ture: 1.72, unghi0: Math.PI, sens: 1, sy: 1.05, intrare: 380,
-      raza: (f, u) => (268 - 132 * f) * (1 + 0.035 * Math.max(0, Math.sin(u * 6)) ** 3),
-    }),
+    descriere: "Urcă pe Scara Acoperită, trece pe zid pe lângă turnurile breslelor și coboară spre Turnul cu Ceas.",
+    capat: "Turnul cu Ceas", tragator: { x: 315, y: 340 },
+    puncte: () => {
+      const t = testoasa(-60, 610, 0).drept(95).arc(30, -90).semn("scara");
+      for (let i = 0; i < 3; i++) t.arc(16, 40).drept(34).arc(16, -80).drept(34).arc(16, 40);      // Scara Acoperită
+      t.semn("scara-sus");
+      t.drept(150).arc(36, 90);
+      for (let i = 0; i < 4; i++) t.drept(34).arc(9, -90).arc(9, 90).drept(11).semn("turn").drept(11).arc(9, 90).arc(9, -90); // turnurile de pe zid
+      return t.drept(40).arc(36, 90)
+        .drept(410, 14, 150).arc(36, 90)
+        .drept(310).arc(36, 90)
+        .drept(300).arc(36, 90)
+        .drept(190, 8, 110).arc(36, 90)
+        .drept(170).arc(36, 90).drept(90)
+        .puncte();
+    },
   },
   {
-    id: "sarmizegetusa", nume: "Sarmizegetusa Regia", loc: "Sanctuarul mare circular",
-    descriere: "Pe Calea Sacră, de jur împrejurul sanctuarului dacilor, până la Soarele de andezit.",
+    id: "sarmizegetusa", nume: "Sarmizegetusa Regia", loc: "Sanctuarele dacilor",
+    descriere: "Pe Calea Sacră, pe lângă razele unui soare de piatră, în jurul sanctuarului mare, până la Soarele de andezit.",
     capat: "Soarele de andezit", tragator: { x: 300, y: 345 },
-    // două inele aproape perfect circulare (ca stâlpii sanctuarului), legate de o trecere lină
+    // un inel cu raze (soarele), apoi cercul sanctuarului, apoi spre mijloc
     puncte: () => polar({
-      cx: 300, cy: 345, ture: 1.9, unghi0: -135 * GRAD, sens: 1, intrare: 300,
-      raza: (f) => {
-        const g = f * 1.9 * 360;
-        if (g < 250) return 262;
-        if (g < 330) return neted(262, 180, (g - 250) / 80);
-        if (g < 590) return 180;
-        return neted(180, 116, (g - 590) / 80);
+      cx: 300, cy: 345, ture: 1.8, unghi0: -90 * GRAD, sens: 1, intrare: 340,
+      raza: (f, u) => {
+        const g = f * 1.8 * 360;
+        const raze = 18 * (0.5 + 0.5 * Math.sin(u * 8)) * neted(0, 1, (g - 15) / 40) * (1 - neted(0, 1, (g - 210) / 40));
+        let r;
+        if (g < 262) r = 246;
+        else if (g < 332) r = neted(246, 180, (g - 262) / 70);
+        else if (g < 560) r = 180;
+        else r = neted(180, 114, (g - 560) / 80);
+        return r + raze;
       },
     }),
   },
   {
-    id: "bucuresti", nume: "București", loc: "Calea Victoriei",
-    descriere: "De la Arcul de Triumf, pe bulevarde și pe Calea Victoriei, până la Ateneul Român.",
-    capat: "Ateneul Român", tragator: { x: 64, y: 230 },
-    // patru bulevarde în coloane, legate prin piețe rotunde; Calea Victoriei șerpuiește
-    puncte: () => testoasa(650, -40, 135)
-      .drept(150)
-      .arc(40, -45)
-      .drept(330)
-      .arc(60, 180)
-      .drept(300, 12, 140)
-      .arc(60, -180)
-      .drept(420)
-      .arc(60, 180)
-      .drept(310, 10, 150)
-      .puncte(),
+    id: "bucuresti", nume: "București", loc: "Bulevardele și Calea Victoriei",
+    descriere: "Pe Kiseleff, prin piețele cu girații și pe Calea Victoriei, până la Ateneul Român.",
+    capat: "Ateneul Român", tragator: { x: 64, y: 330 },
+    puncte: () => {
+      const t = testoasa(650, -40, 135).drept(140).arc(40, -45);
+      girație(t, 34, "arc"); t.drept(110); girație(t, 34, "statuie"); t.drept(110);
+      t.arc(60, 180).drept(440, 14, 130).arc(60, -180);
+      t.drept(80); girație(t, 34, "fantana"); t.drept(80); girație(t, 34, "fantana"); t.drept(30).arc(60, 180).drept(330, 10, 150);
+      return t.puncte();
+    },
   },
   {
     id: "brasov", nume: "Brașov", loc: "Piața Sfatului",
-    descriere: "De jur împrejurul Pieței Sfatului, printre casele colorate, sub Tâmpa.",
-    capat: "Biserica Neagră", tragator: { x: 300, y: 372 },
-    // un pătrat cu colțuri rotunjite (superelipsă), strâns în spirală
-    puncte: () => polar({
-      cx: 300, cy: 372, ture: 1.62, unghi0: Math.PI / 2, sens: 1, intrare: 440,
-      raza: (f, u) => {
-        const s = 250 - 128 * f, c = Math.abs(Math.cos(u)), d = Math.abs(Math.sin(u));
-        return s / Math.pow(Math.pow(c, 5) + Math.pow(d, 5), 1 / 5);
-      },
-    }),
+    descriere: "Coboară în serpentine de pe Tâmpa, ocolește Piața Sfatului și intră pe Strada Sforii, spre Biserica Neagră.",
+    capat: "Biserica Neagră", tragator: { x: 300, y: 395 },
+    puncte: () => {
+      const t = testoasa(470, -60, 90).drept(70).semn("tampa").arc(30, 90);
+      t.drept(240).arc(32, -180).drept(310).arc(36, 90);                                            // serpentinele de pe Tâmpa
+      t.drept(400, 8, 120).arc(40, 90).drept(410).arc(40, 90).drept(330).arc(40, 90);              // primul ocol al pieței
+      t.drept(330).arc(40, 90).drept(270).arc(40, 90).drept(210).arc(40, 90);                      // al doilea
+      t.drept(50).semn("sforii").arc(14, 60).drept(26).arc(14, -120).drept(26).arc(14, 120).drept(26).arc(14, -60).semn("sforii-capat"); // Strada Sforii
+      return t.puncte();
+    },
   },
   {
-    id: "delta", nume: "Delta Dunării", loc: "Canalele dintre stufăriș",
-    descriere: "Pe canalele Deltei, printre stuf și nuferi, spre farul de la malul mării.",
-    capat: "Farul", tragator: { x: 300, y: 340 },
-    // un canal care meandrează în jurul unei insule (spirală cu valuri lente)
-    puncte: () => polar({
-      cx: 300, cy: 340, ture: 1.78, unghi0: Math.PI / 2, sens: -1, intrare: 380,
-      raza: (f, u) => (252 - 130 * f) * (1 + 0.06 * Math.sin(u * 3)),
-    }),
+    id: "delta", nume: "Delta Dunării", loc: "Brațul care se varsă în mare",
+    descriere: "Un braț al Dunării meandrează printre stuf și nuferi până la mare, unde veghează farul.",
+    capat: "Farul", tragator: { x: 420, y: 592 },
+    puncte: () => {
+      const R = 34, A = 75, t = testoasa(-60, 84, 0).drept(80);
+      meandru(t, R, A, 1); t.drept(30); meandru(t, R, A, -1); t.drept(30); meandru(t, R, A, 1); t.drept(20);
+      t.arc(88, 180);
+      t.drept(40); meandru(t, R, A, -1); t.drept(40); meandru(t, R, A, 1); t.drept(20);
+      t.arc(88, -180);
+      t.drept(30); meandru(t, R, A, 1); t.drept(40); meandru(t, R, A, -1); t.drept(30);
+      return t.puncte();
+    },
   },
   {
     id: "transfagarasan", nume: "Transfăgărășan", loc: "Serpentinele de munte",
-    descriere: "Din tunelul de sub creastă, în serpentine strânse, până la baraj.",
+    descriere: "Iese din tunelul de sub creastă și coboară în ace de păr, tot mai largi, până la baraj.",
     capat: "Barajul", tragator: { x: 300, y: 604 },
-    // ace de păr una sub alta, din ce în ce mai largi pe măsură ce coboară muntele
-    puncte: () => testoasa(230, -70, 90)
-      .drept(105)
-      .arc(30, -90)
-      .drept(160)
-      .arc(46, 180)
-      .drept(285)
-      .arc(46, -180)
-      .drept(370)
-      .arc(46, 180)
-      .drept(440)
-      .arc(46, -180)
-      .drept(300)
+    puncte: () => testoasa(230, -70, 90).drept(100).arc(30, -90)
+      .drept(150, 8, 100).arc(36, 180)
+      .drept(270, 12, 135).arc(40, -180)
+      .drept(360, 14, 120).arc(44, 180)
+      .drept(420, 16, 140).arc(48, -180)
+      .drept(170).arc(50, 50).arc(50, -50).drept(60)
       .puncte(),
   },
 ];
