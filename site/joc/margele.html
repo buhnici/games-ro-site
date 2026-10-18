@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mărgele — GAMES.ro</title>
 <meta name="robots" content="noindex">
-<meta name="description" content="Mărgele: un șirag de mărgele colorate se rostogolește spre fântână. Ochește, potrivește trei de aceeași culoare și oprește-l la timp. Joc gratuit, fără download.">
+<meta name="description" content="Mărgele: un șirag de mărgele colorate se rostogolește prin Sighișoara, Sarmizegetusa, București și alte locuri din România. Ochește, potrivește trei de aceeași culoare și oprește-l la timp.">
 <link rel="canonical" href="https://games.ro/joc/margele">
 <meta property="og:title" content="Mărgele — GAMES.ro">
-<meta property="og:description" content="Un șirag de mărgele se rostogolește spre fântână. Ochește și potrivește trei de aceeași culoare înainte să ajungă.">
+<meta property="og:description" content="Un șirag de mărgele se rostogolește prin Sighișoara, Sarmizegetusa, București și alte locuri din România. Ochește și potrivește trei de aceeași culoare.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://games.ro/joc/margele">
 <style>
@@ -165,7 +165,8 @@ button{font:inherit;color:var(--text)}
 }
 .ecran-nota{font-size:0.85rem;color:rgba(255,255,255,0.85);text-shadow:0 1px 3px rgba(0,0,0,0.7);max-width:360px;line-height:1.45}
 @keyframes respira{0%,100%{opacity:1}50%{opacity:0.45}}
-.ecran-nivel{background:radial-gradient(ellipse at center,rgba(5,6,15,0.1) 0%,rgba(5,6,15,0.35) 100%);pointer-events:none}
+.ecran-nivel{background:radial-gradient(ellipse at center,rgba(5,6,15,0.45) 0%,rgba(5,6,15,0.2) 70%,rgba(5,6,15,0.35) 100%);pointer-events:none}
+.ecran-nivel .ecran-sub{animation:none}
 
 /* Panoul de final */
 .panou{
@@ -226,7 +227,7 @@ button{font:inherit;color:var(--text)}
 
 <main class="joc" id="joc">
   <h1 class="game-title">Mărgele</h1>
-  <p class="game-instructions">Un șirag de mărgele se rostogolește spre fântână. Oprește-l potrivind câte trei de aceeași culoare.</p>
+  <p class="game-instructions">Un șirag de mărgele se rostogolește prin locuri din România. Oprește-l potrivind câte trei de aceeași culoare.</p>
 
   <div class="bord">
     <div class="bord-item"><span class="bord-label">NIVEL</span><span class="bord-val" id="nivel">1</span></div>
@@ -241,12 +242,12 @@ button{font:inherit;color:var(--text)}
       <li>Trei sau mai multe mărgele de aceeași culoare lipite dispar.</li>
       <li>Dacă la ruptură se întâlnesc două mărgele de aceeași culoare, șiragul se trage înapoi și poate face o reacție în lanț.</li>
       <li>Atinge rozeta (sau click dreapta) ca să schimbi mărgeaua cu următoarea.</li>
-      <li>Nu lăsa șiragul să ajungă în fântână. Fiecare nivel are alt traseu și e mai greu.</li>
+      <li>Nu lăsa șiragul să ajungă la capătul drumului. Fiecare nivel e alt loc din țară și e mai greu decât cel dinainte.</li>
     </ol>
   </details>
 
   <div class="scena" id="scena">
-    <canvas id="c" role="img" aria-label="Un șirag de mărgele colorate pe un traseu brodat, rozeta de tras în mijloc și fântâna la capăt"></canvas>
+    <canvas id="c" role="img" aria-label="Harta ilustrată a unui loc din România, cu un drum pe care se rostogolește un șirag de mărgele colorate și rozeta de tras lângă capătul drumului"></canvas>
     <button class="sunet" id="sunet" type="button" aria-label="Sunet pornit" aria-pressed="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path id="sunet-unde" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10"/><path id="sunet-mut" d="M16.5 9.5l5 5M21.5 9.5l-5 5" hidden/></svg>
     </button>
@@ -254,17 +255,18 @@ button{font:inherit;color:var(--text)}
     <div class="ecran" id="ecran-start">
       <p class="ecran-titlu" id="start-titlu">Mărgele</p>
       <p class="ecran-sub" id="start-sub">Atinge ca să începi</p>
-      <p class="ecran-nota" id="start-nota">Ochește și potrivește trei de aceeași culoare înainte ca șiragul să ajungă la fântână.</p>
+      <p class="ecran-nota" id="start-nota">Ochește și potrivește trei de aceeași culoare înainte ca șiragul să ajungă la capătul drumului.</p>
     </div>
 
     <div class="ecran ecran-nivel" id="ecran-nivel" hidden>
       <p class="ecran-titlu" id="nivel-titlu">Nivelul 1</p>
-      <p class="ecran-nota" id="nivel-nota">Spirala</p>
+      <p class="ecran-sub" id="nivel-nota">Sighișoara</p>
+      <p class="ecran-nota" id="nivel-desc"></p>
     </div>
 
     <div class="ecran" id="ecran-final" hidden>
       <section class="panou" aria-labelledby="final-titlu">
-        <h2 class="panou-titlu" id="final-titlu">Șiragul a ajuns în fântână</h2>
+        <h2 class="panou-titlu" id="final-titlu">Șiragul a ajuns la capăt</h2>
         <p class="panou-motiv" id="final-motiv"></p>
         <p class="panou-scor" id="final-scor">0</p>
         <p class="panou-scor-label">PUNCTE</p>
@@ -291,7 +293,7 @@ button{font:inherit;color:var(--text)}
 // Traseele, lanțul, inserția, grupurile și atracția stau în ./margele.js (testate în Node);
 // aici: desen, sunet, input, nivele. Totul e procedural: zero imagini, zero fonturi, zero fișiere audio.
 import { GamesRO } from "/shell.js";
-import * as M from "./margele.js?v=1";
+import * as M from "./margele.js?v=2";
 
 const SLUG = "margele";
 const ZI = GamesRO.seedAzi();
@@ -364,6 +366,7 @@ function spriteLumina(r, g, b) {
 }
 const LUMINI = CULORI.map(({ baza }) => spriteLumina(...amesteca(baza, [255, 255, 255], 0.3).map((v) => v | 0)));
 const LUMINA_ROSIE = spriteLumina(255, 40, 40);
+const LUMINA_GALBENA = spriteLumina(255, 200, 110);
 
 /* ─── Canvas ─── */
 const scena = $("scena"), cv = $("c"), cx = cv.getContext("2d");
@@ -378,56 +381,372 @@ function redimensioneaza() {
   construiesteFundal();
 }
 
-/* Scoarța țesută (fundalul) și traseul brodat: desenate o dată pe nivel, pe un canvas ascuns. */
+/* ─── Hărțile, desenate: fiecare loc are fundalul, drumul și capătul lui ─── */
+// Totul se pictează o dată pe nivel, pe un canvas ascuns: întâi locul (sub drum), apoi drumul,
+// apoi monumentul de la capăt. Mărgelele și restul se desenează peste, în fiecare cadru.
+
+/** Distanța până la traseu (pentru a nu așeza case și copaci peste drum). */
+let MOSTRE = [];
+function pregatesteMostre() {
+  MOSTRE = [];
+  for (let i = 0; i < TR.n; i += 4) MOSTRE.push([TR.xs[i], TR.ys[i]]);
+}
+function departeDeDrum(x, y, m) {
+  for (const [a, b] of MOSTRE) if (Math.abs(a - x) < m && Math.abs(b - y) < m && Math.hypot(a - x, b - y) < m) return false;
+  return Math.hypot(x - TRG.x, y - TRG.y) > 62 + m * 0.3;
+}
+
+function cerc(g, x, y, r, stil) { g.fillStyle = stil; g.beginPath(); g.arc(x, y, r, 0, 6.283); g.fill(); }
+function casa(g, x, y, w, h, perete, acoperis, geam = "rgba(40,30,30,0.55)") {
+  g.fillStyle = "rgba(0,0,0,0.25)"; g.fillRect(x - w / 2 + 2, y - h + 3, w, h);
+  g.fillStyle = perete; g.fillRect(x - w / 2, y - h, w, h);
+  g.fillStyle = acoperis;
+  g.beginPath(); g.moveTo(x - w / 2 - 2, y - h + 1); g.lineTo(x, y - h - w * 0.55); g.lineTo(x + w / 2 + 2, y - h + 1); g.closePath(); g.fill();
+  g.fillStyle = geam;
+  const n = Math.max(1, Math.floor(w / 7));
+  for (let i = 0; i < n; i++) g.fillRect(x - w / 2 + (w / n) * (i + 0.5) - 1.5, y - h * 0.65, 3, 3.5);
+}
+function brad(g, x, y, h, col) {
+  g.fillStyle = col;
+  g.beginPath();
+  for (let k = 0; k < 3; k++) { const t = y - h + k * h * 0.27, b = t + h * 0.45, w = h * (0.2 + k * 0.1); g.moveTo(x, t); g.lineTo(x + w, b); g.lineTo(x - w, b); g.closePath(); }
+  g.fill();
+}
+function copac(g, x, y, r, col) {
+  cerc(g, x + 2, y + 3, r, "rgba(0,0,0,0.22)");
+  cerc(g, x, y, r, col);
+  cerc(g, x - r * 0.3, y - r * 0.35, r * 0.45, "rgba(255,255,255,0.12)");
+}
+function munte(g, x, yb, w, h, col, zapada) {
+  g.fillStyle = col;
+  g.beginPath(); g.moveTo(x - w / 2, yb); g.lineTo(x - w * 0.08, yb - h); g.lineTo(x + w * 0.06, yb - h * 0.93); g.lineTo(x + w / 2, yb); g.closePath(); g.fill();
+  if (zapada) {
+    g.fillStyle = zapada;
+    g.beginPath(); g.moveTo(x - w * 0.08, yb - h); g.lineTo(x - w * 0.2, yb - h * 0.72); g.lineTo(x - w * 0.06, yb - h * 0.78); g.lineTo(x + w * 0.02, yb - h * 0.7); g.lineTo(x + w * 0.06, yb - h * 0.93); g.closePath(); g.fill();
+  }
+}
+/** Pune decoruri pe o grilă, doar unde e loc liber. */
+function presara(g, pas, marja, rnd, fn) {
+  for (let y = pas / 2; y < M.LUME_H; y += pas) for (let x = pas / 2; x < M.LUME_L; x += pas) {
+    const px = x + (rnd() - 0.5) * pas * 0.6, py = y + (rnd() - 0.5) * pas * 0.6;
+    if (departeDeDrum(px, py, marja)) fn(px, py, rnd());
+  }
+}
+
+/** Drumul: un stil pe hartă (pavaj, lespezi, asfalt, apă, șosea de munte). */
+function deseneazaDrum(g, stil, rnd) {
+  const urma = (lat, culoare, dash) => {
+    g.strokeStyle = culoare; g.lineWidth = lat; g.lineJoin = "round"; g.lineCap = "round";
+    g.setLineDash(dash || []);
+    g.beginPath();
+    for (let i = 0; i < TR.n; i += 2) g.lineTo(TR.xs[i], TR.ys[i]);
+    g.lineTo(TR.xs[TR.n - 1], TR.ys[TR.n - 1]);
+    g.stroke();
+    g.setLineDash([]);
+  };
+  const deALungul = (pas, fn) => {
+    for (let s = 0; s < TR.L; s += pas) { const p = M.pozitie(TR, s); fn(p, s); }
+  };
+  if (stil === "pavaj") {
+    urma(D + 16, "rgba(0,0,0,0.35)");
+    urma(D + 10, "#8d8172");
+    urma(D + 4, "#5b4f45");
+    deALungul(7, (p) => {
+      for (const o of [-0.32, 0, 0.32]) {
+        const v = 82 + rnd() * 34;
+        g.fillStyle = `rgb(${v},${v - 8},${v - 16})`;
+        g.beginPath(); g.ellipse(p.x - p.uy * o * D, p.y + p.ux * o * D, 3.6, 3, Math.atan2(p.uy, p.ux), 0, 6.283); g.fill();
+      }
+    });
+  } else if (stil === "lespezi") {
+    urma(D + 16, "rgba(0,0,0,0.35)");
+    urma(D + 10, "#a7a9a4");
+    urma(D + 4, "#6f7377");
+    g.strokeStyle = "rgba(40,42,46,0.7)"; g.lineWidth = 1.4;
+    deALungul(22, (p, s) => {
+      const off = (Math.floor(s / 22) % 2) * 0.5;
+      g.beginPath(); g.moveTo(p.x - p.uy * D * 0.5, p.y + p.ux * D * 0.5); g.lineTo(p.x + p.uy * D * 0.5, p.y - p.ux * D * 0.5); g.stroke();
+      const q = M.pozitie(TR, s + 11 * (1 + off));
+      g.beginPath(); g.moveTo(q.x, q.y); g.lineTo(q.x - q.uy * D * 0.5 * (off ? 1 : -1), q.y + q.ux * D * 0.5 * (off ? 1 : -1)); g.stroke();
+    });
+  } else if (stil === "asfalt") {
+    urma(D + 22, "#6f7380");
+    urma(D + 14, "#9da1ab");
+    urma(D + 8, "#2a2c35");
+    urma(D + 3, "rgba(230,230,230,0.55)", [12, 10]);
+    urma(D - 1, "#2a2c35");
+  } else if (stil === "apa") {
+    urma(D + 24, "rgba(70,90,40,0.6)");
+    urma(D + 14, "#6f9b8a");
+    urma(D + 6, "#3b7f98");
+    urma(D - 6, "#2d6b86");
+    urma(D - 14, "rgba(170,220,235,0.18)", [18, 26]);
+  } else if (stil === "drum") {
+    urma(D + 26, "rgba(220,220,220,0.75)", [2, 9]);
+    urma(D + 18, "#7b7468");
+    urma(D + 8, "#3a3d45");
+    urma(D + 3, "rgba(240,240,240,0.8)", [14, 9]);
+    urma(D - 1, "#3a3d45");
+  }
+}
+
+/** Gura de la capătul drumului, peste care stă monumentul. */
+function directiaCapatului() { return M.pozitie(TR, TR.L - 4); }
+
+const PICTORI = {
+  sighisoara(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#9bb36a"); gb.addColorStop(1, "#6f8a45");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // dealul cetății: un platou pietruit în interior
+    g.fillStyle = "#d8c6a5";
+    g.beginPath(); g.ellipse(300, 352, 250, 270, 0, 0, 6.283); g.fill();
+    g.fillStyle = "rgba(120,100,70,0.12)";
+    for (let i = 0; i < 900; i++) g.fillRect(rnd() * 600, rnd() * 660, 3, 2);
+    // Târnava, jos în colț
+    g.strokeStyle = "#5d9ec4"; g.lineWidth = 16; g.lineCap = "round";
+    g.beginPath(); g.moveTo(-10, 600); g.quadraticCurveTo(120, 640, 200, 700); g.stroke();
+    const pereti = ["#f2d16b", "#e99aa0", "#9fd0a8", "#a9c4ec", "#f4b26a", "#e7e0c8", "#c9a0dc"];
+    presara(g, 26, D * 0.95, rnd, (x, y, r) => {
+      if (Math.hypot(x - 300, (y - 352) / 1.05) > 262) { if (r < 0.5) copac(g, x, y, 7 + r * 6, r < 0.25 ? "#4f7d3a" : "#5f8f42"); return; }
+      casa(g, x, y + 7, 16 + r * 6, 11 + r * 5, pereti[Math.floor(r * 70) % pereti.length], r < 0.5 ? "#b8442c" : "#c9582f");
+    });
+    // Biserica din Deal, în colțul de sus
+    g.fillStyle = "#e9e1cf"; g.fillRect(470, 40, 70, 34);
+    g.fillStyle = "#9b3a26"; g.beginPath(); g.moveTo(466, 42); g.lineTo(505, 14); g.lineTo(544, 42); g.closePath(); g.fill();
+    g.fillStyle = "#e9e1cf"; g.fillRect(540, 20, 16, 54);
+    g.fillStyle = "#9b3a26"; g.beginPath(); g.moveTo(537, 22); g.lineTo(548, -4); g.lineTo(559, 22); g.closePath(); g.fill();
+    // Scara Acoperită: o scară de lemn cu acoperiș, care urcă dealul
+    g.save(); g.translate(78, 140); g.rotate(-0.55);
+    g.fillStyle = "#7a4b2a"; g.fillRect(0, 0, 90, 14);
+    g.fillStyle = "#a0532e"; for (let i = 0; i < 9; i++) g.fillRect(i * 10, -5, 8, 6);
+    g.restore();
+  },
+  sarmizegetusa(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#2f5a3a"); gb.addColorStop(1, "#24452c");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // poienița sacră: iarbă deschisă în jurul sanctuarului
+    const gp = g.createRadialGradient(300, 345, 60, 300, 345, 300);
+    gp.addColorStop(0, "#8fb06a"); gp.addColorStop(1, "rgba(120,150,90,0)");
+    g.fillStyle = gp; g.fillRect(0, 0, 600, 660);
+    // pădurea de brazi a munților Orăștiei, peste tot unde e loc
+    presara(g, 20, D * 0.9, rnd, (x, y, r) => {
+      const d = Math.hypot(x - 300, y - 345);
+      if (d < 290 && d > 100) return;
+      brad(g, x, y + 10, 16 + r * 12, r < 0.5 ? "#1d3b26" : "#234a2e");
+    });
+    // inelele de stâlpi de andezit ale sanctuarului mare, între inelele drumului
+    const stalpi = (r, n, w, h) => {
+      for (let i = 0; i < n; i++) {
+        const u = (i / n) * 6.283, x = 300 + Math.cos(u) * r, y = 345 + Math.sin(u) * r;
+        g.save(); g.translate(x, y); g.rotate(u);
+        g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(-h / 2 + 1, -w / 2 + 2, h, w);
+        g.fillStyle = "#b9bcb6"; g.fillRect(-h / 2, -w / 2, h, w);
+        g.restore();
+      }
+    };
+    stalpi(221, 84, 4, 9);
+    stalpi(148, 40, 5, 6);
+    // sanctuarele dreptunghiulare: rânduri de tamburi de andezit, în colț
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) {
+      const x = 470 + c * 18, y = 590 + r * 16;
+      if (departeDeDrum(x, y, D * 0.8)) { cerc(g, x + 1, y + 2, 5.5, "rgba(0,0,0,0.3)"); cerc(g, x, y, 5.5, "#c4c6bf"); }
+    }
+  },
+  bucuresti(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#1b1f3a"); gb.addColorStop(1, "#141729");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // Dâmbovița, canalizată, jos
+    g.fillStyle = "#3d4660"; g.fillRect(0, 618, 600, 42);
+    g.fillStyle = "#2b5f86"; g.fillRect(0, 628, 600, 22);
+    g.fillStyle = "rgba(255,210,140,0.25)"; for (let x = 10; x < 600; x += 46) g.fillRect(x, 636, 18, 2);
+    // cvartale de blocuri, cu ferestre aprinse
+    presara(g, 30, D * 0.95, rnd, (x, y, r) => {
+      if (y > 600) return;
+      if (r < 0.18) { copac(g, x, y, 9, "#2f5b3c"); return; }
+      const w = 20 + r * 8, h = 14 + r * 10;
+      g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(x - w / 2 + 2, y - h / 2 + 3, w, h);
+      g.fillStyle = r < 0.6 ? "#3a3f5c" : "#4a4466"; g.fillRect(x - w / 2, y - h / 2, w, h);
+      g.fillStyle = "rgba(255,206,120,0.85)";
+      for (let i = 0; i < 6; i++) if (rnd() < 0.55) g.fillRect(x - w / 2 + 3 + (i % 3) * (w / 3.2), y - h / 2 + 3 + Math.floor(i / 3) * (h / 2.4), 2.5, 2.5);
+    });
+    // felinarele de pe bulevarde
+    g.globalCompositeOperation = "lighter";
+    for (let s = 40; s < TR.L; s += 55) {
+      const p = M.pozitie(TR, s);
+      for (const o of [-1, 1]) {
+        const x = p.x - p.uy * (D * 0.5 + 12) * o, y = p.y + p.ux * (D * 0.5 + 12) * o;
+        g.globalAlpha = 0.5; g.drawImage(LUMINA_GALBENA, x - 14, y - 14, 28, 28);
+      }
+    }
+    g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
+    // Arcul de Triumf, lângă intrarea în oraș
+    const ax = 520, ay = 40;
+    if (departeDeDrum(ax, ay, 26)) {
+      g.fillStyle = "#d9d2c0"; g.fillRect(ax - 22, ay - 16, 44, 30);
+      g.fillStyle = "#141729"; g.beginPath(); g.moveTo(ax - 8, ay + 14); g.lineTo(ax - 8, ay); g.arc(ax, ay, 8, Math.PI, 0); g.lineTo(ax + 8, ay + 14); g.fill();
+      g.fillStyle = "#bfb8a6"; g.fillRect(ax - 25, ay - 20, 50, 5);
+    }
+    // Palatul Parlamentului, jos în dreapta
+    g.fillStyle = "#cfc7b4";
+    g.fillRect(430, 572, 150, 40); g.fillRect(455, 556, 100, 18); g.fillRect(490, 540, 30, 18);
+    g.fillStyle = "rgba(255,206,120,0.7)";
+    for (let i = 0; i < 14; i++) g.fillRect(436 + i * 10, 584, 4, 6);
+  },
+  brasov(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#c9bfa8"); gb.addColorStop(1, "#b9ad93");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // Tâmpa, sus, cu pădure și literele mari
+    g.fillStyle = "#3f6b35";
+    g.beginPath(); g.moveTo(0, 110); g.quadraticCurveTo(140, -10, 330, 40); g.quadraticCurveTo(480, 70, 600, 20); g.lineTo(600, 0); g.lineTo(0, 0); g.closePath(); g.fill();
+    for (let i = 0; i < 70; i++) { const x = rnd() * 600, y = rnd() * 70; if (y < 100 - x * 0.1) brad(g, x, y + 12, 10 + rnd() * 8, "#2c5127"); }
+    g.fillStyle = "#f4f1e6"; g.font = "700 15px ui-sans-serif, system-ui, sans-serif"; g.textAlign = "center";
+    g.fillText("B R A S O V", 330, 30);
+    // pavajul pieței
+    g.fillStyle = "rgba(90,70,50,0.10)";
+    for (let i = 0; i < 1100; i++) g.fillRect(rnd() * 600, 90 + rnd() * 570, 4, 3);
+    // casele colorate din jurul pieței
+    const pereti = ["#e8b84a", "#d8746a", "#7fb59b", "#8fa7d6", "#e6d7b0", "#d99a5e", "#b58fc7"];
+    presara(g, 24, D * 0.9, rnd, (x, y, r) => {
+      if (y < 95) return;
+      casa(g, x, y + 7, 15 + r * 6, 12 + r * 6, pereti[Math.floor(r * 50) % pereti.length], r < 0.5 ? "#8e3b2a" : "#a5492f");
+    });
+    // Casa Sfatului, în mijlocul pieței (lângă trăgător)
+    g.fillStyle = "#e7c24f"; g.fillRect(244, 420, 38, 24);
+    g.fillStyle = "#7f3a26"; g.beginPath(); g.moveTo(240, 421); g.lineTo(263, 404); g.lineTo(286, 421); g.closePath(); g.fill();
+    g.fillStyle = "#e7c24f"; g.fillRect(258, 396, 10, 14);
+    g.fillStyle = "#3e5d2c"; g.beginPath(); g.moveTo(256, 397); g.lineTo(263, 380); g.lineTo(270, 397); g.closePath(); g.fill();
+  },
+  delta(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#5d7f4a"); gb.addColorStop(1, "#4b6b3c");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // ochiuri de apă
+    for (const [x, y, rx, ry] of [[90, 90, 70, 40], [520, 600, 80, 45], [520, 80, 60, 34], [300, 340, 60, 52]]) {
+      g.fillStyle = "#3f86a0"; g.beginPath(); g.ellipse(x, y, rx, ry, 0.2, 0, 6.283); g.fill();
+      g.fillStyle = "rgba(200,235,240,0.2)"; g.beginPath(); g.ellipse(x - rx * 0.2, y - ry * 0.3, rx * 0.5, ry * 0.25, 0.2, 0, 6.283); g.fill();
+    }
+    // nuferi pe ochiuri
+    for (let i = 0; i < 26; i++) {
+      const [x0, y0] = [[90, 90], [520, 600], [520, 80]][i % 3];
+      const x = x0 + (rnd() - 0.5) * 90, y = y0 + (rnd() - 0.5) * 50;
+      cerc(g, x, y, 5, "#4f8f3c");
+      if (rnd() < 0.4) cerc(g, x, y, 2.2, rnd() < 0.5 ? "#f6f2f6" : "#f0a8c8");
+    }
+    // stuf: smocuri de fire
+    presara(g, 16, D * 0.85, rnd, (x, y, r) => {
+      if (r < 0.35) return;
+      g.strokeStyle = r < 0.7 ? "#a8a65a" : "#c2b56a"; g.lineWidth = 1.3;
+      g.beginPath();
+      for (let k = 0; k < 5; k++) { const dx = (k - 2) * 2.2; g.moveTo(x + dx, y + 6); g.lineTo(x + dx * 1.8 + (r - 0.5) * 6, y - 8 - k % 2 * 3); }
+      g.stroke();
+      if (r > 0.92) cerc(g, x + 2, y - 10, 2.2, "#6b4a2a");
+    });
+    // pelicani pe apă
+    for (const [x, y] of [[70, 80], [110, 98], [500, 590], [540, 612]]) {
+      g.fillStyle = "#f7f4ee"; g.beginPath(); g.ellipse(x, y, 9, 5, 0, 0, 6.283); g.fill();
+      g.beginPath(); g.ellipse(x + 8, y - 5, 2.5, 4, 0, 0, 6.283); g.fill();
+      g.fillStyle = "#f2b33d"; g.fillRect(x + 9, y - 5, 7, 2);
+    }
+    // barca de sub trăgător
+    g.fillStyle = "#6e4526";
+    g.beginPath(); g.moveTo(TRG.x - 58, TRG.y + 6); g.quadraticCurveTo(TRG.x, TRG.y + 46, TRG.x + 58, TRG.y + 6); g.lineTo(TRG.x + 50, TRG.y + 2); g.lineTo(TRG.x - 50, TRG.y + 2); g.closePath(); g.fill();
+  },
+  transfagarasan(g, rnd) {
+    const gb = g.createLinearGradient(0, 0, 0, M.LUME_H);
+    gb.addColorStop(0, "#c9d6df"); gb.addColorStop(0.12, "#9aa5ad"); gb.addColorStop(0.35, "#7d8b73"); gb.addColorStop(1, "#4f7a3c");
+    g.fillStyle = gb; g.fillRect(0, 0, M.LUME_L, M.LUME_H);
+    // creasta Făgărașului, sus
+    for (const [x, w, h] of [[60, 220, 90], [200, 260, 120], [380, 240, 100], [540, 220, 110]]) munte(g, x, 110, w, h, "#76808a", "#f2f4f6");
+    // Bâlea Lac, lângă tunel
+    g.fillStyle = "#4d8fb0"; g.beginPath(); g.ellipse(95, 92, 52, 18, -0.1, 0, 6.283); g.fill();
+    // stânci și brazi pe pantă, mai deși spre vale
+    presara(g, 20, D * 0.95, rnd, (x, y, r) => {
+      if (y < 100) return;
+      if (y < 260 && r < 0.4) { g.fillStyle = "#8a8a84"; g.beginPath(); g.ellipse(x, y, 6 + r * 6, 4 + r * 3, 0, 0, 6.283); g.fill(); return; }
+      if (r < (y - 200) / 600) brad(g, x, y + 10, 14 + r * 12, r < 0.3 ? "#22452a" : "#2a5233");
+    });
+    // tunelul de sub creastă, de unde apare șiragul
+    g.fillStyle = "#5a5f66"; g.fillRect(205, 0, 50, 26);
+    g.fillStyle = "#15171a"; g.beginPath(); g.moveTo(214, 26); g.lineTo(214, 12); g.arc(230, 12, 16, Math.PI, 0); g.lineTo(246, 26); g.fill();
+    // lacul de acumulare de la baza serpentinelor
+    g.fillStyle = "#3f7fa3";
+    g.beginPath(); g.moveTo(0, 660); g.lineTo(0, 600); g.quadraticCurveTo(160, 560, 300, 590); g.quadraticCurveTo(450, 620, 600, 580); g.lineTo(600, 660); g.closePath(); g.fill();
+  },
+};
+
+/** Monumentul de la capătul drumului, desenat peste gura în care intră mărgelele. */
+const MONUMENTE = {
+  sighisoara(g, x, y) {
+    // Turnul cu Ceas: zid de piatră, ceas, acoperiș de țiglă colorată și turnulețe
+    g.fillStyle = "#cfc1a4"; g.fillRect(x - 20, y - 64, 40, 64);
+    cerc(g, x, y - 46, 8, "#f4ead2"); g.strokeStyle = "#3a2f24"; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(x, y - 46); g.lineTo(x, y - 52); g.moveTo(x, y - 46); g.lineTo(x + 4, y - 44); g.stroke();
+    const t = ["#3f8a4a", "#e2b43c", "#b8442c"];
+    for (let r = 0; r < 4; r++) for (let c = -3 + r; c <= 3 - r; c++) { g.fillStyle = t[(r + c + 9) % 3]; g.fillRect(x + c * 5 - 2.5, y - 72 - r * 7, 5, 7); }
+    g.fillStyle = "#3f8a4a"; g.beginPath(); g.moveTo(x - 4, y - 98); g.lineTo(x, y - 122); g.lineTo(x + 4, y - 98); g.closePath(); g.fill();
+    for (const dx of [-17, 17]) { g.fillStyle = "#b8442c"; g.beginPath(); g.moveTo(x + dx - 3, y - 72); g.lineTo(x + dx, y - 86); g.lineTo(x + dx + 3, y - 72); g.closePath(); g.fill(); }
+  },
+  sarmizegetusa(g, x, y) {
+    // Soarele de andezit: un disc cu sectoare, ca razele unui soare
+    cerc(g, x + 2, y + 3, 30, "rgba(0,0,0,0.3)");
+    cerc(g, x, y, 30, "#c9cbc4");
+    g.strokeStyle = "#8d908a"; g.lineWidth = 1.6;
+    for (let i = 0; i < 10; i++) { const u = (i / 10) * 6.283; g.beginPath(); g.moveTo(x + Math.cos(u) * 11, y + Math.sin(u) * 11); g.lineTo(x + Math.cos(u) * 30, y + Math.sin(u) * 30); g.stroke(); }
+    g.beginPath(); g.arc(x, y, 11, 0, 6.283); g.stroke();
+  },
+  bucuresti(g, x, y) {
+    // Ateneul Român: cupolă pe tambur, cu portic de coloane
+    g.fillStyle = "#e6dfcd"; g.fillRect(x - 26, y - 22, 52, 22);
+    g.fillStyle = "#b9b2a0"; for (let i = 0; i < 6; i++) g.fillRect(x - 23 + i * 9, y - 20, 3, 18);
+    g.fillStyle = "#d6cfbc"; g.beginPath(); g.moveTo(x - 28, y - 22); g.lineTo(x, y - 34); g.lineTo(x + 28, y - 22); g.closePath(); g.fill();
+    g.fillStyle = "#5f8a7c"; g.beginPath(); g.arc(x, y - 34, 18, Math.PI, 0); g.fill();
+    g.fillStyle = "#e6dfcd"; g.fillRect(x - 1.5, y - 60, 3, 9);
+  },
+  brasov(g, x, y) {
+    // Biserica Neagră: navă înaltă, acoperiș abrupt, turnul cu coif
+    g.fillStyle = "#3b3634"; g.fillRect(x - 32, y - 34, 50, 34);
+    g.fillStyle = "#6a3328"; g.beginPath(); g.moveTo(x - 35, y - 33); g.lineTo(x - 7, y - 62); g.lineTo(x + 21, y - 33); g.closePath(); g.fill();
+    g.fillStyle = "#2f2a29"; g.fillRect(x + 16, y - 56, 16, 56);
+    g.fillStyle = "#4c6b5c"; g.beginPath(); g.moveTo(x + 14, y - 55); g.lineTo(x + 24, y - 78); g.lineTo(x + 34, y - 55); g.closePath(); g.fill();
+    g.fillStyle = "rgba(240,210,150,0.5)"; for (let i = 0; i < 4; i++) g.fillRect(x - 27 + i * 11, y - 26, 4, 12);
+  },
+  delta(g, x, y) {
+    // farul: turn alb cu brâie roșii și felinar
+    g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(x - 7, y - 58, 16, 60);
+    g.fillStyle = "#f4f1ea"; g.beginPath(); g.moveTo(x - 10, y); g.lineTo(x - 6, y - 58); g.lineTo(x + 6, y - 58); g.lineTo(x + 10, y); g.closePath(); g.fill();
+    g.fillStyle = "#c8372f"; g.fillRect(x - 9, y - 20, 18, 8); g.fillRect(x - 7.5, y - 42, 15, 7);
+    g.fillStyle = "#2b2b2b"; g.fillRect(x - 8, y - 66, 16, 8);
+    g.globalCompositeOperation = "lighter"; g.drawImage(LUMINA_GALBENA, x - 22, y - 84, 44, 44); g.globalCompositeOperation = "source-over";
+  },
+  transfagarasan(g, x, y) {
+    // barajul: un zid de beton arcuit, cu apa în spate
+    g.fillStyle = "#3f7fa3"; g.beginPath(); g.ellipse(x + 34, y - 4, 26, 16, 0, 0, 6.283); g.fill();
+    g.strokeStyle = "#d8d6cf"; g.lineWidth = 9; g.lineCap = "butt";
+    g.beginPath(); g.arc(x + 46, y - 4, 34, Math.PI * 0.72, Math.PI * 1.28); g.stroke();
+    g.strokeStyle = "rgba(0,0,0,0.25)"; g.lineWidth = 2;
+    g.beginPath(); g.arc(x + 46, y - 4, 29, Math.PI * 0.72, Math.PI * 1.28); g.stroke();
+  },
+};
+
 function construiesteFundal() {
   if (!TR) return;
   fundal = document.createElement("canvas");
   fundal.width = cv.width; fundal.height = cv.height;
   const g = fundal.getContext("2d");
   g.setTransform(dpr * k, 0, 0, dpr * k, 0, 0);
-  const L = M.LUME_L, H = M.LUME_H;
-  const gb = g.createLinearGradient(0, 0, 0, H);
-  gb.addColorStop(0, "#5a1420"); gb.addColorStop(1, "#3c0c15");
-  g.fillStyle = gb; g.fillRect(0, 0, L, H);
-  // motivele: romburi în rânduri decalate, ca la scoarțele oltenești
-  const rnd = M.mulberry32(nivel * 31 + 7);
-  for (let r = 0, y = 30; y < H + 60; r++, y += 60) {
-    for (let x = (r % 2) * 40 - 40; x < L + 80; x += 80) {
-      g.strokeStyle = "rgba(201,154,59,0.32)"; g.lineWidth = 2;
-      g.beginPath(); g.moveTo(x, y - 24); g.lineTo(x + 24, y); g.lineTo(x, y + 24); g.lineTo(x - 24, y); g.closePath(); g.stroke();
-      g.fillStyle = r % 3 === 0 ? "rgba(29,44,79,0.55)" : "rgba(20,10,14,0.45)";
-      g.beginPath(); g.moveTo(x, y - 11); g.lineTo(x + 11, y); g.lineTo(x, y + 11); g.lineTo(x - 11, y); g.closePath(); g.fill();
-      g.fillStyle = "rgba(232,220,196,0.28)";
-      g.fillRect(x - 2, y - 2, 4, 4);
-    }
-  }
-  // dungi țesute, cu zigzag
-  for (const y of [0, H - 26]) {
-    g.fillStyle = "rgba(15,8,12,0.55)"; g.fillRect(0, y, L, 26);
-    g.strokeStyle = "rgba(232,220,196,0.4)"; g.lineWidth = 1.6;
-    g.beginPath();
-    for (let x = 0; x <= L; x += 12) g.lineTo(x, y + (x / 12) % 2 * 12 + 7);
-    g.stroke();
-  }
-  // firul țesăturii
-  g.fillStyle = "rgba(255,255,255,0.025)";
-  for (let i = 0; i < 1400; i++) g.fillRect(rnd() * L, rnd() * H, 2, 1);
-  g.fillStyle = "rgba(10,4,8,0.28)"; g.fillRect(0, 0, L, H);
-  // traseul: un șanț brodat cu tighel pe margini
-  const urma = (lat, stil, dash) => {
-    g.strokeStyle = stil; g.lineWidth = lat; g.lineJoin = "round"; g.lineCap = "round";
-    g.setLineDash(dash || []);
-    g.beginPath();
-    for (let i = 0; i < TR.n; i += 2) g.lineTo(TR.xs[i], TR.ys[i]);
-    g.lineTo(TR.xs[TR.n - 1], TR.ys[TR.n - 1]);
-    g.stroke();
-  };
-  urma(D + 16, "rgba(0,0,0,0.4)");
-  urma(D + 9, "rgba(240,226,196,0.7)", [4, 5]);
-  urma(D + 4, "#2b0b12");
-  urma(D - 6, "#341019");
-  g.setLineDash([]);
+  pregatesteMostre();
+  const harta = M.TRASEE[cfg.traseu];
+  const rnd = M.mulberry32(97 + cfg.traseu * 131);
+  PICTORI[harta.id](g, rnd);
+  deseneazaDrum(g, STIL_DRUM[harta.id], M.mulberry32(5));
+  const f = M.pozitie(TR, TR.L);
+  MONUMENTE[harta.id](g, f.x, f.y);
 }
+const STIL_DRUM = { sighisoara: "pavaj", sarmizegetusa: "lespezi", bucuresti: "asfalt", brasov: "pavaj", delta: "apa", transfagarasan: "drum" };
 
 /* ─── Starea jocului ─── */
 let stare = "start";          // start | joc | intre | pierdere | final
@@ -454,10 +773,11 @@ function pornesteNivel(n) {
   construiesteFundal();
   actualizeazaBord();
   $("nivel-titlu").textContent = `Nivelul ${n}`;
-  $("nivel-nota").textContent = `${t.nume} · ${M.plural(cfg.culori, "culoare", "culori")}`;
+  $("nivel-nota").textContent = `${t.nume} · ${t.loc}`;
+  $("nivel-desc").textContent = `${t.descriere} ${M.plural(cfg.culori, "culoare", "culori")} de mărgele.`;
   $("ecran-nivel").hidden = false;
-  setTimeout(() => { $("ecran-nivel").hidden = true; }, 1600);
-  anunta(`Nivelul ${n}: ${t.nume}.`);
+  setTimeout(() => { $("ecran-nivel").hidden = true; }, 2600);
+  anunta(`Nivelul ${n}: ${t.nume}, ${t.loc}. ${t.descriere}`);
 }
 
 function alegeCuloare() {
@@ -565,7 +885,7 @@ function pas(dt) {
     // muniția urmează culorile care mai există
     const prez = M.culoriPrezente(lant);
     if (prez.length) for (let i = 0; i < 2; i++) if (!prez.includes(munitie[i])) munitie[i] = prez[Math.floor(Math.random() * prez.length)];
-    // pericol: capul aproape de fântână
+    // pericol: capul aproape de capătul drumului
     pericol = lant.bile.length ? Math.max(0, (lant.bile[0].s / TR.L - 0.8) / 0.2) : 0;
     if (pericol > 0) {
       batai -= dt;
@@ -574,17 +894,17 @@ function pas(dt) {
     if (M.aAjuns(lant, TR.L)) {
       stare = "pierdere"; timpStare = timp;
       Sunet.pierdere();
-      anunta("Șiragul a ajuns în fântână.");
+      anunta(`Șiragul a ajuns la ${M.TRASEE[cfg.traseu].capat}.`);
     } else if (M.golit(lant) && !proiectile.length && !verificari.length) {
       const b = M.bonusNivel(nivel);
       scor += b;
-      mesaj(TRG.x, TRG.y - 70, `NIVEL TERMINAT +${b}`, "#ffe08a", 1.8);
+      mesaj(M.LUME_L / 2, M.LUME_H / 2, `AI APĂRAT ${M.TRASEE[cfg.traseu].nume.toUpperCase()}! +${b}`, "#ffe08a", 2.2);
       Sunet.nivel();
       stare = "intre"; timpStare = timp;
       actualizeazaBord();
     }
   } else if (stare === "pierdere") {
-    // șiragul e înghițit de fântână
+    // șiragul dispare la capătul drumului
     for (const m of lant.bile) m.s += 900 * dt;
     lant.bile = lant.bile.filter((m) => m.s < TR.L + D);
     lant.coada = [];
@@ -610,7 +930,7 @@ function deseneaza() {
   cx.setTransform(dpr * k, 0, 0, dpr * k, 0, 0);
   if (!TR) return;
 
-  // fântâna de la capătul traseului
+  // gura de la capătul drumului (monumentul e pictat în fundal)
   const f = M.pozitie(TR, TR.L);
   if (pericol > 0) {
     cx.globalCompositeOperation = "lighter";
@@ -619,12 +939,8 @@ function deseneaza() {
     cx.globalAlpha = 1;
     cx.globalCompositeOperation = "source-over";
   }
-  cx.fillStyle = "#6f6a74";
-  cx.beginPath(); cx.arc(f.x, f.y, D * 0.95, 0, 6.283); cx.fill();
-  cx.strokeStyle = "#3a3640"; cx.lineWidth = 3;
-  for (let i = 0; i < 10; i++) { const u = (i / 10) * 6.283; cx.beginPath(); cx.moveTo(f.x + Math.cos(u) * D * 0.62, f.y + Math.sin(u) * D * 0.62); cx.lineTo(f.x + Math.cos(u) * D * 0.95, f.y + Math.sin(u) * D * 0.95); cx.stroke(); }
   const gf = cx.createRadialGradient(f.x, f.y, 0, f.x, f.y, D * 0.62);
-  gf.addColorStop(0, "#000"); gf.addColorStop(1, "#1d1420");
+  gf.addColorStop(0, "rgba(0,0,0,0.95)"); gf.addColorStop(1, "rgba(20,12,16,0.6)");
   cx.fillStyle = gf;
   cx.beginPath(); cx.arc(f.x, f.y, D * 0.62, 0, 6.283); cx.fill();
 
@@ -651,7 +967,7 @@ function deseneaza() {
     for (const m of lant.bile) {
       if (m.sv < -D * 0.5 || m.sv > TR.L + D * 0.5) continue;
       const p = pozitieMargea(m);
-      const sc = m.sv > TR.L - D ? Math.max(0.2, (TR.L + D * 0.5 - m.sv) / (D * 1.5)) : 1;   // se micșorează intrând în fântână
+      const sc = m.sv > TR.L - D ? Math.max(0.2, (TR.L + D * 0.5 - m.sv) / (D * 1.5)) : 1;   // se micșorează intrând pe poarta de la capăt
       const r = (D / 2) * sc;
       cx.drawImage(SPRITE[m.c], p.x - r, p.y - r, r * 2, r * 2);
     }
@@ -701,7 +1017,7 @@ function deseneaza() {
     cx.fillStyle = "rgba(240,226,196,0.85)";
     cx.fillText(`NIVELUL ${nivel} · ${M.TRASEE[cfg.traseu].nume.toUpperCase()}`, x0, y0 + 24);
   }
-  // marginile roșii când șiragul e aproape de fântână
+  // marginile roșii când șiragul e aproape de capăt
   if (pericol > 0) {
     const gv = cx.createRadialGradient(M.LUME_L / 2, M.LUME_H / 2, M.LUME_H * 0.35, M.LUME_L / 2, M.LUME_H / 2, M.LUME_H * 0.75);
     gv.addColorStop(0, "rgba(255,0,0,0)"); gv.addColorStop(1, `rgba(255,30,30,${(0.28 * pericol * (0.6 + 0.4 * Math.sin(timp * 8))).toFixed(3)})`);
@@ -840,7 +1156,8 @@ function arataFinal() {
     nota = avea ? "RECORD NOU!" : "Primul tău record. Acum bate-l!";
   } else if (r.scor > eraAzi && eraAzi >= 0) nota = "Cel mai bun scor de azi!";
   else nota = `Azi: ${M.formatNumar(bestAzi.scor)} · Record: ${M.formatNumar(record.scor)}`;
-  $("final-motiv").textContent = `Ai ajuns până la nivelul ${nivel} (${M.TRASEE[cfg.traseu].nume}).`;
+  $("final-titlu").textContent = `Șiragul a ajuns la ${M.TRASEE[cfg.traseu].capat}`;
+  $("final-motiv").textContent = `Ai ajuns până la nivelul ${nivel}: ${M.TRASEE[cfg.traseu].nume}.`;
   $("final-scor").textContent = M.formatNumar(r.scor);
   $("final-nivel").textContent = r.nivel;
   $("final-margele").textContent = M.formatNumar(r.margele);

@@ -1,5 +1,5 @@
 // ==== Mărgele — logica pură (v1, 18.10.2026) ====
-// Un șirag de mărgele se rostogolește pe un traseu spre fântână; tragi mărgele în el și faci grupuri
+// Un șirag de mărgele se rostogolește pe un drum (o hartă a unui loc din România) spre capătul lui; tragi mărgele în el și faci grupuri
 // de minimum trei de aceeași culoare. Traseele, lanțul, inserția, potrivirile și atracția dintre
 // bucățile rupte stau aici, fără DOM — testate în Node (games/teste/margele.test.mjs).
 //
@@ -25,53 +25,146 @@ export function mulberry32(a) {
   };
 }
 
-/* ─── Traseele ─── */
+/* ─── Hărțile: trasee inspirate de locuri din România ─── */
+// Fiecare hartă e construită din primitive geometrice (spirală polară sau „broască țestoasă”
+// cu drepte și arce), ca inelele să nu se atingă niciodată. Capătul drumului e mereu partea cea
+// mai apropiată de trăgător: capul șiragului e cel pe care îl poți nimeri.
 
-/** Spirală arhimedică cu o intrare dreaptă din afara ecranului. */
-function spirala({ cx, cy, rOut, rIn, ture, unghi0, sens }) {
+const GRAD = Math.PI / 180;
+
+/** Spirală polară generală: r(f) cu f ∈ [0, 1] de-a lungul celor `ture`, plus o intrare dreaptă tangentă. */
+function polar({ cx, cy, raza, ture, unghi0, sens, sx = 1, sy = 1, intrare = 260, N = 3000 }) {
   const p = [];
-  const intrare = rOut + 140;
-  p.push([cx + Math.cos(unghi0) * intrare, cy + Math.sin(unghi0) * intrare]);
-  const N = 2400;
-  for (let i = 0; i <= N; i++) {
-    const t = i / N, u = unghi0 + sens * t * ture * Math.PI * 2, r = rOut - (rOut - rIn) * t;
-    p.push([cx + Math.cos(u) * r, cy + Math.sin(u) * r]);
-  }
+  const punct = (f) => {
+    const u = unghi0 + sens * f * ture * Math.PI * 2, r = raza(f, u);
+    return [cx + Math.cos(u) * r * sx, cy + Math.sin(u) * r * sy];
+  };
+  const [x0, y0] = punct(0), [x1, y1] = punct(1 / N);
+  const d = Math.hypot(x1 - x0, y1 - y0) || 1;
+  p.push([x0 - ((x1 - x0) / d) * intrare, y0 - ((y1 - y0) / d) * intrare]);
+  for (let i = 0; i <= N; i++) p.push(punct(i / N));
   return p;
 }
+const neted = (a, b, t) => { t = Math.min(1, Math.max(0, t)); t = t * t * (3 - 2 * t); return a + (b - a) * t; };
 
-/** Serpentină pe rânduri (opțional ondulate), intrând din stânga sau din dreapta. */
-function serpentina({ randuri, y0, dy, xL, xR, unda, oglinda, xFinal }) {
-  const p = [];
-  const fx = (x) => (oglinda ? LUME_L - x : x);
-  const val = (x, k) => (unda ? Math.sin((x / 150) * Math.PI + k) * unda : 0);
-  const r = dy / 2;
-  for (let k = 0; k < randuri; k++) {
-    const y = y0 + k * dy, spreDreapta = k % 2 === 0;
-    const x0 = k === 0 ? -70 : spreDreapta ? xL : xR;
-    const x1 = k === randuri - 1 ? xFinal : spreDreapta ? xR : xL;
-    const pasi = Math.ceil(Math.abs(x1 - x0) / 2);
-    for (let i = 0; i <= pasi; i++) {
-      const x = x0 + ((x1 - x0) * i) / pasi;
-      p.push([fx(x), y + val(x, k)]);
-    }
-    if (k < randuri - 1) {                      // întoarcerea în U spre rândul următor
-      const cxu = spreDreapta ? xR : xL, cyu = y + r, yv = val(cxu, k), yv2 = val(cxu, k + 1);
-      for (let i = 1; i < 90; i++) {
-        const u = -Math.PI / 2 + (i / 90) * Math.PI;
-        const x = spreDreapta ? cxu + Math.cos(u) * r : cxu - Math.cos(u) * r;
-        p.push([fx(x), cyu + Math.sin(u) * r + yv + (yv2 - yv) * (i / 90)]);
+/** „Broasca țestoasă”: pornește din (x, y) cu direcția în grade (0 = est, 90 = sud) și desenează. */
+function testoasa(x, y, grade) {
+  const p = [[x, y]];
+  let u = grade * GRAD;
+  const t = {
+    drept(len, unda = 0, lungUnda = 160) {
+      const n = Math.max(1, Math.ceil(Math.abs(len) / 2));
+      const nx = -Math.sin(u), ny = Math.cos(u);
+      for (let i = 1; i <= n; i++) {
+        const s = (len * i) / n, w = unda ? Math.sin((s / lungUnda) * Math.PI * 2) * unda * Math.sin((Math.PI * i) / n) : 0;
+        p.push([x + Math.cos(u) * s + nx * w, y + Math.sin(u) * s + ny * w]);
       }
-    }
-  }
-  return p;
+      x += Math.cos(u) * len; y += Math.sin(u) * len;
+      return t;
+    },
+    /** Viraj: grade > 0 = la dreapta (sens orar pe ecran), < 0 = la stânga. */
+    arc(r, grade) {
+      const tot = grade * GRAD, sg = Math.sign(tot);
+      const cxa = x + Math.cos(u + (sg * Math.PI) / 2) * r, cya = y + Math.sin(u + (sg * Math.PI) / 2) * r;
+      const a0 = u - (sg * Math.PI) / 2, n = Math.max(2, Math.ceil((Math.abs(tot) * r) / 2));
+      for (let i = 1; i <= n; i++) {
+        const a = a0 + (tot * i) / n;
+        p.push([cxa + Math.cos(a) * r, cya + Math.sin(a) * r]);
+      }
+      u += tot; x = p[p.length - 1][0]; y = p[p.length - 1][1];
+      return t;
+    },
+    puncte: () => p,
+  };
+  return t;
 }
 
 export const TRASEE = [
-  { nume: "Spirala", tragator: { x: 300, y: 335 }, puncte: () => spirala({ cx: 300, cy: 335, rOut: 282, rIn: 112, ture: 2.05, unghi0: -Math.PI / 2, sens: 1 }) },
-  { nume: "Serpentina", tragator: { x: 300, y: 585 }, puncte: () => serpentina({ randuri: 4, y0: 70, dy: 106, xL: 70, xR: 530, unda: 0, oglinda: false, xFinal: 170 }) },
-  { nume: "Vârtejul", tragator: { x: 300, y: 335 }, puncte: () => spirala({ cx: 300, cy: 335, rOut: 282, rIn: 118, ture: 2.3, unghi0: 0, sens: -1 }) },
-  { nume: "Dealurile", tragator: { x: 300, y: 590 }, puncte: () => serpentina({ randuri: 4, y0: 72, dy: 108, xL: 72, xR: 528, unda: 16, oglinda: true, xFinal: 160 }) },
+  {
+    id: "sighisoara", nume: "Sighișoara", loc: "Cetatea medievală",
+    descriere: "Șiragul urcă pe zidurile cetății, pe lângă turnurile breslelor, spre Turnul cu Ceas.",
+    capat: "Turnul cu Ceas", tragator: { x: 300, y: 352 },
+    // zidul cetății: o spirală ușor ovală, cu bastioane (umflături mici) din loc în loc
+    puncte: () => polar({
+      cx: 300, cy: 352, ture: 1.72, unghi0: Math.PI, sens: 1, sy: 1.05, intrare: 380,
+      raza: (f, u) => (268 - 132 * f) * (1 + 0.035 * Math.max(0, Math.sin(u * 6)) ** 3),
+    }),
+  },
+  {
+    id: "sarmizegetusa", nume: "Sarmizegetusa Regia", loc: "Sanctuarul mare circular",
+    descriere: "Pe Calea Sacră, de jur împrejurul sanctuarului dacilor, până la Soarele de andezit.",
+    capat: "Soarele de andezit", tragator: { x: 300, y: 345 },
+    // două inele aproape perfect circulare (ca stâlpii sanctuarului), legate de o trecere lină
+    puncte: () => polar({
+      cx: 300, cy: 345, ture: 1.9, unghi0: -135 * GRAD, sens: 1, intrare: 300,
+      raza: (f) => {
+        const g = f * 1.9 * 360;
+        if (g < 250) return 262;
+        if (g < 330) return neted(262, 180, (g - 250) / 80);
+        if (g < 590) return 180;
+        return neted(180, 116, (g - 590) / 80);
+      },
+    }),
+  },
+  {
+    id: "bucuresti", nume: "București", loc: "Calea Victoriei",
+    descriere: "De la Arcul de Triumf, pe bulevarde și pe Calea Victoriei, până la Ateneul Român.",
+    capat: "Ateneul Român", tragator: { x: 64, y: 230 },
+    // patru bulevarde în coloane, legate prin piețe rotunde; Calea Victoriei șerpuiește
+    puncte: () => testoasa(650, -40, 135)
+      .drept(150)
+      .arc(40, -45)
+      .drept(330)
+      .arc(60, 180)
+      .drept(300, 12, 140)
+      .arc(60, -180)
+      .drept(420)
+      .arc(60, 180)
+      .drept(310, 10, 150)
+      .puncte(),
+  },
+  {
+    id: "brasov", nume: "Brașov", loc: "Piața Sfatului",
+    descriere: "De jur împrejurul Pieței Sfatului, printre casele colorate, sub Tâmpa.",
+    capat: "Biserica Neagră", tragator: { x: 300, y: 372 },
+    // un pătrat cu colțuri rotunjite (superelipsă), strâns în spirală
+    puncte: () => polar({
+      cx: 300, cy: 372, ture: 1.62, unghi0: Math.PI / 2, sens: 1, intrare: 440,
+      raza: (f, u) => {
+        const s = 250 - 128 * f, c = Math.abs(Math.cos(u)), d = Math.abs(Math.sin(u));
+        return s / Math.pow(Math.pow(c, 5) + Math.pow(d, 5), 1 / 5);
+      },
+    }),
+  },
+  {
+    id: "delta", nume: "Delta Dunării", loc: "Canalele dintre stufăriș",
+    descriere: "Pe canalele Deltei, printre stuf și nuferi, spre farul de la malul mării.",
+    capat: "Farul", tragator: { x: 300, y: 340 },
+    // un canal care meandrează în jurul unei insule (spirală cu valuri lente)
+    puncte: () => polar({
+      cx: 300, cy: 340, ture: 1.78, unghi0: Math.PI / 2, sens: -1, intrare: 380,
+      raza: (f, u) => (252 - 130 * f) * (1 + 0.06 * Math.sin(u * 3)),
+    }),
+  },
+  {
+    id: "transfagarasan", nume: "Transfăgărășan", loc: "Serpentinele de munte",
+    descriere: "Din tunelul de sub creastă, în serpentine strânse, până la baraj.",
+    capat: "Barajul", tragator: { x: 300, y: 604 },
+    // ace de păr una sub alta, din ce în ce mai largi pe măsură ce coboară muntele
+    puncte: () => testoasa(230, -70, 90)
+      .drept(105)
+      .arc(30, -90)
+      .drept(160)
+      .arc(46, 180)
+      .drept(285)
+      .arc(46, -180)
+      .drept(370)
+      .arc(46, 180)
+      .drept(440)
+      .arc(46, -180)
+      .drept(300)
+      .puncte(),
+  },
 ];
 
 /** Reeșantionează o linie frântă la pas constant de lungime (pentru poziționare rapidă pe arc). */
@@ -109,7 +202,7 @@ export function pozitie(tr, s) {
 export function configNivel(nivel) {
   const k = (nivel - 1) % TRASEE.length;
   const runda = Math.floor((nivel - 1) / TRASEE.length);
-  const baza = [[4, 50, 22], [4, 60, 24], [5, 66, 26], [5, 74, 28]][k];
+  const baza = [[4, 48, 22], [4, 54, 23], [5, 60, 24], [5, 64, 25], [5, 70, 26], [5, 74, 27]][k];
   return {
     traseu: k,
     culori: Math.min(CULORI_MAX, baza[0] + runda),
@@ -118,7 +211,7 @@ export function configNivel(nivel) {
   };
 }
 
-/** Viteza motorului: un sprint la începutul nivelului, apoi croaziera; frânează puțin lângă fântână. */
+/** Viteza motorului: un sprint la începutul nivelului, apoi croaziera; frânează puțin lângă capătul drumului. */
 export function vitezaLant(cfg, capS, L, sprint) {
   if (sprint && capS < 0.22 * L) return 320;
   return capS > 0.82 * L ? cfg.viteza * 0.65 : cfg.viteza;
@@ -138,7 +231,7 @@ export function genereazaCulori(seed, n, k) {
 }
 
 /* ─── Lanțul ─── */
-// bile[0] e capul (cel mai aproape de fântână, s mare), ultima e coada. s < 0 = încă în afara traseului.
+// bile[0] e capul (cel mai aproape de capătul drumului, s mare), ultima e coada. s < 0 = încă în afara traseului.
 
 export function creeazaLant(culori) {
   return { bile: [], coada: culori.slice(), idUrm: 1 };
@@ -179,7 +272,7 @@ export function avanseaza(lant, dt, viteza) {
 
 export const indexDupaId = (lant, id) => lant.bile.findIndex((x) => x.id === id);
 
-/** Inserează o mărgea lângă bila j: în fața ei (spre fântână) sau în spatele ei. Întoarce id-ul noii mărgele. */
+/** Inserează o mărgea lângă bila j: în fața ei (spre capătul drumului) sau în spatele ei. Întoarce id-ul noii mărgele. */
 export function insereaza(lant, j, inFata, c) {
   const b = lant.bile;
   const nou = { c, s: b[j].s + (inFata ? D : 0), id: lant.idUrm++ };
@@ -210,7 +303,7 @@ export function culoriPrezente(lant) {
   return [...set].sort((a, b) => a - b);
 }
 
-/** A ajuns capul șiragului în fântână? */
+/** A ajuns capul șiragului la capătul drumului? */
 export const aAjuns = (lant, L) => lant.bile.length > 0 && lant.bile[0].s >= L;
 /** Nivel câștigat: nu mai e nimic de scos și nimic pe traseu. */
 export const golit = (lant) => lant.bile.length === 0 && lant.coada.length === 0;
